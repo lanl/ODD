@@ -3,8 +3,8 @@
  * \file   solver/opacity_reader.hh
  * \author Mathew Cleveland
  * \brief  Define class opacity_reader
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #ifndef solver_opacity_reader_hh
@@ -31,29 +31,41 @@ namespace odd_solver {
  */
 //================================================================================================//
 
-  class opacity_reader {
-  public:
-    // NESTED CLASSES AND TYPEDEFS
+class opacity_reader {
+public:
+  // NESTED CLASSES AND TYPEDEFS
 
-    // CREATORS
+  // CREATORS
 
-    //! Default constructors.
-    opacity_reader(const std::string &ipcressFile);
+  //! Default constructors.
+  opacity_reader(const std::string &ipcressFile);
 
-    // SERVICES
-    void print_file_info() const;
-    void print_mat_info(const size_t mat_id) const;
+  // SERVICES
+  void print_available_mats() const {
+    std::cout << "Available matids " << std::endl;
+    std::cout << "    ";
+    for (auto &id : my_opacity_file.getMatIDs())
+      std::cout << std::to_string(id) << " ";
+    std::cout << std::endl;
+  }
 
-  private:
-    // DATA
-    rtt_cdi_ipcress::IpcressFile my_opacity_file;
-  };
+  void print_available_data(const size_t mat_id) const {
+    std::cout << "Available ipcress fields " << std::endl;
+    std::cout << "    ";
+    for (auto &string : my_opacity_file.listDataFieldNames(mat_id))
+      std::cout << string << " ";
+    std::cout << std::endl;
+  }
 
-} // end namespace <namespace>
+private:
+  // DATA
+  rtt_cdi_ipcress::IpcressFile my_opacity_file;
+};
+
+} // namespace odd_solver
 
 #endif // solver_opacity_reader_hh
 
 //------------------------------------------------------------------------------------------------//
 // end of solver/opacity_reader.hh
 //------------------------------------------------------------------------------------------------//
-
