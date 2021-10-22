@@ -1,0 +1,92 @@
+//------------------------------------------------------------------------------------------------//
+// build_commands.dcc
+// Example configure commands
+//------------------------------------------------------------------------------------------------//
+
+/*!
+
+\page build_commands Example Build Commands for Odd
+
+\section odd_checkout Access the source code
+
+- Log into https://re-git.lanl.gov/chaos/odd and fork the repository.
+\code
+% git clone ssh://git@re-git.lanl.gov:10022/<MONIKER>/odd
+% cd odd
+% git remote add upstream ssh://git@re-git.lanl.gov:10022/odd/odd
+% git fetch --all --prune
+% git checkout develop
+% git merge upstream/develop
+\endcode
+
+\section odd_environment Developer Environment
+- We normally use module to setup the developer environment
+- For CCS-NET and LANL HPC machines, running \code module load user_contrib
+  \endcode will normally provide access to the needed modules.
+
+\code
+# set PATHS and environment variables
+% module load gcc gsl lapack openmpi cmake graphviz doxygen ...
+\endcode
+
+- Alternately, you can try to source the bashrc file from a Draco checkout
+
+\code
+% git clone git@github.com/lanl/Draco draco
+% source draco/environment/bashrc/.bashrc
+\code
+
+\section odd_configure Create Makefiles
+\code
+% cd $ODD_BINARY_DIR
+% cmake -DCMAKE_BUILD_TYPE=[Release|Debug] $ODD_SOURCE_DIR
+\endcode
+or one of the following more detailed commands:
+\code
+% ccmake -DCMAKE_INSTALL_PREFIX=$ODD_INSTALL_PREFIX -DCMAKE_BUILD_TYPE=[Release|Debug] $ODD_SOURCE_DIR
+\endcode
+
+\section build_flags Build Flags
+
+Common configure options are listed at
+https://rtt.lanl.gov/redmine/projects/draco/wiki/Common_Configure_Options, but
+include:
+
+- BUILD_TESTING
+- CMAKE_BUILD_TYPE
+- CMAKE_INSTALL_PREFIX
+- DRACO_DBC_LEVEL
+- DRACO_DIAGNOSTICS
+- DRACO_LIBRARY_TYPE
+- DRACO_C4
+- DRACO_STATIC_ANALYZER
+.
+
+Environment variables that may impact the build are:
+
+- CXX, CC, FC, CUDA
+- CXX_FLAGS, FC_FLAGS, C_FLAGS
+- CPATH
+- LD_LIBRARY_PATH
+- [CRAY_LD_LIBRARY_PATH](https://rtt.lanl.gov/redmine/projects/draco/wiki/Trinity#CRAY_LD_LIBRARY_PATH)
+.
+
+\section compile_commands Common (Linux) Compile commands
+\code
+% make -j
+% ctest -j40
+% make -j40 install
+\endcode
+- The number of available CPUs can often be found by running 'cat
+  /proc/cpuinfo' or by runnint top and then using option '1'.
+
+\section test_commands Common (Linux) Test commands
+\code
+% ctest -j 40 --test-load 30 [--output-on-failure]
+% ctest -VV -R <regex_test_name>
+% ctest -j40 --rerun-failed
+\endcode
+
+//------------------------------------------------------------------------------------------------//
+// end of mainpage.dcc
+//------------------------------------------------------------------------------------------------//

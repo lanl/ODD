@@ -1,0 +1,58 @@
+#--------------------------------------------*-cmake-*---------------------------------------------#
+# file   config/odd-config-install.cmake
+# author Mathew Cleveland
+# date   October 21st 2021
+# brief  configure Odd library
+# note   Copyright (C) 2010-2021 Triad National Security, LLC.
+#        All rights reserved.
+#--------------------------------------------------------------------------------------------------#
+
+get_filename_component( _SELF_DIR "${CMAKE_CURRENT_LIST_FILE}"  PATH )
+include( "${_SELF_DIR}/odd-targets.cmake" )
+@DRACO_GNUtoMS_INSTALL@
+
+# Also set the odd install dir
+get_filename_component( ODD_DIR "${_SELF_DIR}"  PATH )
+set( ODD_INCLUDE_DIR "${ODD_DIR}/include")
+set( ODD_CONFIG_DIR "${_SELF_DIR}" )
+
+# Provide some pretty print information during configure
+include( FeatureSummary )
+set_package_properties( odd PROPERTIES
+   DESCRIPTION "Orthogonal Diffusion Discretization (odd) library"
+   TYPE REQUIRED
+   PURPOSE "Provide orthogonal diffusion discretization solvers" )
+
+## ---------------------------------------------------------------------------
+## Compilers used by Odd build
+## ---------------------------------------------------------------------------
+
+set( DRACO_LIBRARY_TYPE @DRACO_LIBRARY_TYPE@ )
+
+## ---------------------------------------------------------------------------
+## Set library specifications and paths
+## ---------------------------------------------------------------------------
+
+## The project version number
+set(Odd_VERSION "@Odd_VERSION@")
+
+## The project library directories.
+set(Odd_LIBRARY_DIRS "${ODD_DIR}/lib")
+
+## The project libraries.
+set(Odd_LIBRARIES "@Odd_LIBRARIES@" )
+
+## ---------------------------------------------------------------------------
+## MPI specific variables
+##   These variables are provided to make it easier to get the mpi libraries
+##   and includes on systems that do not use the mpi wrappers for compiling
+## ---------------------------------------------------------------------------
+set(Odd_MPIEXEC_EXECUTABLE   "@Draco_MPIEXEC_EXECUTABLE@")
+set(Odd_MPIEXEC_MAX_NUMPROCS "@Draco_MPIEXEC_MAX_NUMPROCS@")
+set(Odd_MPIEXEC_NUMPROC_FLAG "@Draco_MPIEXEC_NUMPROC_FLAG@")
+
+## ---------------------------------------------------------------------------
+## Save per target properties for importing into other projects.
+## ---------------------------------------------------------------------------
+
+@Odd_EXPORT_TARGET_PROPERTIES@

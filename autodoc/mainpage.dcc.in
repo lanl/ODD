@@ -1,0 +1,24 @@
+//------------------------------------------------------------------------------------------------//
+// mainpage.dcc
+// Front page to the odd autodoc system.
+//------------------------------------------------------------------------------------------------//
+
+/*!
+
+\mainpage The Odd Documentation System
+\version  Odd-@Odd_VERSION_FULL@
+
+\par Executive Summary
+
+The Orthogonal Diffusion Discretization (Odd) library provides an standalone diffusion package to be
+imported by multiphysics solvers.
+
+\par Authors
+
+@AUTHOR_LIST@
+
+*/
+
+//------------------------------------------------------------------------------------------------//
+// end of mainpage.dcc
+//------------------------------------------------------------------------------------------------//

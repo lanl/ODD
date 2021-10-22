@@ -1,0 +1,17 @@
+//------------------------------------------------------------------------------------------------//
+// odd_overview.dcc
+//------------------------------------------------------------------------------------------------//
+
+/*!
+  \page Odd_overview Odd Overview
+
+  \section oo_txrt Thermal X-ray diffusion
+
+  The Odd (Orthogonal Diffusion Discretization) project provides a standalone thermal radiation
+  transport diffusion solver for multiphysics simulations.
+
+*/
+
+//------------------------------------------------------------------------------------------------//
+// end
+//------------------------------------------------------------------------------------------------//

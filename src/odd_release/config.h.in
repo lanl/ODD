@@ -1,0 +1,32 @@
+/*---------------------------------------------*-C-*----------------------------------------------*/
+/* \file   odd_release/config.h
+ * \author Mathew Cleveland
+ * \date   October 22nd 2021
+ * \brief  CPP defines related to Odd.
+ * \note   Copyright (C) 2015-2021 Triad National Security, LLC., All rights reserved. */
+/*------------------------------------------------------------------------------------------------*/
+
+#ifndef rtt_odd_release_config_h
+#define rtt_odd_release_config_h
+
+#include "ds++/config.h"
+
+#cmakedefine Odd_VERSION "@Odd_VERSION@"
+
+#define ODD_BUILD_DATE "@Odd_BUILD_DATE@"
+#define ODD_BUILD_TYPE "@CMAKE_BUILD_TYPE@"
+
+#define Odd_VERSION_MAJOR "@Odd_VERSION_MAJOR@"
+#define Odd_VERSION_MINOR "@Odd_VERSION_MINOR@"
+#define Odd_VERSION_PATCH "@Odd_VERSION_PATCH@"
+#define Odd_VERSION       "@Odd_VERSION@"
+#define Odd_VERSION_FULL  "@Odd_VERSION_FULL@"
+
+/* Windows DLL libraries ---------------------------------------- */
+#include "odd_release/dll_declspec.h"
+
+#endif // rtt_odd_release_config_h
+
+/*------------------------------------------------------------------------------------------------*/
+/* end of odd_release/config.h */
+/*------------------------------------------------------------------------------------------------*/

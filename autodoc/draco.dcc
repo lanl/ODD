@@ -1,0 +1,31 @@
+/*!
+
+\page dracolink The Draco Documentation System
+
+\par  Executive Summary
+
+<a href="https://github.com/lanl/draco">Draco</a> is a C++ radiation transport
+component library developed by CCS-2, Los Alamos National Laboratory. In
+addition to providing infrastructure for radiation transport code development,
+Draco serves as a "model Development Environment (DE)" for code development
+activities within CCS-2.  Most CCS-2 code projects are based on the coding
+standards, idioms, style, organization, and architecture of Draco.
+
+\par Getting Started
+
+To access and start using Draco, please visit the github project portal,
+https://github.com/lanl/Draco, or the team's Redmine project portal (password
+requried), https://rtt.lanl.gov/redmine/projects/draco.
+
+\par  Code Access
+
+- To get access to Draco source contact <a
+  href="mailto:draco@lanl.gov">CCS-2</a>.
+- Project Source Portal: https://github.com/lanl/draco
+- Project Planning Portal: https://rtt.lanl.gov/redmine/projects/draco.
+
+*/
+
+//------------------------------------------------------------------------------------------------//
+// end of draco.dcc
+//------------------------------------------------------------------------------------------------//
