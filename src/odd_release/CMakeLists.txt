@@ -28,6 +28,7 @@ include(generate_dll_declspec)
 set(dirs_with_libs
     odd_release
     solver
+    api
     driver)
 generate_dll_declspec("odd_release" "${dirs_with_libs}")
 

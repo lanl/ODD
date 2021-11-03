@@ -1,12 +1,12 @@
 # -------------------------------------------*-cmake-*-------------------------------------------- #
-# file   driver/CMakeLists.txt
+# file   api/CMakeLists.txt
 # author Mathew Cleveland
 # date   October 2021
 # brief  Generate build project files for mc
 # note   Copyright (C) 2015-2021 Triad National Security, LLC., All rights reserved.
 # ------------------------------------------------------------------------------------------------ #
 cmake_minimum_required(VERSION 3.9.0)
-project(driver CXX)
+project(api CXX)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   string(REPLACE "/W2" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -34,9 +34,10 @@ endif()
 # Build package library
 # ------------------------------------------------------------------------------------------------ #
 add_component_library(
-  TARGET Lib_driver
-  TARGET_DEPS "Lib_api"
-  LIBRARY_NAME driver
+  TARGET Lib_api
+  TARGET_DEPS "Lib_solver"
+  LIBRARY_NAME api
+  INCLUDE_DIRS ${include_dirs}
   SOURCES "${sources}"
   HEADERS "${headers}"
   EXPORT_NAME "odd-targets")
@@ -44,15 +45,15 @@ add_component_library(
 # ------------------------------------------------------------------------------------------------ #
 # Installation instructions
 # ------------------------------------------------------------------------------------------------ #
-install(FILES ${headers} DESTINATION include/driver)
+install(FILES ${headers} DESTINATION include/api)
 
 # ------------------------------------------------------------------------------------------------ #
 # Unit tests
 # ------------------------------------------------------------------------------------------------ #
-## if(BUILD_TESTING)
-##   add_subdirectory(test)
-## endif()
-## 
+if(BUILD_TESTING)
+ add_subdirectory(test)
+endif()
+
 # ------------------------------------------------------------------------------------------------ #
 # Autodoc
 # ------------------------------------------------------------------------------------------------ #

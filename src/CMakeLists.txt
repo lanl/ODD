@@ -3,7 +3,7 @@
 # author Mathew Cleveland
 # date   October 11th 2021
 # brief  Instructions for building src level Makefile.
-# note   Copyright (C) 2015-2021 Triad National Security, LLC., All rights reserved.
+# note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
 # ------------------------------------------------------------------------------------------------ #
 cmake_minimum_required(VERSION 3.9.0)
 project(odd_src_dir)
@@ -61,6 +61,11 @@ add_dir_if_exists(solver)
 # Level 3
 message(" ")
 message(STATUS "Configuring Level 3 packages --")
+add_dir_if_exists(api)
+
+# Level 4
+message(" ")
+message(STATUS "Configuring Level 4 packages --")
 add_dir_if_exists(driver)
 
 # ---------------------------------------------------------------------------##
