@@ -35,7 +35,7 @@ endif()
 # ------------------------------------------------------------------------------------------------ #
 add_component_library(
   TARGET Lib_solver
-  TARGET_DEPS "Lib_cdi_ipcress;Lib_odd_release"
+  TARGET_DEPS "Lib_cdi;Lib_cdi_ipcress;Lib_odd_release"
   LIBRARY_NAME solver
   INCLUDE_DIRS ${include_dirs}
   SOURCES "${sources}"

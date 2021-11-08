@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "api/Arguments.hh"
+#include "api/Function_Interface.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 
@@ -19,27 +20,17 @@ using namespace rtt_dsxx;
 //------------------------------------------------------------------------------------------------//
 void test(rtt_dsxx::UnitTest &ut) {
   Arguments arg;
-  // Should fail
-  try {
-    arg.control_data.check_arguments();
-  } catch (...) {
-    std::cout << "Caught the expected Control_Data::check_arguments assertions" << std::endl;
-  }
+
   // fill control data with "valid junk" and check arguments
-  arg.control_data.opacity_file = "not_empty";
+  arg.control_data.opacity_file = "two-mats.ipcress";
   arg.control_data.check_arguments();
 
-  try {
-    arg.zonal_data.check_arguments();
-  } catch (...) {
-    std::cout << "Caught the expected Zonal_Data::check_arguments assertions" << std::endl;
-  }
   // fill the zonal data with "valid junk" and check arguments
   arg.zonal_data.number_of_cells = 2;
   arg.zonal_data.dimensions = 1;
   arg.zonal_data.dx = 31.0;
   // global material data
-  std::vector<size_t> matids = {19000, 190001};
+  std::vector<size_t> matids = {10001, 10002};
   arg.zonal_data.number_of_mats = 2;
   arg.zonal_data.problem_matids = &matids[0];
   // cell wise material data
@@ -59,28 +50,22 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
 
-  // Check that the pointer matches the data
-  FAIL_IF_NOT((*arg.zonal_data.problem_matids) == matids[0]);
-  arg.zonal_data.problem_matids++;
-  FAIL_IF_NOT((*arg.zonal_data.problem_matids) == matids[1]);
-  arg.zonal_data.check_arguments();
-
-  try {
-    arg.output_data.check_arguments();
-  } catch (...) {
-    std::cout << "Caught the expected Output_Data::check_arguments assertions" << std::endl;
-  }
-  std::vector<double> opacity_data = {17000.0, 17000.1};
+  // setup the opacity data field to be filled in by the solver
+  std::vector<double> opacity_data(arg.zonal_data.number_of_cells, 0.0);
   arg.output_data.ave_opacity_data = &opacity_data[0];
-  // Check that the pointer matches the data
-  FAIL_IF_NOT((*arg.output_data.ave_opacity_data) == opacity_data[0]);
-  arg.output_data.ave_opacity_data++;
-  FAIL_IF_NOT((*arg.output_data.ave_opacity_data) == opacity_data[1]);
-  arg.output_data.check_arguments();
+
+  // Call the solver on the fake arguments list
+  std::cout << "Call solver" << std::endl;
+  Odd_Diffusion_Solve(arg);
+
+  // print out the opacity data
+  auto optr = arg.output_data.ave_opacity_data;
+  for (size_t i = 0; i < arg.zonal_data.number_of_cells; i++, optr++)
+    std::cout << "Opacity_value[" << i << "] = " << *optr << std::endl;
 
   if (ut.numFails == 0) {
     std::ostringstream m;
-    m << "the ODD API arguments seem to be working";
+    m << "the ODD API seems to be working";
     PASSMSG(m.str());
   }
 }

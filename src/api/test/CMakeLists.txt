@@ -29,6 +29,10 @@ add_parallel_tests(
   PE_LIST "1;2;4"
   DEPS "Lib_api")
 
+file(GLOB ipcress_files ${PROJECT_SOURCE_DIR}/*.ipcress)
+provide_aux_files(FILES "${ipcress_files}" FOLDER solver_test)
+
+
 # ------------------------------------------------------------------------------------------------ #
 # end CMakeLists.txt
 # ------------------------------------------------------------------------------------------------ #
