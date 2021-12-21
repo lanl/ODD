@@ -1,14 +1,14 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/opacity_reader.hh
+ * \file   solver/Opacity_Reader.hh
  * \author Mathew Cleveland
- * \brief  Define class opacity_reader
+ * \brief  Define class Opacity_Reader
  * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
-#ifndef solver_opacity_reader_hh
-#define solver_opacity_reader_hh
+#ifndef solver_Opacity_Reader_hh
+#define solver_Opacity_Reader_hh
 
 #include "cdi_ipcress/IpcressFile.hh"
 #include "cdi_ipcress/IpcressGrayOpacity.hh"
@@ -17,32 +17,32 @@ namespace odd_solver {
 
 //================================================================================================//
 /*!
- * \class opacity_reader
+ * \class Opacity_Reader
  * \brief
  *
  * Example of how to import draco functions
  *
- * \sa opacity_reader.cc for detailed descriptions.
+ * \sa Opacity_Reader.cc for detailed descriptions.
  *
  */
 /*!
- * \example solver/test/tstopacity_reader.cc
+ * \example solver/test/tstOpacity_Reader.cc
  *
- * Test of opacity_reader.
+ * Test of Opacity_Reader.
  */
 //================================================================================================//
 
-class opacity_reader {
+class Opacity_Reader {
 public:
   // NESTED CLASSES AND TYPEDEFS
 
   // CREATORS
 
   //! Default constructors.
-  opacity_reader(const std::string &ipcressFile);
+  Opacity_Reader(const std::string &ipcressFile);
 
   //! Load up the requested matids
-  opacity_reader(const std::string &ipcressFile, const std::vector<size_t> &matids);
+  Opacity_Reader(const std::string &ipcressFile, const std::vector<size_t> &matids);
 
   // SERVICES
   void print_available_mats() const {
@@ -71,8 +71,8 @@ public:
 
 } // namespace odd_solver
 
-#endif // solver_opacity_reader_hh
+#endif // solver_Opacity_Reader_hh
 
 //------------------------------------------------------------------------------------------------//
-// end of solver/opacity_reader.hh
+// end of solver/Opacity_Reader.hh
 //------------------------------------------------------------------------------------------------//
