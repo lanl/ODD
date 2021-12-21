@@ -1,6 +1,6 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/test/tstopacity_reader.cc
+ * \file   solver/test/tstOpacity_Reader.cc
  * \author Mathew Cleveland
  * \date   October 21st 2021
  * \brief  Testing opacity reader
@@ -8,7 +8,7 @@
  */
 //------------------------------------------------------------------------------------------------//
 
-#include "solver/opacity_reader.hh"
+#include "solver/Opacity_Reader.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 
@@ -19,7 +19,7 @@ using namespace odd_solver;
 // TESTS
 //------------------------------------------------------------------------------------------------//
 void test_print(rtt_dsxx::UnitTest &ut) {
-  opacity_reader op_reader(ut.getTestSourcePath() + "two-mats.ipcress");
+  Opacity_Reader op_reader(ut.getTestSourcePath() + "two-mats.ipcress");
   op_reader.print_available_mats();
   op_reader.print_available_data(10001);
   op_reader.print_available_data(10002);
@@ -41,5 +41,5 @@ int main(int argc, char *argv[]) {
 }
 
 //------------------------------------------------------------------------------------------------//
-// end of tstopacity_reader.cc
+// end of tstOpacity_Reader.cc
 //------------------------------------------------------------------------------------------------//

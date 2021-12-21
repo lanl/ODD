@@ -1,6 +1,6 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/opacity_reader.cc
+ * \file   solver/Opacity_Reader.cc
  * \author <user>
  * \date   <date>
  * \brief  <start>
@@ -8,19 +8,19 @@
  */
 //------------------------------------------------------------------------------------------------//
 
-#include "opacity_reader.hh"
+#include "Opacity_Reader.hh"
 #include "cdi/OpacityCommon.hh"
 
 namespace odd_solver {
 
-opacity_reader::opacity_reader(const std::string &ipcressfile)
+Opacity_Reader::Opacity_Reader(const std::string &ipcressfile)
     : my_opacity_file(new rtt_cdi_ipcress::IpcressFile(ipcressfile)) {
   for (auto &id : my_opacity_file->getMatIDs())
     mat_rosseland_abs_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressGrayOpacity>(
         my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::ABSORPTION));
 }
 
-opacity_reader::opacity_reader(const std::string &ipcressfile, const std::vector<size_t> &matids)
+Opacity_Reader::Opacity_Reader(const std::string &ipcressfile, const std::vector<size_t> &matids)
     : my_opacity_file(new rtt_cdi_ipcress::IpcressFile(ipcressfile)) {
   for (auto &id : matids)
     mat_rosseland_abs_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressGrayOpacity>(
@@ -30,5 +30,5 @@ opacity_reader::opacity_reader(const std::string &ipcressfile, const std::vector
 } // namespace odd_solver
 
 //------------------------------------------------------------------------------------------------//
-// end of opacity_reader.cc
+// end of Opacity_Reader.cc
 //------------------------------------------------------------------------------------------------//
