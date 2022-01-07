@@ -10,6 +10,9 @@
 
 #ifndef solver_Interface_Data_hh
 #define solver_Interface_Data_hh
+#include "units/PhysicalConstexprs.hh"
+#include <array>
+#include <string>
 #include <vector>
 
 namespace odd_solver {
@@ -19,6 +22,13 @@ enum COORDINATE_SYSTEM { CARTESIAN, CYLINDRICAL, SPHERICAL, N_COORD_TYPES };
 
 //! Face types used to navigate the mesh
 enum FACE_TYPE { INTERNAL_FACE, BOUNDARY_FACE, GHOST_FACE, N_FACE_TYPES };
+
+// Control Data
+struct Control_Data {
+  bool multigroup{false};
+  std::array<bool, 6> reflect_bnd{true, true, true, true, true, true};
+  std::array<double, 6> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+};
 
 // Mesh Data
 struct Mesh_Data {
@@ -44,6 +54,7 @@ struct Mesh_Data {
 
 // Raw Material data arrays
 struct Mat_Data {
+  std::string ipcress_filename;
   size_t number_of_mats{0};
   std::vector<size_t> problem_matids;
   std::vector<size_t> number_of_cell_mats;
@@ -52,7 +63,47 @@ struct Mat_Data {
   std::vector<std::vector<double>> cell_mat_temperature;
   std::vector<std::vector<double>> cell_mat_density;
   std::vector<std::vector<double>> cell_mat_specific_heat;
-  std::vector<double> cell_velocity;
+  std::vector<double> cell_rad_eden;
+  std::vector<std::vector<double>> cell_mg_rad_eden;
+  std::vector<std::array<double, 3>> cell_velocity;
+};
+
+struct Solver_Data {
+  // Matrix Data
+  std::vector<double> diagonal;
+  std::vector<std::vector<double>> off_diagonal;
+  std::vector<std::vector<size_t>> off_diagonal_id;
+  std::vector<double> source;
+  // Mat Data
+  std::vector<double> cell_density;
+  std::vector<double> cell_cve;
+  // Initial Conditions
+  std::vector<double> cell_eden0;
+  std::vector<std::vector<double>> face_flux0;
+  std::vector<double> cell_temperature0;
+  // Solution Data
+  std::vector<double> cell_eden;
+  std::vector<std::vector<double>> face_flux;
+  std::vector<double> cell_temperature;
+};
+
+struct MG_Solver_Data {
+  // Matrix Data
+  std::vector<std::vector<double>> diagonal;
+  std::vector<std::vector<std::vector<double>>> off_diagonal;
+  std::vector<size_t> off_diagonal_id;
+  std::vector<std::vector<double>> source;
+  // Mat Data
+  std::vector<double> cell_density;
+  std::vector<double> cell_cve;
+  // Initial Conditions
+  std::vector<std::vector<double>> cell_eden0;
+  std::vector<std::vector<std::vector<double>>> face_flux0;
+  std::vector<double> cell_temperature0;
+  // Solution Data
+  std::vector<std::vector<double>> cell_eden;
+  std::vector<std::vector<std::vector<double>>> face_flux;
+  std::vector<double> cell_temperature;
 };
 
 //================================================================================================//
@@ -72,6 +123,7 @@ public:
 
   bool valid();
 
+  Control_Data control_data;
   Mesh_Data mesh_data;
   Mat_Data mat_data;
 };

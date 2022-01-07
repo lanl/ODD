@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "Test_Interface_Builder.hh"
+#include "solver/Interface_Data.hh"
 #include "solver/Orthogonal_Mesh.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"

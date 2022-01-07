@@ -62,6 +62,9 @@ public:
   //! get volume
   double cell_volume(const size_t cell) const;
 
+  //! get the distance from the cell center to the face center
+  double distance_center_to_face(const size_t cell, const size_t face) const;
+
   //! get face area
   double face_area(const size_t cell, const size_t face) const;
 
