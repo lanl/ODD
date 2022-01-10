@@ -3,8 +3,8 @@
  * \file   solver/Grey_Matrix.hh
  * \author Mathew Cleveland
  * \brief  Define class Grey_Matrix
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #ifndef odd_solver_Grey_Matrix_hh
@@ -30,11 +30,11 @@ public:
   //! Default constructors.
   Grey_Matrix(const Control_Data &control_data);
 
-  //! Initialize Solver Data
+  //! Initialize solver data
   void initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
                               const double dt);
 
-  //!
+  //! Build the solution matrix
   void build_matrix(const Orthogonal_Mesh &mesh, const double dt);
 
 private:
@@ -47,10 +47,11 @@ private:
   std::vector<double> sigma_a;
   std::vector<std::vector<double>> face_D;
 
-  // Helper functions
+  //! Helper function for mass averaging
   double mass_average(const std::vector<double> &mass, const std::vector<double> &variable) const;
 
 public:
+  //! Fundamental matrix data and solution vectors
   Solver_Data solver_data;
 };
 

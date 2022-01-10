@@ -12,6 +12,14 @@
 #include "solver/Interface_Data.hh"
 #include "solver/Opacity_Reader.hh"
 
+//================================================================================================//
+/*!
+ * \brief Call diffusion solver
+ *
+ * \param[in] arg interface arguments data
+ *
+ */
+//================================================================================================//
 void Odd_Diffusion_Solve(Arguments &arg) {
   // check the argument class to be valid
   arg.control_data.check_arguments();

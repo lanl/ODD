@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \brief  Define the Solver Interface data class that holds the fundamental interface data in
  * convenient c++ data types (ie vectors rather then pointers)
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -23,14 +23,14 @@ enum COORDINATE_SYSTEM { CARTESIAN, CYLINDRICAL, SPHERICAL, N_COORD_TYPES };
 //! Face types used to navigate the mesh
 enum FACE_TYPE { INTERNAL_FACE, BOUNDARY_FACE, GHOST_FACE, N_FACE_TYPES };
 
-// Control Data
+//! Control Data
 struct Control_Data {
   bool multigroup{false};
   std::array<bool, 6> reflect_bnd{true, true, true, true, true, true};
   std::array<double, 6> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 };
 
-// Mesh Data
+//! Mesh Data
 struct Mesh_Data {
   bool domain_decomposed{false};
   size_t n_dims{0};
@@ -52,7 +52,7 @@ struct Mesh_Data {
   std::vector<size_t> next_cell_id;
 };
 
-// Raw Material data arrays
+//! Raw Material data arrays
 struct Mat_Data {
   std::string ipcress_filename;
   size_t number_of_mats{0};
@@ -68,6 +68,7 @@ struct Mat_Data {
   std::vector<std::array<double, 3>> cell_velocity;
 };
 
+//! Raw matrix data and the solution vectors
 struct Solver_Data {
   // Matrix Data
   std::vector<double> diagonal;
@@ -87,6 +88,7 @@ struct Solver_Data {
   std::vector<double> cell_temperature;
 };
 
+//! Raw multigroup matrix data and the solution vectors
 struct MG_Solver_Data {
   // Matrix Data
   std::vector<std::vector<double>> diagonal;
@@ -119,7 +121,7 @@ struct MG_Solver_Data {
 class Interface_Data {
 public:
   //! Default constructors.
-  Interface_Data(){};
+  Interface_Data() = default;
 
   bool valid();
 

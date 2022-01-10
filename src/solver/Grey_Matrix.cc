@@ -4,8 +4,8 @@
  * \author Mathew Cleveland
  * \date   January 5th 2022
  * \brief  Build Matrix data to be used by the solver
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #include "Grey_Matrix.hh"
@@ -17,11 +17,33 @@
 
 namespace odd_solver {
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Grey Matrix constructor sets initial constructor data
+ *
+ *  \param[in] control_data interface control data
+ *
+ */
+//================================================================================================//
 Grey_Matrix::Grey_Matrix(const Control_Data &control_data)
     : reflect_bnd(control_data.reflect_bnd), bnd_temp(control_data.bnd_temp) {
   Insist(!control_data.multigroup, "Multigroup currently not supported");
 }
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Helper function to mass average variables
+ *
+ *  \param[in] mass of each material
+ *  \param[in] variable to be averaged for each material
+ *  \return mass averaged variable
+ *
+ */
+//================================================================================================//
 double Grey_Matrix::mass_average(const std::vector<double> &mass,
                                  const std::vector<double> &variable) const {
   Require(mass.size() == variable.size());
@@ -31,6 +53,19 @@ double Grey_Matrix::mass_average(const std::vector<double> &mass,
   return total_mass > 0.0 ? accumulated_value / total_mass : 0.0;
 }
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Initialize solver data populates the fundimental physical data, from the interface, that will be
+ * used to generate the solution matrix.
+ *
+ *  \param[in] mesh orthogonal mesh class
+ *  \param[in] mat_data material interface data
+ *  \param[in] dt time step size
+ *
+ */
+//================================================================================================//
 void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
                                          const double dt) {
   Insist(!mesh.domain_decomposed(), "Domain decomposition currently not supported");
@@ -189,6 +224,17 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
   }
 }
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Build the grey solution matrix using the initialized matrix data and the mesh.
+ *
+ *  \param[in] mesh orthogonal mesh class
+ *  \param[in] dt time step size
+ *
+ */
+//================================================================================================//
 void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
   Insist(!mesh.domain_decomposed(), "Domain decomposition currently not supported");
   const auto ncells = mesh.number_of_local_cells();
@@ -226,6 +272,7 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
         Insist(reflect_bnd[face], "Vacuum/Source boundaries are not yet supported");
+        Insist(bnd_temp[0] < 1.0e6, "Junk check for bnd_temp to be used later");
       }
     }
   }

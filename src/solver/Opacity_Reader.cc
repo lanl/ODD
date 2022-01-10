@@ -4,7 +4,7 @@
  * \author <user>
  * \date   <date>
  * \brief  <start>
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -13,6 +13,16 @@
 
 namespace odd_solver {
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Default constructor to open and read all opacities in an ipcressfile
+ *
+ *  \param[in] ipcressfile opacity file name
+ *
+ */
+//================================================================================================//
 Opacity_Reader::Opacity_Reader(const std::string &ipcressfile)
     : my_opacity_file(new rtt_cdi_ipcress::IpcressFile(ipcressfile)) {
   for (auto &id : my_opacity_file->getMatIDs()) {
@@ -25,6 +35,17 @@ Opacity_Reader::Opacity_Reader(const std::string &ipcressfile)
   }
 }
 
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Constructor to open an ipcress file and read a provided list of materials opacities.
+ *
+ *  \param[in] ipcressfile opacity file name
+ *  \param[in] matids list of material id's to read from the file
+ *
+ */
+//================================================================================================//
 Opacity_Reader::Opacity_Reader(const std::string &ipcressfile, const std::vector<size_t> &matids)
     : my_opacity_file(new rtt_cdi_ipcress::IpcressFile(ipcressfile)) {
   for (auto &id : matids) {

@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   October 21st 2021
  * \brief  Example driver
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -14,7 +14,7 @@
 #include <iostream>
 #include <vector>
 
-int main(int argc, char *argv[]) {
+int main(int /*argc*/, char *argv[]) {
   Arguments arg;
 
   // fill control data with "valid junk" and check arguments

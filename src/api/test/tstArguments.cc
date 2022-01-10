@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   October 21st 2021
  * \brief  Testing opacity reader
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -12,6 +12,7 @@
 #include "solver/Interface_Data.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
+#include "ds++/dbc.hh"
 
 using namespace rtt_dsxx;
 
@@ -96,9 +97,9 @@ void test(rtt_dsxx::UnitTest &ut) {
   std::vector<double> opacity_data = {17000.0, 17000.1};
   arg.output_data.ave_opacity_data = &opacity_data[0];
   // Check that the pointer matches the data
-  FAIL_IF_NOT((*arg.output_data.ave_opacity_data) == opacity_data[0]);
+  FAIL_IF_NOT(rtt_dsxx::soft_equiv((*arg.output_data.ave_opacity_data), opacity_data[0]));
   arg.output_data.ave_opacity_data++;
-  FAIL_IF_NOT((*arg.output_data.ave_opacity_data) == opacity_data[1]);
+  FAIL_IF_NOT(rtt_dsxx::soft_equiv((*arg.output_data.ave_opacity_data), opacity_data[1]));
   arg.output_data.check_arguments();
 
   if (ut.numFails == 0) {

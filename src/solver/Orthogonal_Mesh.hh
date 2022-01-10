@@ -3,7 +3,7 @@
  * \file   solver/Orthogonal_Mesh.hh
  * \author Mathew Cleveland
  * \brief  Define class Orthogonal_Mesh
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -36,7 +36,7 @@ public:
  *
  */
   //================================================================================================//
-  Orthogonal_Mesh(const Mesh_Data &mData) : mesh_data(mData){};
+  Orthogonal_Mesh(const Mesh_Data mData) : mesh_data(std::move(mData)) {}
 
   //! get the number of local cells
   size_t number_of_local_cells() const { return mesh_data.number_of_local_cells; }
@@ -48,7 +48,7 @@ public:
   size_t number_of_ghost_cells() const { return mesh_data.number_of_ghost_cells; }
 
   //! Get the number of faces for each cell
-  size_t number_of_faces(const size_t cell) const { return mesh_data.n_dims * 2; }
+  size_t number_of_faces(const size_t /*cell*/) const { return mesh_data.n_dims * 2; }
 
   //! Get the cells global id
   size_t cell_global_id(const size_t cell) const { return mesh_data.cell_global_id[cell]; }

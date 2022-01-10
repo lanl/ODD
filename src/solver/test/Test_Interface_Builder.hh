@@ -3,8 +3,8 @@
  * \file   solver/test/Test_Interface_Builder.hh
  * \author Mathew Cleveland
  * \brief  Build out simple interface data class for testing. 
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #ifndef solver_test_Test_Interface_Builder_hh
@@ -76,7 +76,7 @@ void Test_Multi_Mat_Builder(odd_solver::Interface_Data &iface) {
 void Test_1D_Interface_Builder(odd_solver::Interface_Data &iface) {
   // Define mesh data
   // 2 zones | 0 || 1 | with dx=0.5 dy=0 and dz=0
-  iface.mesh_data.domain_decomposed = 0;
+  iface.mesh_data.domain_decomposed = false;
   iface.mesh_data.number_of_local_cells = 2;
   iface.mesh_data.number_of_global_cells = 2;
   iface.mesh_data.n_dims = 1;
@@ -107,7 +107,7 @@ void Test_2D_Interface_Builder(odd_solver::Interface_Data &iface) {
   //          ===  ===
   //         | 0 || 1 |
   //          ---  ---
-  iface.mesh_data.domain_decomposed = 0;
+  iface.mesh_data.domain_decomposed = false;
   iface.mesh_data.number_of_local_cells = 4;
   iface.mesh_data.number_of_global_cells = 4;
   iface.mesh_data.n_dims = 2;
@@ -137,7 +137,7 @@ void Test_3D_Interface_Builder(odd_solver::Interface_Data &iface) {
   //          ===  ===    ===  ===
   //         | 0 || 1 |  | 4 || 5 |
   //          ---  ---    ---  ---
-  iface.mesh_data.domain_decomposed = 0;
+  iface.mesh_data.domain_decomposed = false;
   iface.mesh_data.number_of_local_cells = 8;
   iface.mesh_data.number_of_global_cells = 8;
   iface.mesh_data.n_dims = 3;
