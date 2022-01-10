@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   November 4th 2021
  * \brief  Contains the C interface function implementations for the ODD solver
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -30,7 +30,6 @@ void Odd_Diffusion_Solve(Arguments &arg) {
   auto n_cell_mats_ptr = arg.zonal_data.number_of_cell_mats;
   for (size_t i = 0; i < iface.mesh_data.number_of_local_cells; i++, n_cell_mats_ptr++)
     iface.mat_data.number_of_cell_mats[i] = *n_cell_mats_ptr;
-
   // unwind the cell-material arrays
   auto cell_mats_ptr = arg.zonal_data.cell_mats;
   auto cell_mat_vol_frac_ptr = arg.zonal_data.cell_mat_vol_frac;
@@ -70,7 +69,6 @@ void Odd_Diffusion_Solve(Arguments &arg) {
           opacity_file.mat_rosseland_abs_models[m]->getOpacity(
               iface.mat_data.cell_mat_temperature[i][m], iface.mat_data.cell_mat_density[i][m]) *
           iface.mat_data.cell_mat_vol_frac[i][m];
-      ;
     }
     cell_opacity_ptr++;
   }

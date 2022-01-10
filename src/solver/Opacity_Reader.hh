@@ -67,6 +67,8 @@ private:
 
 public:
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_rosseland_abs_models;
+  std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_planck_abs_models;
+  std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_rosseland_total_models;
 };
 
 } // namespace odd_solver

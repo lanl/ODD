@@ -79,6 +79,23 @@ double Orthogonal_Mesh::cell_volume(const size_t cell) const {
 
 //================================================================================================//
 /*!
+ * \brief Calculate the distance from the cell center to the face
+ *
+ * \param[in] cell id (local)
+ * \param[in] face (local)
+ * 
+ * \return distance to cell face
+ */
+//================================================================================================//
+double Orthogonal_Mesh::distance_center_to_face(const size_t cell, const size_t face) const {
+  Require(cell >= 0 && cell < mesh_data.number_of_local_cells);
+  Require(face >= 0 && face < number_of_faces(cell));
+  size_t face_d = face < 2 ? 0 : (face < 4 ? 1 : 2);
+  return 0.5 * mesh_data.cell_size[cell * 3 + face_d];
+}
+
+//================================================================================================//
+/*!
  * \brief Get the face area of a cell
  *
  * \param[in] cell id (local)
