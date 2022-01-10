@@ -3,7 +3,7 @@
  * \file   solver/Opacity_Reader.hh
  * \author Mathew Cleveland
  * \brief  Define class Opacity_Reader
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -53,6 +53,7 @@ public:
     std::cout << std::endl;
   }
 
+  //! Print available data
   void print_available_data(const size_t mat_id) const {
     std::cout << "Available ipcress fields " << std::endl;
     std::cout << "    ";

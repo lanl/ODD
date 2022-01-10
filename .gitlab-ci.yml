@@ -1,0 +1,28 @@
+#--------------------------------------------------------------------------------------------------#
+# File:    .gitlab-ci.yml
+# Author:  Kelly Thompson <kgt@lanl.gov>
+# Date:    Tuesday, Dec 04, 2018, 15:13 pm
+# Purpose: Instructions for Travis continuous integration testing on GitLab.  This script wil be run
+#          to test pull requests
+# Note:    Copyright (C) 2018-2021 Triad National Security, LLC.  All rights reserved.
+#--------------------------------------------------------------------------------------------------#
+
+variables:
+  PROJECT: ODD
+  ODD_BINARY_DIR: ${CI_PROJECT_DIR}/build
+  ODD_SOURCE_DIR: ${CI_PROJECT_DIR}
+  http_proxy: "http://proxyout.lanl.gov:8080"
+  https_proxy: "http://proxyout.lanl.gov:8080"
+  no_proxy: "localhost,127.0.0.1,.lanl.gov,lanl.gov"
+  OMP_NUM_THREADS: 8
+
+stages:
+  - fasttest
+  - slowtest
+
+include:
+  - local: /.gitlab/ci/ccscs-jobs.yml
+
+#--------------------------------------------------------------------------------------------------#
+# End .gitlab-ci.yml
+#--------------------------------------------------------------------------------------------------#

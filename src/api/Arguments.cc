@@ -4,38 +4,39 @@
  * \author Mathew Cleveland
  * \date   October 26th 2021
  * \brief  Implementation of api arguments
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
 #include "Arguments.hh"
-#include "solver/Interface_Data.hh"
 #include "c4/global.hh"
 #include "ds++/DracoMath.hh"
 #include "ds++/dbc.hh"
 
 Control_Data::Control_Data() : opacity_file("") {}
 
+//================================================================================================//
+/*!
+ * \brief Check control data arguments
+ *
+ */
+//================================================================================================//
 void Control_Data::check_arguments() {
   Insist(opacity_file != "", "Opacity file was not specified");
 }
 
-Zonal_Data::Zonal_Data()
-    : domain_decomposed(0), dimensions(0), coord_sys(odd_solver::COORDINATE_SYSTEM::CARTESIAN),
-      number_of_local_cells(0), number_of_ghost_cells(0), cell_position(nullptr),
-      cell_size(nullptr), cell_global_id(nullptr), face_type(nullptr), next_cell_id(nullptr),
-      ghost_cell_global_id(nullptr), ghost_cell_proc(nullptr), number_of_mats(0),
-      problem_matids(nullptr), number_of_cell_mats(nullptr), cell_mats(nullptr),
-      cell_mat_vol_frac(nullptr), cell_mat_density(nullptr), cell_mat_specific_heat(nullptr),
-      cell_velocity(nullptr) {}
-
+//================================================================================================//
+/*!
+ * \brief Check zone data arguments
+ *
+ */
+//================================================================================================//
 void Zonal_Data::check_arguments() {
   // Check mesh data first
   Insist(domain_decomposed == 0 || domain_decomposed == 1,
          "Domain decomposed must be true or false (1 or 0)");
   Insist(dimensions > 0 && dimensions < 4, "Dimensions must be (1, 2, or 3)");
-  Insist(coord_sys >= 0 && coord_sys < odd_solver::COORDINATE_SYSTEM::N_COORD_TYPES,
-         "Invalid coordinate system");
+  Insist(coord_sys < odd_solver::COORDINATE_SYSTEM::N_COORD_TYPES, "Invalid coordinate system");
   Insist(number_of_local_cells > 0, "Number of local cells must be greater then zero");
   Insist(domain_decomposed == 1 ? number_of_ghost_cells > 0 : true,
          "Number of ghost cells must be greater then zero in domain decomposed problems");
@@ -77,7 +78,8 @@ void Zonal_Data::check_arguments() {
   if (domain_decomposed == 1) {
     for (size_t i = 0; i < number_of_global_cells; i++) {
       Insist(ghost_cell_global_id[i] < number_of_global_cells, "Cell global id must be valid");
-      Insist(ghost_cell_proc[i] < rtt_c4::nodes(), "Cell proc must be bound by mpi range");
+      Insist(ghost_cell_proc[i] < static_cast<size_t>(rtt_c4::nodes()),
+             "Cell proc must be bound by mpi range");
     }
   }
 
@@ -117,12 +119,22 @@ void Zonal_Data::check_arguments() {
   }
 }
 
-Output_Data::Output_Data() : ave_opacity_data(nullptr) {}
-
+//================================================================================================//
+/*!
+ * \brief Check output data arguments
+ *
+ */
+//================================================================================================//
 void Output_Data::check_arguments() {
   Insist(ave_opacity_data != nullptr, "Opacity_data field must be specified");
 }
 
+//================================================================================================//
+/*!
+ * \brief Default arguments constructor
+ *
+ */
+//================================================================================================//
 Arguments::Arguments() : control_data(), zonal_data(), output_data() {}
 
 //------------------------------------------------------------------------------------------------//

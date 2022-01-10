@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   December 20th 2021
  * \brief  Testing Orthogonal Mesh class
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -45,14 +45,6 @@ void test_1d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 1.0));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 1.0));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -77,14 +69,6 @@ void test_1d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 1.0));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   if (ut.numFails == 0) {
@@ -117,14 +101,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -132,14 +108,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -163,25 +131,9 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -201,14 +153,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -220,14 +164,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   {
@@ -247,14 +183,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -262,14 +190,6 @@ void test_2d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.5));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   if (ut.numFails == 0) {
@@ -302,14 +222,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -317,14 +229,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -332,14 +236,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -363,25 +259,9 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -389,14 +269,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -416,14 +288,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -435,25 +299,9 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -477,14 +325,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -492,25 +332,9 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -530,14 +354,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -545,14 +361,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -564,14 +372,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   {
@@ -591,25 +391,9 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -621,14 +405,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   {
@@ -644,14 +420,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     size_t face = 0;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -663,14 +431,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -678,14 +438,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   {
@@ -705,14 +457,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 1;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 2;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -720,14 +464,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 3;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
     face = 4;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::INTERNAL_FACE);
@@ -735,14 +471,6 @@ void test_3d_mesh(rtt_dsxx::UnitTest &ut) {
     face = 5;
     FAIL_IF_NOT(soft_equiv(mesh.face_area(cell, face), 0.25));
     FAIL_IF_NOT(mesh.face_type(cell, face) == odd_solver::FACE_TYPE::BOUNDARY_FACE);
-    try {
-      mesh.next_cell(cell, face);
-      // should not make it here, so fail if we do.
-      ITFAILS;
-    } catch (...) {
-      std::cout << "GOOD Caught expected exception: Can not get next cell on a boundary face"
-                << std::endl;
-    }
   }
 
   if (ut.numFails == 0) {

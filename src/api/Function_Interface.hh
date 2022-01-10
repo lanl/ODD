@@ -3,8 +3,8 @@
  * \file   api/Function_Interface.hh
  * \author Mathew Cleveland
  * \brief  Define the C interface functions
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #ifndef api_Function_Interface_hh
@@ -14,6 +14,7 @@
 
 extern "C" {
 
+//! Odd solver interface call
 void Odd_Diffusion_Solve(Arguments &arg);
 
 } // end extern "C"
