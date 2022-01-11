@@ -14,6 +14,7 @@
 #include "ds++/dbc.hh"
 #include <cmath>
 #include <numeric>
+#include <sstream>
 
 namespace odd_solver {
 
@@ -275,6 +276,40 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         Insist(bnd_temp[0] < 1.0e6, "Junk check for bnd_temp to be used later");
       }
     }
+  }
+}
+
+void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
+  Require(max_iter > 0);
+  double max_error = 1.0;
+  size_t count = 0;
+  std::stringstream diagnostics;
+  while (max_error > eps && count < max_iter) {
+    max_error = 0.0;
+    for (size_t i = 0; i < solver_data.diagonal.size(); i++) {
+      const double diag = solver_data.diagonal[i];
+      double b = solver_data.source[i];
+      for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
+        const size_t next_cell = solver_data.off_diagonal_id[i][f];
+        b -= solver_data.off_diagonal[i][f] * solver_data.cell_eden[next_cell];
+      }
+      Check(diag > 0.0);
+      const double last_eden = solver_data.cell_eden[i];
+      solver_data.cell_eden[i] = b / diag;
+      const double eden_diff =
+          solver_data.cell_eden[i] > 0.0
+              ? std::abs(solver_data.cell_eden[i] - last_eden) / solver_data.cell_eden[i]
+              : std::abs(solver_data.cell_eden[i] - last_eden);
+      max_error = std::max(max_error, eden_diff);
+    }
+    diagnostics << "  Iteration = " << count << " error = " << max_error << std::endl;
+    count++;
+  }
+  if (max_error > eps) {
+    std::cout << "WARNING: Did not converge cell_eden max_error = " << max_error << std::endl;
+    std::cout << diagnostics.str();
+  } else {
+    std::cout << "Converged eden -> Iteration = " << count << " error = " << max_error << std::endl;
   }
 }
 
