@@ -37,6 +37,9 @@ public:
   //! Build the solution matrix
   void build_matrix(const Orthogonal_Mesh &mesh, const double dt);
 
+  //! solve using Gauss Siedel
+  void gs_solver(const double eps, const size_t max_iter);
+
 private:
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;

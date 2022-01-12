@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   December 20th 2021
  * \brief  Testing Gray Matrix class
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -67,6 +67,11 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
                                      matrix.solver_data.off_diagonal[1][0]));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], -11.3227, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -108,6 +113,11 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
                                      matrix.solver_data.off_diagonal[1][0]));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -7.83406, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], -7.83406, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -193,6 +203,11 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][2], -11.3227, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][0], -11.3227, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][2], -11.3227, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -266,6 +281,11 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][2], -7.83406, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][0], -7.83406, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][2], -7.83406, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -442,6 +462,11 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][0], -11.3227, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][2], -11.3227, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][4], -11.3227, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -606,6 +631,11 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][0], -7.83406, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][2], -7.83406, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[7][4], -7.83406, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 
   if (ut.numFails == 0) {
