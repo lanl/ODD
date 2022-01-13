@@ -31,6 +31,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
   // Test Single Material Matrix
   {
     Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -72,11 +73,20 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
   {
     Test_Multi_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -118,6 +128,16 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+    }
+    //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -135,6 +155,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
   // Test Single Material Matrix
   {
     Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -208,11 +229,20 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
   {
     Test_Multi_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -286,6 +316,16 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+    }
+    //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -303,6 +343,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
   // Test Single Material Matrix
   {
     Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -467,11 +508,20 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
   }
 
   // Test Multi Material Matrix
   {
     Test_Multi_Mat_Builder(iface);
+    Test_Output_Builder(iface);
     iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
     Grey_Matrix matrix(iface.control_data);
     matrix.initialize_solver_data(mesh, iface.mat_data, dt);
@@ -635,6 +685,16 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+    }
+    //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
   }
 

@@ -14,6 +14,26 @@
 #include "ds++/dbc.hh"
 
 namespace odd_solver_test {
+
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Initialize output data
+ *
+ */
+//================================================================================================//
+
+void Test_Output_Builder(odd_solver::Interface_Data &iface) {
+  Insist(iface.mesh_data.number_of_local_cells > 0, "Must have cells defined on the mesh");
+  iface.mat_data.ipcress_filename = "two-mats.ipcress";
+  const size_t ncells = iface.mesh_data.number_of_local_cells;
+  iface.output_data.cell_rad_eden = std::vector<double>(ncells, 0.0);
+  iface.output_data.cell_mat_dedv = std::vector<std::vector<double>>(ncells);
+  for (size_t cell = 0; cell < ncells; cell++)
+    iface.output_data.cell_mat_dedv[cell].resize(iface.mat_data.number_of_cell_mats[cell], 0.0);
+}
+
 //================================================================================================//
 /*!
  * \brief
