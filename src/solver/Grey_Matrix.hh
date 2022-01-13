@@ -40,6 +40,9 @@ public:
   //! solve using Gauss Siedel
   void gs_solver(const double eps, const size_t max_iter);
 
+  //! Calculate the output data
+  void calculate_output_data(const Mat_Data &mat_data, const double dt, Output_Data &output_data);
+
 private:
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;

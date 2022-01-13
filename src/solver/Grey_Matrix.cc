@@ -106,7 +106,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     for (size_t mat = 0; mat < nmats; mat++) {
       size_t matid = mat_data.cell_mats[cell][mat];
       cell_mat_sigma_a[matid] =
-          opacity_reader.mat_planck_abs_models[mat]->getOpacity(
+          opacity_reader.mat_planck_abs_models[matid]->getOpacity(
               mat_data.cell_mat_temperature[cell][mat], mat_data.cell_mat_density[cell][mat]) *
           mat_data.cell_mat_density[cell][mat];
       cell_mat_sigma_tr[mat] =
@@ -245,7 +245,7 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     const auto cell_volume = mesh.cell_volume(cell);
     // Apply collision terms to the diagonal (census + absorption)
     solver_data.diagonal[cell] = 1.0 + constants::c * dt * fleck[cell] * sigma_a[cell];
-    // Apply the emission source
+    // Apply the cell source
     solver_data.source[cell] =
         solver_data.cell_eden0[cell] +
         constants::a * constants::c * 4.0 * fleck[cell] * solver_data.cell_temperature[cell] *
@@ -279,6 +279,15 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
   }
 }
 
+//================================================================================================//
+/*!
+ * \brief Solver the radiation energy vector using Gauss-Siedel
+ *
+ *  \param[in] eps max convergence error
+ *  \param[in] max_iter maximum number of iterations
+ *
+ */
+//================================================================================================//
 void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
   Require(max_iter > 0);
   double max_error = 1.0;
@@ -310,6 +319,47 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
     std::cout << diagnostics.str();
   } else {
     std::cout << "Converged eden -> Iteration = " << count << " error = " << max_error << std::endl;
+  }
+}
+
+//================================================================================================//
+/*!
+ * \brief Calculate the output data 
+ *
+ *  \param[in] mesh orthogonal mesh class
+ *  \param[in] mat_data material interface data
+ *  \param[in] dt time step size
+ *  \param[inout] output_data the output interface data 
+ *
+ */
+//================================================================================================//
+void Grey_Matrix::calculate_output_data(const Mat_Data &mat_data, const double dt,
+                                        Output_Data &output_data) {
+  Require(output_data.cell_mat_dedv.size() == solver_data.cell_eden.size());
+  Require(output_data.cell_rad_eden.size() == solver_data.cell_eden.size());
+  Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
+  const auto ncells = solver_data.cell_eden.size();
+  // Loop over all cells
+  for (size_t cell = 0; cell < ncells; cell++) {
+    output_data.cell_rad_eden[cell] = solver_data.cell_eden[cell];
+    const double cell_vol_edep = fleck[cell] * sigma_a[cell] * solver_data.cell_eden[cell] * dt;
+    // Populate the homogenized cell material data
+    const auto nmats = mat_data.number_of_cell_mats[cell];
+    Check(output_data.cell_mat_dedv[cell].size() == nmats);
+    // Split up the change in material energy between materials
+    for (size_t mat = 0; mat < nmats; mat++) {
+      const size_t matid = mat_data.cell_mats[cell][mat];
+      const double mat_sigma_a =
+          opacity_reader.mat_planck_abs_models[matid]->getOpacity(
+              mat_data.cell_mat_temperature[cell][mat], mat_data.cell_mat_density[cell][mat]) *
+          mat_data.cell_mat_density[cell][mat];
+      const double mat_vol_edep = cell_vol_edep * mat_sigma_a / sigma_a[cell];
+      const double mat_T4 =
+          mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat] *
+          mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat];
+      const double mat_vol_emission = fleck[cell] * constants::a * constants::c * 4.0 * mat_T4 * dt;
+      output_data.cell_mat_dedv[cell][mat] = (mat_vol_edep - mat_vol_emission);
+    }
   }
 }
 

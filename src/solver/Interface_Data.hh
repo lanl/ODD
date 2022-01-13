@@ -68,6 +68,12 @@ struct Mat_Data {
   std::vector<std::array<double, 3>> cell_velocity;
 };
 
+//! Raw output data
+struct Output_Data {
+  std::vector<std::vector<double>> cell_mat_dedv;
+  std::vector<double> cell_rad_eden;
+};
+
 //! Raw matrix data and the solution vectors
 struct Solver_Data {
   // Matrix Data
@@ -128,6 +134,7 @@ public:
   Control_Data control_data;
   Mesh_Data mesh_data;
   Mat_Data mat_data;
+  Output_Data output_data;
 };
 
 } // namespace odd_solver
