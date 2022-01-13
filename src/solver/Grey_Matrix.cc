@@ -107,7 +107,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     for (size_t mat = 0; mat < nmats; mat++) {
       size_t matid = mat_data.cell_mats[cell][mat];
       cell_mat_sigma_a[matid] =
-          opacity_reader.mat_planck_abs_models[mat]->getOpacity(
+          opacity_reader.mat_planck_abs_models[matid]->getOpacity(
               mat_data.cell_mat_temperature[cell][mat], mat_data.cell_mat_density[cell][mat]) *
           mat_data.cell_mat_density[cell][mat];
       cell_mat_sigma_tr[mat] =
@@ -354,7 +354,7 @@ void Grey_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_D
     for (size_t mat = 0; mat < nmats; mat++) {
       const size_t matid = mat_data.cell_mats[cell][mat];
       const double mat_sigma_a =
-          opacity_reader.mat_planck_abs_models[mat]->getOpacity(
+          opacity_reader.mat_planck_abs_models[matid]->getOpacity(
               mat_data.cell_mat_temperature[cell][mat], mat_data.cell_mat_density[cell][mat]) *
           mat_data.cell_mat_density[cell][mat];
       const double mat_vol_edep = cell_vol_edep * mat_sigma_a / sigma_a[cell];
