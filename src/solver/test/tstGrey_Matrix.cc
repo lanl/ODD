@@ -75,7 +75,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
@@ -130,7 +130,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
@@ -231,7 +231,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
@@ -318,7 +318,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
@@ -510,7 +510,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
@@ -688,7 +688,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));

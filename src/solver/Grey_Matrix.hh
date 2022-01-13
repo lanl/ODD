@@ -41,8 +41,7 @@ public:
   void gs_solver(const double eps, const size_t max_iter);
 
   //! Calculate the output data
-  void calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data, const double dt,
-                             Output_Data &output_data);
+  void calculate_output_data(const Mat_Data &mat_data, const double dt, Output_Data &output_data);
 
 private:
   // boundary conditions
@@ -52,7 +51,6 @@ private:
   // Local matrix data
   std::vector<double> fleck;
   std::vector<double> sigma_a;
-  std::vector<double> emission;
   std::vector<std::vector<double>> face_D;
 
   //! Helper function for mass averaging

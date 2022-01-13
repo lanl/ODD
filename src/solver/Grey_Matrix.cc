@@ -89,7 +89,6 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
   // Resize local matrix data
   sigma_a.resize(ncells, 0.0);
   fleck.resize(ncells, 0.0);
-  emission.resize(ncells, 0.0);
   face_D.resize(ncells);
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
@@ -246,12 +245,12 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     const auto cell_volume = mesh.cell_volume(cell);
     // Apply collision terms to the diagonal (census + absorption)
     solver_data.diagonal[cell] = 1.0 + constants::c * dt * fleck[cell] * sigma_a[cell];
-    // Apply the emission source
-    emission[cell] = constants::a * constants::c * 4.0 * fleck[cell] *
-                     solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] *
-                     solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] * dt *
-                     cell_volume;
-    solver_data.source[cell] = solver_data.cell_eden0[cell] + emission[cell] / cell_volume;
+    // Apply the cell source
+    solver_data.source[cell] =
+        solver_data.cell_eden0[cell] +
+        constants::a * constants::c * 4.0 * fleck[cell] * solver_data.cell_temperature[cell] *
+            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] *
+            solver_data.cell_temperature[cell] * dt;
 
     const auto nfaces = mesh.number_of_faces(cell);
     for (size_t face = 0; face < nfaces; face++) {
@@ -334,19 +333,16 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
  *
  */
 //================================================================================================//
-void Grey_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
-                                        const double dt, Output_Data &output_data) {
-  Insist(!mesh.domain_decomposed(), "Domain decomposition currently not supported");
-  Require(output_data.cell_mat_dedv.size() == mesh.number_of_local_cells());
-  Require(output_data.cell_rad_eden.size() == mesh.number_of_local_cells());
+void Grey_Matrix::calculate_output_data(const Mat_Data &mat_data, const double dt,
+                                        Output_Data &output_data) {
+  Require(output_data.cell_mat_dedv.size() == solver_data.cell_eden.size());
+  Require(output_data.cell_rad_eden.size() == solver_data.cell_eden.size());
   Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
-  const auto ncells = mesh.number_of_local_cells();
+  const auto ncells = solver_data.cell_eden.size();
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
     output_data.cell_rad_eden[cell] = solver_data.cell_eden[cell];
-    const auto cell_volume = mesh.cell_volume(cell);
     const double cell_vol_edep = fleck[cell] * sigma_a[cell] * solver_data.cell_eden[cell] * dt;
-    Check(cell_volume > 0.0);
     // Populate the homogenized cell material data
     const auto nmats = mat_data.number_of_cell_mats[cell];
     Check(output_data.cell_mat_dedv[cell].size() == nmats);
