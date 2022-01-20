@@ -4,8 +4,8 @@
  * \author Mathew Cleveland
  * \date   January 13th 2022
  * \brief  Function to manage the Solver:Interface_Data and API data interface
- * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
- *         All rights reserved. */
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
+ */
 //------------------------------------------------------------------------------------------------//
 
 #include "Interface_Builder.hh"
@@ -98,7 +98,7 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
     output_data.cell_mat_dedv[i] = std::vector<double>(mat_data.number_of_cell_mats[i], 0.0);
 
   return iface;
-};
+}
 
 } // namespace odd_api
 
