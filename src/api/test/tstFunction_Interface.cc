@@ -24,6 +24,9 @@ void test(rtt_dsxx::UnitTest &ut) {
 
   // fill control data with "valid junk" and check arguments
   arg.control_data.opacity_file = "two-mats.ipcress";
+  arg.control_data.dt = 0.1;
+  arg.control_data.max_iter = 100;
+  arg.control_data.min_tol = 1.0e-12;
   arg.control_data.check_arguments();
 
   // fill the zonal data with "valid junk" and check arguments
@@ -65,26 +68,38 @@ void test(rtt_dsxx::UnitTest &ut) {
   // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
   std::vector<double> cell_mat_specific_heat{0.1, 0.1, 0.01};
   // cell velocity
-  std::vector<double> cell_velocity{0.0, 0.0};
+  std::vector<double> cell_velocity{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  // cell radiation energy density
+  std::vector<double> cell_erad0{32.0, 23.0};
   arg.zonal_data.cell_mats = &cell_mats[0];
   arg.zonal_data.cell_mat_vol_frac = &cell_mat_vol_frac[0];
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
+  arg.zonal_data.cell_erad = &cell_erad0[0];
 
-  // setup the opacity data field to be filled in by the solver
-  std::vector<double> opacity_data(arg.zonal_data.number_of_local_cells, 0.0);
-  arg.output_data.ave_opacity_data = &opacity_data[0];
+  // setup the output data
+  std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, 0.0);
+  std::vector<double> cell_Trad(arg.zonal_data.number_of_local_cells, 0.0);
+  std::vector<double> cell_mat_delta_e(cell_mats.size(), 0.0);
+  arg.output_data.cell_erad = &cell_erad[0];
+  arg.output_data.cell_Trad = &cell_Trad[0];
+  arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
 
   // Call the solver on the fake arguments list
   std::cout << "Call solver" << std::endl;
   Odd_Diffusion_Solve(arg);
 
   // print out the opacity data
-  auto optr = arg.output_data.ave_opacity_data;
-  for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++, optr++)
-    std::cout << "Opacity_value[" << i << "] = " << *optr << std::endl;
+  size_t mat_index = 0;
+  for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
+    std::cout << "erad[" << i << "] = " << arg.output_data.cell_erad[i] << std::endl;
+    std::cout << "Trad[" << i << "] = " << arg.output_data.cell_Trad[i] << std::endl;
+    for (size_t m = 0; m < cell_number_of_mats[i]; m++, mat_index++)
+      std::cout << "cell_mat_delta_e[" << i << "][" << m
+                << "] = " << arg.output_data.cell_Trad[mat_index] << std::endl;
+  }
 
   if (ut.numFails == 0) {
     std::ostringstream m;
