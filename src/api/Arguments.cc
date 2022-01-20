@@ -21,8 +21,11 @@ Control_Data::Control_Data() : opacity_file("") {}
  *
  */
 //================================================================================================//
-void Control_Data::check_arguments() {
+void Control_Data::check_arguments() const {
   Insist(opacity_file != "", "Opacity file was not specified");
+  Insist(dt > 0.0, "Time step size must be greater then zero");
+  Insist(max_iter > 0, "Max number of iterations (max_iter) must be greater then zero");
+  Insist(min_tol > 0.0, "Min convergence tolerance (max_tol) must be greater then zero");
 }
 
 //================================================================================================//
@@ -31,7 +34,7 @@ void Control_Data::check_arguments() {
  *
  */
 //================================================================================================//
-void Zonal_Data::check_arguments() {
+void Zonal_Data::check_arguments() const {
   // Check mesh data first
   Insist(domain_decomposed == 0 || domain_decomposed == 1,
          "Domain decomposed must be true or false (1 or 0)");
@@ -54,6 +57,7 @@ void Zonal_Data::check_arguments() {
     for (size_t d = 0; d < dimensions; d++) {
       Insist(rtt_dsxx::isFinite(cell_position[i * 3 + d]), "Cell position must be finite");
       Insist(rtt_dsxx::isFinite(cell_size[i * 3 + d]), "Cell size must be finite");
+      Insist(rtt_dsxx::isFinite(cell_velocity[i * 3 + d]), "Cell velocity must be finite");
       Insist(face_type[i * dimensions * 2 + d * 2 + d] < odd_solver::FACE_TYPE::N_FACE_TYPES,
              "Cell lower face type must be a valid type (0=internal, 1=boundary, or 2=ghost");
       Insist(face_type[i * dimensions * 2 + d * 2 + d + 1] < odd_solver::FACE_TYPE::N_FACE_TYPES,
@@ -95,12 +99,15 @@ void Zonal_Data::check_arguments() {
   Insist(cell_mat_specific_heat != nullptr,
          "Vector of cell material specific heat was not specified");
   Insist(cell_velocity != nullptr, "Cell velocity was not specified");
+  Insist(cell_erad != nullptr,
+         "cell radiation energy density array must be allocated and assigned");
   // Check mat data array values
   size_t index = 0;
   for (size_t i = 0; i < number_of_local_cells; i++) {
     Insist(number_of_cell_mats[i] <= number_of_mats,
            "Number of cell mats must be less then or equal to the total number of mats");
-    Insist(rtt_dsxx::isFinite(cell_velocity[i]), "The cell velocity must be finite");
+    for (size_t d = 0; d < 3; d++)
+      Insist(rtt_dsxx::isFinite(cell_velocity[i * 3 + d]), "The cell velocity must be finite");
     for (size_t m = 0; m < number_of_cell_mats[i]; m++) {
       Insist(cell_mats[index] < number_of_mats,
              "Cell mat must be less then or equal to the total number of mats");
@@ -125,8 +132,22 @@ void Zonal_Data::check_arguments() {
  *
  */
 //================================================================================================//
-void Output_Data::check_arguments() {
-  Insist(ave_opacity_data != nullptr, "Opacity_data field must be specified");
+void Output_Data::check_arguments(const size_t ncells, const size_t *number_of_cell_mats) const {
+  Insist(number_of_cell_mats != nullptr, "Passed a null pointer for number_oc_cell_mats");
+  Insist(cell_erad != nullptr, "cell_erad output array must be allocated and assigned");
+  Insist(cell_Trad != nullptr, "cell_Trad output array must be allocated and assigned");
+  Insist(cell_mat_delta_e != nullptr,
+         "cell_mat_delta_e output array must be allocated and assigned");
+  size_t index = 0;
+  for (size_t i = 0; i < ncells; i++) {
+    Insist(rtt_dsxx::isFinite(cell_erad[i]), "The cell erad must be finite");
+    Insist(rtt_dsxx::isFinite(cell_Trad[i]), "The cell erad must be finite");
+    for (size_t m = 0; m < number_of_cell_mats[i]; m++) {
+      Insist(rtt_dsxx::isFinite(cell_mat_delta_e[index]),
+             "The cell_mat_delta_e values must be finite");
+      index++;
+    }
+  }
 }
 
 //================================================================================================//

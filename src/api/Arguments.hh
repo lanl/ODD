@@ -19,8 +19,11 @@ extern "C" {
 struct Control_Data {
   std::string opacity_file{""};
   // Constructor to initialize data
+  double dt{0.0};
+  size_t max_iter{0};
+  double min_tol{0};
   Control_Data();
-  void check_arguments();
+  void check_arguments() const;
 };
 
 //! Zonal data
@@ -64,22 +67,30 @@ struct Zonal_Data {
   double *cell_mat_density{nullptr};
   // cell specific heat [jerks/keV/g]
   double *cell_mat_specific_heat{nullptr};
-  // cell velocity
+
+  // cell velocity ncells*3 [cm/sh]
   double *cell_velocity{nullptr};
+  // cell energy density [jerks/cc]
+  double *cell_erad{nullptr};
 
   // constructor to initialize data
   Zonal_Data() = default;
-  void check_arguments();
+  void check_arguments() const;
 };
 
 //! Output data
 struct Output_Data {
-  // grey_opacity_data
-  double *ave_opacity_data{nullptr};
+
+  // The cell radiation energy density [jerks/cc]
+  double *cell_erad{nullptr};
+  // The cell radiation temperature [keV]
+  double *cell_Trad{nullptr};
+  // The change in material energy (strided by cells*mats) [jerks/cc]
+  double *cell_mat_delta_e{nullptr};
 
   // constructor to initialize data
   Output_Data() = default;
-  void check_arguments();
+  void check_arguments(const size_t ncells, const size_t *number_of_cell_mats) const;
 };
 
 //! Arguments data

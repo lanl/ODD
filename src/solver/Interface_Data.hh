@@ -64,7 +64,6 @@ struct Mat_Data {
   std::vector<std::vector<double>> cell_mat_density;
   std::vector<std::vector<double>> cell_mat_specific_heat;
   std::vector<double> cell_rad_eden;
-  std::vector<std::vector<double>> cell_mg_rad_eden;
   std::vector<std::array<double, 3>> cell_velocity;
 };
 
