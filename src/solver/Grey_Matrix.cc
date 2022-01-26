@@ -248,9 +248,9 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     // Apply the cell source
     solver_data.source[cell] =
         solver_data.cell_eden0[cell] +
-        constants::a * constants::c * 4.0 * fleck[cell] * solver_data.cell_temperature[cell] *
+        constants::a * constants::c * fleck[cell] * sigma_a[cell] *
             solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] *
-            solver_data.cell_temperature[cell] * dt;
+            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] * dt;
 
     const auto nfaces = mesh.number_of_faces(cell);
     for (size_t face = 0; face < nfaces; face++) {
@@ -342,7 +342,8 @@ void Grey_Matrix::calculate_output_data(const Mat_Data &mat_data, const double d
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
     output_data.cell_rad_eden[cell] = solver_data.cell_eden[cell];
-    const double cell_vol_edep = fleck[cell] * sigma_a[cell] * solver_data.cell_eden[cell] * dt;
+    const double cell_vol_edep =
+        fleck[cell] * sigma_a[cell] * constants::c * solver_data.cell_eden[cell] * dt;
     // Populate the homogenized cell material data
     const auto nmats = mat_data.number_of_cell_mats[cell];
     Check(output_data.cell_mat_dedv[cell].size() == nmats);
@@ -357,7 +358,8 @@ void Grey_Matrix::calculate_output_data(const Mat_Data &mat_data, const double d
       const double mat_T4 =
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat] *
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat];
-      const double mat_vol_emission = fleck[cell] * constants::a * constants::c * 4.0 * mat_T4 * dt;
+      const double mat_vol_emission =
+          fleck[cell] * mat_sigma_a * constants::a * constants::c * mat_T4 * dt;
       output_data.cell_mat_dedv[cell][mat] = (mat_vol_edep - mat_vol_emission);
     }
   }

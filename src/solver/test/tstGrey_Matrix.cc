@@ -54,7 +54,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 17.9828, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 12.0774, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 2);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -72,15 +72,15 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
-        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -109,7 +109,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 12.6124, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 30.7416, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 21.2717, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 2);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -127,17 +127,17 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
     }
     //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -178,7 +178,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 29.3054, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 12.0774, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 4);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -228,15 +228,15 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
-        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -265,7 +265,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 20.4465, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 30.7416, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 21.2717, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 4);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -315,17 +315,17 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
     }
     //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
   }
 
   if (ut.numFails == 0) {
@@ -366,7 +366,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 40.6281, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 12.0774, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 8);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -507,15 +507,15 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
-        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -9.04318, 1e-5));
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.81341, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
   }
 
   // Test Multi Material Matrix
@@ -544,7 +544,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 28.2806, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 30.7416, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 21.2717, 1e-5));
     // Check connectivity vector
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 8);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
@@ -685,17 +685,17 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], -6.41431, 1e-5));
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -50.0892, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
     }
     //    FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -4.52159, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.43346, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
   }
 
   if (ut.numFails == 0) {

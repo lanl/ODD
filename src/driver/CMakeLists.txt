@@ -3,7 +3,7 @@
 # author Mathew Cleveland
 # date   October 2021
 # brief  Generate build project files for mc
-# note   Copyright (C) 2015-2021 Triad National Security, LLC., All rights reserved.
+# note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
 # ------------------------------------------------------------------------------------------------ #
 cmake_minimum_required(VERSION 3.9.0)
 project(driver CXX)
@@ -40,6 +40,8 @@ add_component_library(
   SOURCES "${sources}"
   HEADERS "${headers}"
   EXPORT_NAME "odd-targets")
+
+add_subdirectory(bin)
 
 # ------------------------------------------------------------------------------------------------ #
 # Installation instructions
