@@ -4,13 +4,12 @@
  * \author Mathew Cleveland
  * \date   October 21st 2021
  * \brief  Testing opacity reader
- * \note   Copyright (C) 2021 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
 #include "api/Arguments.hh"
 #include "api/Function_Interface.hh"
-#include "solver/Interface_Data.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 
@@ -98,7 +97,7 @@ void test(rtt_dsxx::UnitTest &ut) {
     std::cout << "Trad[" << i << "] = " << arg.output_data.cell_Trad[i] << std::endl;
     for (size_t m = 0; m < cell_number_of_mats[i]; m++, mat_index++)
       std::cout << "cell_mat_delta_e[" << i << "][" << m
-                << "] = " << arg.output_data.cell_Trad[mat_index] << std::endl;
+                << "] = " << arg.output_data.cell_mat_delta_e[mat_index] << std::endl;
   }
 
   if (ut.numFails == 0) {

@@ -1,0 +1,3 @@
+For now this is just a simple command line parsing
+example: 
+> src/driver/bin/odd $(cat inf_med.in)

@@ -58,17 +58,15 @@ void Zonal_Data::check_arguments() const {
       Insist(rtt_dsxx::isFinite(cell_position[i * 3 + d]), "Cell position must be finite");
       Insist(rtt_dsxx::isFinite(cell_size[i * 3 + d]), "Cell size must be finite");
       Insist(rtt_dsxx::isFinite(cell_velocity[i * 3 + d]), "Cell velocity must be finite");
-      Insist(face_type[i * dimensions * 2 + d * 2 + d] < odd_solver::FACE_TYPE::N_FACE_TYPES,
+      Insist(face_type[i * dimensions * 2 + d * 2] < odd_solver::FACE_TYPE::N_FACE_TYPES,
              "Cell lower face type must be a valid type (0=internal, 1=boundary, or 2=ghost");
-      Insist(face_type[i * dimensions * 2 + d * 2 + d + 1] < odd_solver::FACE_TYPE::N_FACE_TYPES,
+      Insist(face_type[i * dimensions * 2 + d * 2 + 1] < odd_solver::FACE_TYPE::N_FACE_TYPES,
              "Cell upper face type must be a valid type (0=internal, 1=boundary, or 2=ghost");
-      Insist(face_type[i * dimensions * 2 + d * 2 + d] < odd_solver::FACE_TYPE::N_FACE_TYPES,
-             "Cell lower face type must be a valid type (0=internal, 1=boundary, or 2=ghost");
       // cell_id == number_of_local_cells is a boundary designator
-      Insist(next_cell_id[i * dimensions * 2 + d * 2 + d] <=
+      Insist(next_cell_id[i * dimensions * 2 + d * 2] <=
                  std::max(number_of_local_cells, number_of_ghost_cells),
              "next lower cell must be valid");
-      Insist(next_cell_id[i * dimensions * 2 + d * 2 + d + 1] <=
+      Insist(next_cell_id[i * dimensions * 2 + d * 2 + 1] <=
                  std::max(number_of_local_cells, number_of_ghost_cells),
              "next upper cell must be valid");
     }
