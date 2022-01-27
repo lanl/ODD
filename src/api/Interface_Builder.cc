@@ -16,6 +16,12 @@ namespace odd_api {
 odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
   odd_solver::Interface_Data iface;
 
+  // Populate control data
+  for (size_t f = 0; f < 6; f++) {
+    iface.control_data.reflect_bnd[f] = bool(arg.control_data.reflect_bnd[f] == 1);
+    iface.control_data.bnd_temp[f] = arg.control_data.bnd_temp[f];
+  }
+
   //construct the zonal data
   arg.zonal_data.check_arguments();
   auto &mesh_data = iface.mesh_data;
