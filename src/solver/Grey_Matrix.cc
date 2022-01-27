@@ -205,9 +205,16 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
       } else {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
-        Insist(reflect_bnd[face], "Vacuum/Source boundaries are not yet supported");
+
         // Calculate the face averaged temperature
-        const auto face_T = solver_data.cell_temperature[cell];
+        auto face_T = solver_data.cell_temperature[cell];
+
+        if (!reflect_bnd[face])
+          face_T =
+              std::pow(0.5 * (bnd_temp[face] * bnd_temp[face] * bnd_temp[face] * bnd_temp[face] +
+                              face_T * face_T * face_T * face_T),
+                       0.25);
+
         // Calculate the face opacity
         std::vector<double> cell_mat_sigma_tr(nmats, 0.0);
         for (size_t mat = 0; mat < nmats; mat++) {
@@ -272,8 +279,16 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
       } else {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
-        Insist(reflect_bnd[face], "Vacuum/Source boundaries are not yet supported");
-        Insist(bnd_temp[0] < 1.0e6, "Junk check for bnd_temp to be used later");
+        if (!reflect_bnd[face]) {
+          const double E0 = 4.0 * constants::a * std::pow(bnd_temp[face], 4.0);
+          const auto D = face_D[cell][face];
+          const auto half_width = mesh.distance_center_to_face(cell, face);
+          const auto face_area = mesh.face_area(cell, face);
+          const double fring = constants::c * D * dt * face_area /
+                               (cell_volume * half_width * (1.0 + 2.0 * D / half_width));
+          solver_data.source[cell] += fring * E0;
+          solver_data.diagonal[cell] += fring;
+        }
       }
     }
   }
