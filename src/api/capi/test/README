@@ -1,0 +1,5 @@
+Execute this example test from the local build your_build/src/api/capi/test/ 
+
+$ ./example 
+
+Compare with your gold file example.gold

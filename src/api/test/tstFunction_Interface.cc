@@ -22,7 +22,8 @@ void test(rtt_dsxx::UnitTest &ut) {
   Arguments arg;
 
   // fill control data with "valid junk" and check arguments
-  arg.control_data.opacity_file = "two-mats.ipcress";
+  std::string file = "two-mats.ipcress";
+  arg.control_data.opacity_file = &file[0];
   arg.control_data.dt = 0.1;
   arg.control_data.max_iter = 100;
   arg.control_data.min_tol = 1.0e-12;

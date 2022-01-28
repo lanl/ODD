@@ -28,7 +28,8 @@ void test(rtt_dsxx::UnitTest &ut) {
     std::cout << "Caught the expected Control_Data::check_arguments assertions" << std::endl;
   }
   // fill control data with "valid junk" and check arguments
-  arg.control_data.opacity_file = "not_empty";
+  std::string file = "not_empty";
+  arg.control_data.opacity_file = &file[0];
   arg.control_data.dt = 0.1;
   arg.control_data.max_iter = 1;
   arg.control_data.min_tol = 1.0e-12;

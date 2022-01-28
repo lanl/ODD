@@ -22,8 +22,10 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   for (size_t i = 0; i < argv.size(); i++) {
     std::string str = argv[i];
     // Parse control data
-    if (str == "-if" || str == "-ipcress_file")
-      args.control_data.opacity_file = argv[i + 1];
+    if (str == "-if" || str == "-ipcress_file") {
+      odd_data.opacity_file = argv[i + 1];
+      args.control_data.opacity_file = &odd_data.opacity_file[0];
+    }
     if (str == "-nc" || str == "-n_cycles")
       odd_data.n_cycles = std::stoi(argv[i + 1]);
     if (str == "-dt")

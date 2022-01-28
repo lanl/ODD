@@ -13,8 +13,6 @@
 #include "ds++/DracoMath.hh"
 #include "ds++/dbc.hh"
 
-Control_Data::Control_Data() : opacity_file("") {}
-
 //================================================================================================//
 /*!
  * \brief Check control data arguments
@@ -22,7 +20,7 @@ Control_Data::Control_Data() : opacity_file("") {}
  */
 //================================================================================================//
 void Control_Data::check_arguments() const {
-  Insist(opacity_file != "", "Opacity file was not specified");
+  Insist(opacity_file != nullptr, "Opacity file was not specified");
   Insist(dt > 0.0, "Time step size must be greater then zero");
   Insist(max_iter > 0, "Max number of iterations (max_iter) must be greater then zero");
   Insist(min_tol > 0.0, "Min convergence tolerance (max_tol) must be greater then zero");
