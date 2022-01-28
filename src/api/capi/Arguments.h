@@ -3,7 +3,7 @@
  * \file   api/Arguments.hh
  * \author Mathew Cleveland
  * \brief  C Interface
- * \note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -19,8 +19,6 @@ struct Control_Data {
   double dt;
   size_t max_iter;
   double min_tol;
-  double *bnd_temp;
-  size_t *reflect_bnd;
 };
 
 //! Zonal data

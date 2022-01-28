@@ -3,10 +3,10 @@
 # author Mathew Cleveland
 # date   October 2021
 # brief  Generate build project files for mc
-# note   Copyright (C) 2021-2022 Triad National Security, LLC., All rights reserved.
+# note   Copyright (C) 2015-2021 Triad National Security, LLC., All rights reserved.
 # ------------------------------------------------------------------------------------------------ #
 cmake_minimum_required(VERSION 3.9.0)
-project(api CXX)
+project(capi C)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   string(REPLACE "/W2" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -20,10 +20,8 @@ endif()
 # Source files
 # ------------------------------------------------------------------------------------------------ #
 
-file(GLOB headers *.hh)
-file(GLOB template_implementations *.t.hh *.i.hh)
-file(GLOB sources *.cc)
-file(GLOB explicit_instantiations *_pt.cc)
+file(GLOB headers *.h)
+file(GLOB sources *.c)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   string(REPLACE "/W2" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -31,23 +29,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 # ------------------------------------------------------------------------------------------------ #
-# Build package library
-# ------------------------------------------------------------------------------------------------ #
-add_component_library(
-  TARGET Lib_api
-  TARGET_DEPS "Lib_solver"
-  LIBRARY_NAME api
-  INCLUDE_DIRS ${include_dirs}
-  SOURCES "${sources}"
-  HEADERS "${headers}"
-  EXPORT_NAME "odd-targets")
-
-# ------------------------------------------------------------------------------------------------ #
 # Installation instructions
 # ------------------------------------------------------------------------------------------------ #
-install(FILES ${headers} DESTINATION include/api)
-
-add_subdirectory(capi)
+install(FILES ${headers} DESTINATION include/capi)
 
 # ------------------------------------------------------------------------------------------------ #
 # Unit tests
