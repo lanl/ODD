@@ -1,0 +1,8 @@
+Converged eden -> Iteration = 13 error = 1.62653e-13
+erad[0] = 2.451790e+00
+Trad[0] = 3.656208e+00
+cell_mat_delta_e[0][0] = 4.356516e+01
+erad[1] = 8.717417e+00
+Trad[1] = 5.020617e+00
+cell_mat_delta_e[1][0] = -1.652614e-01
+cell_mat_delta_e[1][1] = 6.965204e-01

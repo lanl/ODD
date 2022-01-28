@@ -19,6 +19,7 @@ namespace odd_driver {
 
 struct Odd_Driver_Data {
   // simple mesh and single material data
+  std::string opacity_file;
   size_t n_cycles;
   std::array<double, 3> mesh_size;
   std::array<size_t, 3> mesh_n_cells;

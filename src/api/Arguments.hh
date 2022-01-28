@@ -17,14 +17,14 @@ extern "C" {
 
 //! Control data
 struct Control_Data {
-  std::string opacity_file{""};
+  char *opacity_file{nullptr};
   // Constructor to initialize data
   double dt{0.0};
   size_t max_iter{0};
   double min_tol{0};
   double *bnd_temp{nullptr};
   size_t *reflect_bnd{nullptr};
-  Control_Data();
+  Control_Data() = default;
   void check_arguments() const;
 };
 
