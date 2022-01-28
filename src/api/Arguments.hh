@@ -22,6 +22,8 @@ struct Control_Data {
   double dt{0.0};
   size_t max_iter{0};
   double min_tol{0};
+  double *bnd_temp{nullptr};
+  size_t *reflect_bnd{nullptr};
   Control_Data() = default;
   void check_arguments() const;
 };

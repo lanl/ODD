@@ -52,6 +52,9 @@ struct Odd_Driver_Data {
   double total_energy;
   double total_rad_energy;
   double total_mat_energy;
+  // Boundary conditions
+  std::vector<double> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  std::vector<size_t> reflect_bnd{1, 1, 1, 1, 1, 1};
 };
 
 void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,

@@ -24,6 +24,14 @@ void Control_Data::check_arguments() const {
   Insist(dt > 0.0, "Time step size must be greater then zero");
   Insist(max_iter > 0, "Max number of iterations (max_iter) must be greater then zero");
   Insist(min_tol > 0.0, "Min convergence tolerance (max_tol) must be greater then zero");
+  Insist(bnd_temp != nullptr, "Boundary temperature array must be defined");
+  Insist(reflect_bnd != nullptr, "Reflecting boundary array must be defined");
+  for (size_t f = 0; f < 6; f++) {
+    Insist(reflect_bnd[f] == 1 || reflect_bnd[f] == 0,
+           "Reflecting boundary condition must be zero or 1");
+    Insist(rtt_dsxx::isFinite(bnd_temp[f]) && !(bnd_temp[f] < 0.0),
+           "Boundary temperature must be finite and non-negative");
+  }
 }
 
 //================================================================================================//

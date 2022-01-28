@@ -60,7 +60,26 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       odd_data.density = std::stod(argv[i + 1]);
     if (str == "-cv" || str == "-specific_heat")
       odd_data.specific_heat = std::stod(argv[i + 1]);
+    if (str == "-bt" || str == "-boundary_temp") {
+      odd_data.bnd_temp[0] = std::stod(argv[i + 1]);
+      odd_data.bnd_temp[1] = std::stod(argv[i + 2]);
+      odd_data.bnd_temp[2] = std::stod(argv[i + 2]);
+      odd_data.bnd_temp[3] = std::stod(argv[i + 3]);
+      odd_data.bnd_temp[4] = std::stod(argv[i + 4]);
+      odd_data.bnd_temp[5] = std::stod(argv[i + 5]);
+    }
+    if (str == "-rb" || str == "-reflect_bnd") {
+      odd_data.reflect_bnd[0] = std::stoi(argv[i + 1]);
+      odd_data.reflect_bnd[1] = std::stoi(argv[i + 2]);
+      odd_data.reflect_bnd[2] = std::stoi(argv[i + 2]);
+      odd_data.reflect_bnd[3] = std::stoi(argv[i + 3]);
+      odd_data.reflect_bnd[4] = std::stoi(argv[i + 4]);
+      odd_data.reflect_bnd[5] = std::stoi(argv[i + 5]);
+    }
   }
+  // Assign remaining control data
+  args.control_data.bnd_temp = &odd_data.bnd_temp[0];
+  args.control_data.reflect_bnd = &odd_data.reflect_bnd[0];
 
   // Build mesh arguments
   args.zonal_data.domain_decomposed = 0;
@@ -97,10 +116,12 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     odd_data.cell_global_id[cell] = cell;
     const std::array<size_t, 3> dim_index{
         cell % odd_data.mesh_n_cells[0],
-        odd_data.mesh_n_cells[0] > 0 ? ((cell / odd_data.mesh_n_cells[0]) %
-                                        (args.zonal_data.dimensions > 2 ? odd_data.mesh_n_cells[2]
-                                                                        : odd_data.mesh_n_cells[1]))
-                                     : 0,
+        odd_data.mesh_n_cells[0] > 0
+            ? ((cell / odd_data.mesh_n_cells[0]) %
+               (args.zonal_data.dimensions > 2
+                    ? odd_data.mesh_n_cells[2]
+                    : (odd_data.mesh_n_cells[1] > 0 ? odd_data.mesh_n_cells[1] : 1)))
+            : 0,
         odd_data.mesh_n_cells[0] * odd_data.mesh_n_cells[1] > 0
             ? cell / (odd_data.mesh_n_cells[0] * odd_data.mesh_n_cells[1])
             : 0};
