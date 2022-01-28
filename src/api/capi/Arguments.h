@@ -19,6 +19,8 @@ struct Control_Data {
   double dt;
   size_t max_iter;
   double min_tol;
+  double *bnd_temp;
+  size_t *reflect_bnd;
 };
 
 //! Zonal data

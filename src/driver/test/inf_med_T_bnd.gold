@@ -1,0 +1,221 @@
+PARSING COMPLETE
+Converged eden -> Iteration = 21 error = 6.27724e-13
+####################################
+    t = 0.1
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137202
+     total mat_energy0 = 0.09
+     total energy0 = 0.10372
+     total rad_energy = 0.0127115
+     total mat_energy = 0.115515
+     total energy = 0.128226
+     relative conservation = 0.191116
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0129277 Trad[0] = 0.985237 cell_mat_delta_e[0][0] = 0.0270018 cell_mat_T[0][0] = 0.990006
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0129277 Trad[1] = 0.985237 cell_mat_delta_e[1][0] = 0.0270018 cell_mat_T[1][0] = 0.990006
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0127307 Trad[2] = 0.981462 cell_mat_delta_e[2][0] = 0.0256471 cell_mat_T[2][0] = 0.98549
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0127307 Trad[3] = 0.981462 cell_mat_delta_e[3][0] = 0.0256471 cell_mat_T[3][0] = 0.98549
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0127307 Trad[4] = 0.981462 cell_mat_delta_e[4][0] = 0.0256471 cell_mat_T[4][0] = 0.98549
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0127307 Trad[5] = 0.981462 cell_mat_delta_e[5][0] = 0.0256471 cell_mat_T[5][0] = 0.98549
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0124568 Trad[6] = 0.97614 cell_mat_delta_e[6][0] = 0.0237633 cell_mat_T[6][0] = 0.979211
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0124568 Trad[7] = 0.97614 cell_mat_delta_e[7][0] = 0.0237633 cell_mat_T[7][0] = 0.979211
+####################################
+
+Converged eden -> Iteration = 22 error = 3.18043e-13
+####################################
+    t = 0.2
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0127115
+     total mat_energy0 = 0.115515
+     total energy0 = 0.128226
+     total rad_energy = 0.0135397
+     total mat_energy = 0.118844
+     total energy = 0.132384
+     relative conservation = 0.0314073
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0136087 Trad[0] = 0.997962 cell_mat_delta_e[0][0] = 0.00226233 cell_mat_T[0][0] = 0.997547
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0136087 Trad[1] = 0.997962 cell_mat_delta_e[1][0] = 0.00226233 cell_mat_T[1][0] = 0.997547
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0135481 Trad[2] = 0.996849 cell_mat_delta_e[2][0] = 0.00324404 cell_mat_T[2][0] = 0.996304
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0135481 Trad[3] = 0.996849 cell_mat_delta_e[3][0] = 0.00324404 cell_mat_T[3][0] = 0.996304
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0135481 Trad[4] = 0.996849 cell_mat_delta_e[4][0] = 0.00324404 cell_mat_T[4][0] = 0.996304
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0135481 Trad[5] = 0.996849 cell_mat_delta_e[5][0] = 0.00324404 cell_mat_T[5][0] = 0.996304
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.013454 Trad[6] = 0.995114 cell_mat_delta_e[6][0] = 0.00456818 cell_mat_T[6][0] = 0.994438
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.013454 Trad[7] = 0.995114 cell_mat_delta_e[7][0] = 0.00456818 cell_mat_T[7][0] = 0.994438
+####################################
+
+Converged eden -> Iteration = 20 error = 8.34657e-13
+####################################
+    t = 0.3
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0135397
+     total mat_energy0 = 0.118844
+     total energy0 = 0.132384
+     total rad_energy = 0.0136763
+     total mat_energy = 0.119707
+     total energy = 0.133383
+     relative conservation = 0.00749224
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0136944 Trad[0] = 0.999529 cell_mat_delta_e[0][0] = 0.000559365 cell_mat_T[0][0] = 0.999412
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0136944 Trad[1] = 0.999529 cell_mat_delta_e[1][0] = 0.000559365 cell_mat_T[1][0] = 0.999412
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0136787 Trad[2] = 0.999244 cell_mat_delta_e[2][0] = 0.000830713 cell_mat_T[2][0] = 0.999073
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0136787 Trad[3] = 0.999244 cell_mat_delta_e[3][0] = 0.000830713 cell_mat_T[3][0] = 0.999073
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0136787 Trad[4] = 0.999244 cell_mat_delta_e[4][0] = 0.000830713 cell_mat_T[4][0] = 0.999073
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0136787 Trad[5] = 0.999244 cell_mat_delta_e[5][0] = 0.000830713 cell_mat_T[5][0] = 0.999073
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0136535 Trad[6] = 0.998784 cell_mat_delta_e[6][0] = 0.00122996 cell_mat_T[6][0] = 0.998538
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0136535 Trad[7] = 0.998784 cell_mat_delta_e[7][0] = 0.00122996 cell_mat_T[7][0] = 0.998538
+####################################
+
+Converged eden -> Iteration = 19 error = 7.43661e-13
+####################################
+    t = 0.4
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0136763
+     total mat_energy0 = 0.119707
+     total energy0 = 0.133383
+     total rad_energy = 0.0137091
+     total mat_energy = 0.119925
+     total energy = 0.133634
+     relative conservation = 0.00187778
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137138 Trad[0] = 0.999885 cell_mat_delta_e[0][0] = 0.000133202 cell_mat_T[0][0] = 0.999856
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137138 Trad[1] = 0.999885 cell_mat_delta_e[1][0] = 0.000133202 cell_mat_T[1][0] = 0.999856
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137098 Trad[2] = 0.99981 cell_mat_delta_e[2][0] = 0.000207761 cell_mat_T[2][0] = 0.999765
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137098 Trad[3] = 0.99981 cell_mat_delta_e[3][0] = 0.000207761 cell_mat_T[3][0] = 0.999765
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137098 Trad[4] = 0.99981 cell_mat_delta_e[4][0] = 0.000207761 cell_mat_T[4][0] = 0.999765
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137098 Trad[5] = 0.99981 cell_mat_delta_e[5][0] = 0.000207761 cell_mat_T[5][0] = 0.999765
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.013703 Trad[6] = 0.999687 cell_mat_delta_e[6][0] = 0.000323993 cell_mat_T[6][0] = 0.999618
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.013703 Trad[7] = 0.999687 cell_mat_delta_e[7][0] = 0.000323993 cell_mat_T[7][0] = 0.999618
+####################################
+
+Converged eden -> Iteration = 18 error = 6.77269e-13
+####################################
+    t = 0.5
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137091
+     total mat_energy0 = 0.119925
+     total energy0 = 0.133634
+     total rad_energy = 0.0137173
+     total mat_energy = 0.119981
+     total energy = 0.133698
+     relative conservation = 0.000477311
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137186 Trad[0] = 0.999971 cell_mat_delta_e[0][0] = 3.25052e-05 cell_mat_T[0][0] = 0.999964
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137186 Trad[1] = 0.999971 cell_mat_delta_e[1][0] = 3.25052e-05 cell_mat_T[1][0] = 0.999964
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137175 Trad[2] = 0.999952 cell_mat_delta_e[2][0] = 5.24868e-05 cell_mat_T[2][0] = 0.99994
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137175 Trad[3] = 0.999952 cell_mat_delta_e[3][0] = 5.24868e-05 cell_mat_T[3][0] = 0.99994
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137175 Trad[4] = 0.999952 cell_mat_delta_e[4][0] = 5.24868e-05 cell_mat_T[4][0] = 0.99994
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137175 Trad[5] = 0.999952 cell_mat_delta_e[5][0] = 5.24868e-05 cell_mat_T[5][0] = 0.99994
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0137157 Trad[6] = 0.999919 cell_mat_delta_e[6][0] = 8.47928e-05 cell_mat_T[6][0] = 0.999901
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0137157 Trad[7] = 0.999919 cell_mat_delta_e[7][0] = 8.47928e-05 cell_mat_T[7][0] = 0.999901
+####################################
+
+Converged eden -> Iteration = 17 error = 6.19302e-13
+####################################
+    t = 0.6
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137173
+     total mat_energy0 = 0.119981
+     total energy0 = 0.133698
+     total rad_energy = 0.0137194
+     total mat_energy = 0.119995
+     total energy = 0.133715
+     relative conservation = 0.000121987
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137198 Trad[0] = 0.999993 cell_mat_delta_e[0][0] = 8.07684e-06 cell_mat_T[0][0] = 0.999991
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137198 Trad[1] = 0.999993 cell_mat_delta_e[1][0] = 8.07684e-06 cell_mat_T[1][0] = 0.999991
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137195 Trad[2] = 0.999988 cell_mat_delta_e[2][0] = 1.33455e-05 cell_mat_T[2][0] = 0.999985
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137195 Trad[3] = 0.999988 cell_mat_delta_e[3][0] = 1.33455e-05 cell_mat_T[3][0] = 0.999985
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137195 Trad[4] = 0.999988 cell_mat_delta_e[4][0] = 1.33455e-05 cell_mat_T[4][0] = 0.999985
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137195 Trad[5] = 0.999988 cell_mat_delta_e[5][0] = 1.33455e-05 cell_mat_T[5][0] = 0.999985
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.013719 Trad[6] = 0.999979 cell_mat_delta_e[6][0] = 2.20624e-05 cell_mat_T[6][0] = 0.999974
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.013719 Trad[7] = 0.999979 cell_mat_delta_e[7][0] = 2.20624e-05 cell_mat_T[7][0] = 0.999974
+####################################
+
+Converged eden -> Iteration = 16 error = 5.66564e-13
+####################################
+    t = 0.7
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137194
+     total mat_energy0 = 0.119995
+     total energy0 = 0.133715
+     total rad_energy = 0.01372
+     total mat_energy = 0.119999
+     total energy = 0.133719
+     relative conservation = 3.12569e-05
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137201 Trad[0] = 0.999998 cell_mat_delta_e[0][0] = 2.03163e-06 cell_mat_T[0][0] = 0.999998
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137201 Trad[1] = 0.999998 cell_mat_delta_e[1][0] = 2.03163e-06 cell_mat_T[1][0] = 0.999998
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.01372 Trad[2] = 0.999997 cell_mat_delta_e[2][0] = 3.40722e-06 cell_mat_T[2][0] = 0.999996
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.01372 Trad[3] = 0.999997 cell_mat_delta_e[3][0] = 3.40722e-06 cell_mat_T[3][0] = 0.999996
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.01372 Trad[4] = 0.999997 cell_mat_delta_e[4][0] = 3.40722e-06 cell_mat_T[4][0] = 0.999996
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.01372 Trad[5] = 0.999997 cell_mat_delta_e[5][0] = 3.40722e-06 cell_mat_T[5][0] = 0.999996
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0137199 Trad[6] = 0.999995 cell_mat_delta_e[6][0] = 5.71645e-06 cell_mat_T[6][0] = 0.999993
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0137199 Trad[7] = 0.999995 cell_mat_delta_e[7][0] = 5.71645e-06 cell_mat_T[7][0] = 0.999993
+####################################
+
+Converged eden -> Iteration = 15 error = 5.18009e-13
+####################################
+    t = 0.8
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.01372
+     total mat_energy0 = 0.119999
+     total energy0 = 0.133719
+     total rad_energy = 0.0137201
+     total mat_energy = 0.12
+     total energy = 0.13372
+     relative conservation = 8.0203e-06
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137201 Trad[0] = 1 cell_mat_delta_e[0][0] = 5.1515e-07 cell_mat_T[0][0] = 0.999999
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137201 Trad[1] = 1 cell_mat_delta_e[1][0] = 5.1515e-07 cell_mat_T[1][0] = 0.999999
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137201 Trad[2] = 0.999999 cell_mat_delta_e[2][0] = 8.72188e-07 cell_mat_T[2][0] = 0.999999
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137201 Trad[3] = 0.999999 cell_mat_delta_e[3][0] = 8.72188e-07 cell_mat_T[3][0] = 0.999999
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137201 Trad[4] = 0.999999 cell_mat_delta_e[4][0] = 8.72188e-07 cell_mat_T[4][0] = 0.999999
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137201 Trad[5] = 0.999999 cell_mat_delta_e[5][0] = 8.72188e-07 cell_mat_T[5][0] = 0.999999
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0137201 Trad[6] = 0.999999 cell_mat_delta_e[6][0] = 1.47705e-06 cell_mat_T[6][0] = 0.999998
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0137201 Trad[7] = 0.999999 cell_mat_delta_e[7][0] = 1.47705e-06 cell_mat_T[7][0] = 0.999998
+####################################
+
+Converged eden -> Iteration = 14 error = 4.73124e-13
+####################################
+    t = 0.9
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137201
+     total mat_energy0 = 0.12
+     total energy0 = 0.13372
+     total rad_energy = 0.0137202
+     total mat_energy = 0.12
+     total energy = 0.13372
+     relative conservation = 2.05966e-06
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137202 Trad[0] = 1 cell_mat_delta_e[0][0] = 1.31301e-07 cell_mat_T[0][0] = 1
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137202 Trad[1] = 1 cell_mat_delta_e[1][0] = 1.31301e-07 cell_mat_T[1][0] = 1
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137202 Trad[2] = 1 cell_mat_delta_e[2][0] = 2.2364e-07 cell_mat_T[2][0] = 1
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137202 Trad[3] = 1 cell_mat_delta_e[3][0] = 2.2364e-07 cell_mat_T[3][0] = 1
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137202 Trad[4] = 1 cell_mat_delta_e[4][0] = 2.2364e-07 cell_mat_T[4][0] = 1
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137202 Trad[5] = 1 cell_mat_delta_e[5][0] = 2.2364e-07 cell_mat_T[5][0] = 1
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0137202 Trad[6] = 1 cell_mat_delta_e[6][0] = 3.80972e-07 cell_mat_T[6][0] = 1
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0137202 Trad[7] = 1 cell_mat_delta_e[7][0] = 3.80972e-07 cell_mat_T[7][0] = 1
+####################################
+
+Converged eden -> Iteration = 13 error = 4.32285e-13
+####################################
+    t = 1
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0137202
+     total mat_energy0 = 0.12
+     total energy0 = 0.13372
+     total rad_energy = 0.0137202
+     total mat_energy = 0.12
+     total energy = 0.13372
+     relative conservation = 5.29203e-07
+Cell = 0 loc = (0.25, 0.25, 0.25) erad[0] = 0.0137202 Trad[0] = 1 cell_mat_delta_e[0][0] = 3.35763e-08 cell_mat_T[0][0] = 1
+Cell = 1 loc = (0.75, 0.25, 0.25) erad[1] = 0.0137202 Trad[1] = 1 cell_mat_delta_e[1][0] = 3.35763e-08 cell_mat_T[1][0] = 1
+Cell = 2 loc = (0.25, 0.75, 0.25) erad[2] = 0.0137202 Trad[2] = 1 cell_mat_delta_e[2][0] = 5.74051e-08 cell_mat_T[2][0] = 1
+Cell = 3 loc = (0.75, 0.75, 0.25) erad[3] = 0.0137202 Trad[3] = 1 cell_mat_delta_e[3][0] = 5.74051e-08 cell_mat_T[3][0] = 1
+Cell = 4 loc = (0.25, 0.25, 0.75) erad[4] = 0.0137202 Trad[4] = 1 cell_mat_delta_e[4][0] = 5.74051e-08 cell_mat_T[4][0] = 1
+Cell = 5 loc = (0.75, 0.25, 0.75) erad[5] = 0.0137202 Trad[5] = 1 cell_mat_delta_e[5][0] = 5.74051e-08 cell_mat_T[5][0] = 1
+Cell = 6 loc = (0.25, 0.75, 0.75) erad[6] = 0.0137202 Trad[6] = 1 cell_mat_delta_e[6][0] = 9.81534e-08 cell_mat_T[6][0] = 1
+Cell = 7 loc = (0.75, 0.75, 0.75) erad[7] = 0.0137202 Trad[7] = 1 cell_mat_delta_e[7][0] = 9.81534e-08 cell_mat_T[7][0] = 1
+####################################
+

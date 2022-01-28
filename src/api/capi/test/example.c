@@ -11,6 +11,10 @@ int main(int argc, char *argv[]) {
   arg.control_data.dt = 0.1;
   arg.control_data.max_iter = 20;
   arg.control_data.min_tol = 1.0e-12;
+  double bnd_temp[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  arg.control_data.bnd_temp = &bnd_temp[0];
+  size_t reflect_bnd[6] = {1, 1, 1, 1, 1, 1};
+  arg.control_data.reflect_bnd = &reflect_bnd[0];
 
   // fill the zonal data with "valid junk" and check arguments
   arg.zonal_data.domain_decomposed = 0;
