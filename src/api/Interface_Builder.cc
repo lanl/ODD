@@ -18,7 +18,7 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
 
   // Populate control data
   for (size_t f = 0; f < 6; f++) {
-    iface.control_data.reflect_bnd[f] = bool(arg.control_data.reflect_bnd[f] == 1);
+    iface.control_data.reflect_bnd[f] = (arg.control_data.reflect_bnd[f] == 1);
     iface.control_data.bnd_temp[f] = arg.control_data.bnd_temp[f];
   }
 
