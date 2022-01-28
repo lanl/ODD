@@ -280,7 +280,7 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
         if (!reflect_bnd[face]) {
-          const double E0 = 4.0 * constants::a * std::pow(bnd_temp[face], 4.0);
+          const double E0 = constants::a * std::pow(bnd_temp[face], 4.0);
           const auto D = face_D[cell][face];
           const auto half_width = mesh.distance_center_to_face(cell, face);
           const auto face_area = mesh.face_area(cell, face);

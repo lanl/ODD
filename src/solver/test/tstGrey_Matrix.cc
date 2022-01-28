@@ -227,7 +227,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     for (auto &d : matrix.solver_data.diagonal)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 30.8834, 1e-5));
     for (auto &b : matrix.solver_data.source)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 451.788, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 119.915, 1e-5));
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 2);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
@@ -244,15 +244,15 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     // Solve matrix using gauss siedel
     matrix.gs_solver(1.0e-6, 100);
     for (auto &e : matrix.solver_data.cell_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 23.0967, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.13038, 1e-5));
 
     // Update the output data
     matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
-        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 124.439, 1e-5));
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 28.4082, 1e-5));
     for (auto &e : iface.output_data.cell_rad_eden)
-      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 23.0967, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.13038, 1e-5));
     // reset the boundary condition for the rest of the tests
     iface.control_data.reflect_bnd[0] = true;
     iface.control_data.reflect_bnd[1] = true;

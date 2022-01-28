@@ -34,6 +34,10 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.control_data.dt = 0.1;
   arg.control_data.max_iter = 1;
   arg.control_data.min_tol = 1.0e-12;
+  std::vector<double> bnd_temp(6, 0.0);
+  arg.control_data.bnd_temp = &bnd_temp[0];
+  std::vector<size_t> reflect_bnd(6, 1);
+  arg.control_data.reflect_bnd = &reflect_bnd[0];
   arg.control_data.check_arguments();
 
   try {

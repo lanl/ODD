@@ -116,10 +116,12 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     odd_data.cell_global_id[cell] = cell;
     const std::array<size_t, 3> dim_index{
         cell % odd_data.mesh_n_cells[0],
-        odd_data.mesh_n_cells[0] > 0 ? ((cell / odd_data.mesh_n_cells[0]) %
-                                        (args.zonal_data.dimensions > 2 ? odd_data.mesh_n_cells[2]
-                                                                        : odd_data.mesh_n_cells[1]))
-                                     : 0,
+        odd_data.mesh_n_cells[0] > 0
+            ? ((cell / odd_data.mesh_n_cells[0]) %
+               (args.zonal_data.dimensions > 2
+                    ? odd_data.mesh_n_cells[2]
+                    : (odd_data.mesh_n_cells[1] > 0 ? odd_data.mesh_n_cells[1] : 1)))
+            : 0,
         odd_data.mesh_n_cells[0] * odd_data.mesh_n_cells[1] > 0
             ? cell / (odd_data.mesh_n_cells[0] * odd_data.mesh_n_cells[1])
             : 0};
