@@ -35,7 +35,7 @@ endif()
 # ------------------------------------------------------------------------------------------------ #
 add_component_library(
   TARGET Lib_driver
-  TARGET_DEPS "Lib_api"
+  TARGET_DEPS "Lib_api;Lib_cdi;Lib_cdi_analytic"
   LIBRARY_NAME driver
   SOURCES "${sources}"
   HEADERS "${headers}"
