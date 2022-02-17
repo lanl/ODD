@@ -315,7 +315,8 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
       double b = solver_data.source[i];
       for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
         const size_t next_cell = solver_data.off_diagonal_id[i][f];
-        b -= solver_data.off_diagonal[i][f] * solver_data.cell_eden[next_cell];
+        if (next_cell < solver_data.diagonal.size())
+          b -= solver_data.off_diagonal[i][f] * solver_data.cell_eden[next_cell];
       }
       Check(diag > 0.0);
       const double last_eden = solver_data.cell_eden[i];
