@@ -148,6 +148,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     Check(cell_cve > 0.0);
     fleck[cell] = 1.0 / (1.0 + constants::a * constants::c * sigma_a[cell] * 4.0 * cell_T * cell_T *
                                    cell_T * dt / cell_cve);
+
     // Set initial conditions
     solver_data.cell_temperature0[cell] = cell_T;
     solver_data.cell_temperature[cell] = cell_T;
@@ -303,7 +304,7 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
  *
  */
 //================================================================================================//
-void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
+void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool print) {
   Require(max_iter > 0);
   double max_error = 1.0;
   size_t count = 0;
@@ -333,7 +334,7 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter) {
   if (max_error > eps) {
     std::cout << "WARNING: Did not converge cell_eden max_error = " << max_error << std::endl;
     std::cout << diagnostics.str();
-  } else {
+  } else if (print) {
     std::cout << "Converged eden -> Iteration = " << count << " error = " << max_error << std::endl;
   }
 }

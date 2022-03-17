@@ -22,6 +22,7 @@ namespace odd_driver {
 struct Odd_Driver_Data {
   // simple mesh and single material data
   std::string opacity_file;
+  size_t print_frequency{1};
   size_t n_cycles;
   std::array<double, 3> mesh_size;
   std::array<size_t, 3> mesh_n_cells;
@@ -66,7 +67,7 @@ struct Odd_Driver_Data {
 void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,
                               Odd_Driver_Data &odd_data);
 
-void energy_update(Arguments &args, Odd_Driver_Data &odd_data);
+void energy_update(Arguments &args, Odd_Driver_Data &odd_data, const bool print_info);
 
 } // end namespace odd_driver
 
