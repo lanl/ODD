@@ -1,4 +1,4 @@
--if const.ip \
+-if 100_over_T3.ip \
 -nc 1000 \
 -dt 0.0001 \
 -mi 10000 \
