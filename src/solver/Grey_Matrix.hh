@@ -38,7 +38,7 @@ public:
   void build_matrix(const Orthogonal_Mesh &mesh, const double dt);
 
   //! solve using Gauss Siedel
-  void gs_solver(const double eps, const size_t max_iter);
+  void gs_solver(const double eps, const size_t max_iter, const bool print = false);
 
   //! Calculate the output data
   void calculate_output_data(const Mat_Data &mat_data, const double dt, Output_Data &output_data);

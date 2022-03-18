@@ -19,7 +19,7 @@ constexpr rtt_units::PhysicalConstexprs<rtt_units::CGSH> phys_constants;
 //! Speed of light
 constexpr double c = phys_constants.speedOfLight(); // cm/sh
 
-//! Radiation constant
+//! Radiation constant Jerks/cc/keV^4
 constexpr double a = 4.0 * phys_constants.stefanBoltzmann() / phys_constants.speedOfLight();
 
 } // namespace constants
