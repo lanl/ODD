@@ -55,7 +55,7 @@ struct Odd_Driver_Data {
   std::vector<double> output_cell_Trad;
   std::vector<double> output_cell_mat_delta_e;
   // ODD Conservation Data
-  std::vector<double> mat_energy_density;
+  std::vector<double> cell_mat_energy_density;
   double total_energy;
   double total_rad_energy;
   double total_mat_energy;

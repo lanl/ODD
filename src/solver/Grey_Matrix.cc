@@ -270,11 +270,13 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         const auto next_cell = solver_data.off_diagonal_id[cell][face];
         const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
         const auto D = face_D[cell][face];
+        const auto sigma = 1.0 / (3.0 * D);
         const auto next_D = face_D[next_cell][face];
         const auto half_width = mesh.distance_center_to_face(cell, face);
         const auto next_half_width = mesh.distance_center_to_face(next_cell, next_face);
         const double fring = -constants::c * dt * face_area * (D * next_D) /
                              (cell_volume * (half_width * next_D + next_half_width * D));
+
         solver_data.off_diagonal[cell][face] = fring;
         solver_data.diagonal[cell] -= fring;
       } else {

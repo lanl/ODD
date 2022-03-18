@@ -67,7 +67,7 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       odd_data.specific_heat = std::stod(argv[i + 1]);
       odd_data.specific_heat_Tref = std::stod(argv[i + 2]);
       odd_data.specific_heat_Tpow = std::stod(argv[i + 3]);
-      // Convert from jerks/cc -> kJ/g
+      // Convert from jerks/g -> kJ/g
       odd_data.eos =
           std::make_unique<rtt_cdi_analytic::Analytic_EoS>(rtt_cdi_analytic::Analytic_EoS(
               std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
@@ -204,26 +204,28 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   odd_data.output_cell_mat_delta_e = std::vector<double>(ncells, 0.0);
   args.output_data.cell_mat_delta_e = &odd_data.output_cell_mat_delta_e[0];
 
-  // Query the EOS
+  // Query the EOS in kJ/g
   odd_data.cell_mat_specific_heat = odd_data.eos->getElectronHeatCapacity(
       odd_data.cell_mat_temperature, odd_data.cell_mat_density);
   args.zonal_data.cell_mat_specific_heat = &odd_data.cell_mat_specific_heat[0];
-  odd_data.mat_energy_density = odd_data.eos->getSpecificElectronInternalEnergy(
+  odd_data.cell_mat_energy_density = odd_data.eos->getSpecificElectronInternalEnergy(
       odd_data.cell_mat_temperature, odd_data.cell_mat_density);
 
   size_t mat_index = 0;
   odd_data.total_rad_energy = 0.0;
   odd_data.total_mat_energy = 0.0;
   for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
+    // Convert from kJ/g -> jerks/g
     double volume = 1.0;
     for (size_t d = 0; d < args.zonal_data.dimensions; d++)
       volume *= odd_data.cell_size[i * 3 + d];
     odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
     for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-      // Convert from kJ/g -> jerks/cc
-      odd_data.total_mat_energy += odd_data.mat_energy_density[mat_index] *
-                                   odd_data.cell_mat_density[mat_index] *
-                                   odd_data.cell_mat_vol_frac[mat_index] * volume * 1.0e-6;
+      // Convert from kJ/g -> jerks/g
+      odd_data.cell_mat_specific_heat[mat_index] *= 1.0e-6;
+      odd_data.cell_mat_energy_density[mat_index] *= 1.0e-6 * odd_data.cell_mat_density[mat_index];
+      odd_data.total_mat_energy += odd_data.cell_mat_energy_density[mat_index] *
+                                   odd_data.cell_mat_vol_frac[mat_index] * volume;
     }
   }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
@@ -248,17 +250,15 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
     odd_data.cell_erad[i] = args.output_data.cell_erad[i];
     odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
     for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-      // Convert from jerks/cc -> kJ/g
-      odd_data.mat_energy_density[mat_index] += 1.0e+6 *
-                                                args.output_data.cell_mat_delta_e[mat_index] /
-                                                odd_data.cell_mat_density[mat_index];
-      // Convert from kJ/g -> jerks/cc
-      odd_data.total_mat_energy += odd_data.mat_energy_density[mat_index] *
-                                   odd_data.cell_mat_density[mat_index] *
-                                   odd_data.cell_mat_vol_frac[mat_index] * volume * 1.0e-6;
-      odd_data.cell_mat_temperature[mat_index] = odd_data.eos->getElectronTemperature(
-          odd_data.cell_mat_density[mat_index], odd_data.mat_energy_density[mat_index],
-          odd_data.cell_mat_temperature[mat_index]);
+      odd_data.cell_mat_energy_density[mat_index] += args.output_data.cell_mat_delta_e[mat_index];
+      odd_data.total_mat_energy += odd_data.cell_mat_energy_density[mat_index] *
+                                   odd_data.cell_mat_vol_frac[mat_index] * volume;
+      // Convert from jerks/g -> kJ/g
+      odd_data.cell_mat_temperature[mat_index] =
+          odd_data.eos->getElectronTemperature(odd_data.cell_mat_density[mat_index],
+                                               odd_data.cell_mat_energy_density[mat_index] * 1.0e6 /
+                                                   odd_data.cell_mat_density[mat_index],
+                                               odd_data.cell_mat_temperature[mat_index]);
     }
   }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
