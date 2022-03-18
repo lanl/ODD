@@ -53,7 +53,8 @@ void Odd_Diffusion_Solve(Arguments &arg) {
   matrix.build_matrix(mesh, dt);
 
   // Call the solver to calculate the implicit radiation energy density
-  matrix.gs_solver(arg.control_data.min_tol, arg.control_data.max_iter);
+  matrix.gs_solver(arg.control_data.min_tol, arg.control_data.max_iter,
+                   arg.control_data.print == 1);
 
   // Calculate output data for the implicit radiation energy density vector
   matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);

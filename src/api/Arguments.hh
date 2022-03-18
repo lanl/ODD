@@ -24,6 +24,7 @@ struct Control_Data {
   double min_tol{0};
   double *bnd_temp{nullptr};
   size_t *reflect_bnd{nullptr};
+  size_t print{0};
   Control_Data() = default;
   void check_arguments() const;
 };

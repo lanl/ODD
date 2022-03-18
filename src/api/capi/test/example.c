@@ -11,6 +11,7 @@ int main(int argc, char *argv[]) {
   arg.control_data.dt = 0.1;
   arg.control_data.max_iter = 20;
   arg.control_data.min_tol = 1.0e-12;
+  arg.control_data.print = 1;
   double bnd_temp[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   arg.control_data.bnd_temp = &bnd_temp[0];
   size_t reflect_bnd[6] = {1, 1, 1, 1, 1, 1};

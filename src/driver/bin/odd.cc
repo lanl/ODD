@@ -35,38 +35,48 @@ int main(int argc, char *argv[]) {
 
   double t = arg.control_data.dt;
   for (size_t cycle = 0; cycle < odd_data.n_cycles; cycle++) {
+    const bool print_cycle = ((cycle + 1) % odd_data.print_frequency == 0);
+
+    arg.control_data.print = print_cycle ? 1 : 0;
     // Call the solver on the fake arguments list
     Odd_Diffusion_Solve(arg);
 
-    // print out the opacity data
-    std::cout << "####################################\n";
-    std::cout << "    t = " << t << "\n";
-    std::cout << "####################################\n";
+    if (print_cycle) {
+      // print out the opacity data
+      std::cout << "####################################\n";
+      std::cout << "    t = " << t << "\n";
+      std::cout << "    cycle = " << cycle + 1 << "\n";
+      std::cout << "    dt = " << arg.control_data.dt << "\n";
+      std::cout << "####################################\n";
+    }
 
     // Calculate the energy update
-    energy_update(arg, odd_data);
+    energy_update(arg, odd_data, print_cycle);
 
-    // print out the final material and cell properties
-    size_t mat_index = 0;
-    for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
-      std::cout << "Cell = " << i;
-      std::cout << " loc = (" << arg.zonal_data.cell_position[i * 3];
-      for (size_t d = 1; d < arg.zonal_data.dimensions; d++)
-        std::cout << ", " << arg.zonal_data.cell_position[i * 3 + d];
-      std::cout << ")";
-      std::cout << " erad[" << i << "] = " << arg.output_data.cell_erad[i];
-      std::cout << " Trad[" << i << "] = " << arg.output_data.cell_Trad[i];
-      for (size_t m = 0; m < arg.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-        std::cout << " cell_mat_delta_e[" << i << "][" << m
-                  << "] = " << arg.output_data.cell_mat_delta_e[mat_index];
-        std::cout << " cell_mat_T[" << i << "][" << m
-                  << "] = " << arg.zonal_data.cell_mat_temperature[mat_index];
+    if (print_cycle) {
+      // print out the final material and cell properties
+      size_t mat_index = 0;
+      for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
+        std::cout << "Cell = " << i;
+        std::cout << " loc = (" << arg.zonal_data.cell_position[i * 3];
+        for (size_t d = 1; d < arg.zonal_data.dimensions; d++)
+          std::cout << ", " << arg.zonal_data.cell_position[i * 3 + d];
+        std::cout << ")";
+        std::cout << " erad[" << i << "] = " << arg.output_data.cell_erad[i];
+        std::cout << " Trad[" << i << "] = " << arg.output_data.cell_Trad[i];
+        for (size_t m = 0; m < arg.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
+          std::cout << " cell_mat_delta_e[" << i << "][" << m
+                    << "] = " << arg.output_data.cell_mat_delta_e[mat_index];
+          std::cout << " cell_mat_T[" << i << "][" << m
+                    << "] = " << arg.zonal_data.cell_mat_temperature[mat_index];
+        }
+        std::cout << "\n";
       }
-      std::cout << "\n";
-      arg.zonal_data.cell_erad[i] = arg.output_data.cell_erad[i];
+      std::cout << "####################################\n" << std::endl;
     }
+    for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++)
+      arg.zonal_data.cell_erad[i] = arg.output_data.cell_erad[i];
     t += arg.control_data.dt;
-    std::cout << "####################################\n" << std::endl;
   }
 }
 

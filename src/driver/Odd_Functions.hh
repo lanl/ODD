@@ -11,7 +11,9 @@
 #define odd_driver_Odd_Functions_hh
 
 #include "api/Arguments.hh"
+#include "cdi/EoS.hh"
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -20,13 +22,17 @@ namespace odd_driver {
 struct Odd_Driver_Data {
   // simple mesh and single material data
   std::string opacity_file;
+  size_t print_frequency{1};
   size_t n_cycles;
   std::array<double, 3> mesh_size;
   std::array<size_t, 3> mesh_n_cells;
+  std::unique_ptr<rtt_cdi::EoS> eos{nullptr};
   size_t matid;
   double temperature;
   double density;
   double specific_heat;
+  double specific_heat_Tref{1.0};
+  double specific_heat_Tpow{0.0};
   double rad_temperature;
   // Mesh data holder
   std::vector<double> cell_position;
@@ -49,6 +55,7 @@ struct Odd_Driver_Data {
   std::vector<double> output_cell_Trad;
   std::vector<double> output_cell_mat_delta_e;
   // ODD Conservation Data
+  std::vector<double> cell_mat_energy_density;
   double total_energy;
   double total_rad_energy;
   double total_mat_energy;
@@ -60,7 +67,7 @@ struct Odd_Driver_Data {
 void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,
                               Odd_Driver_Data &odd_data);
 
-void energy_update(Arguments &args, Odd_Driver_Data &odd_data);
+void energy_update(Arguments &args, Odd_Driver_Data &odd_data, const bool print_info);
 
 } // end namespace odd_driver
 

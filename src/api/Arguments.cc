@@ -26,6 +26,7 @@ void Control_Data::check_arguments() const {
   Insist(min_tol > 0.0, "Min convergence tolerance (max_tol) must be greater then zero");
   Insist(bnd_temp != nullptr, "Boundary temperature array must be defined");
   Insist(reflect_bnd != nullptr, "Reflecting boundary array must be defined");
+  Insist((print == 1 || print == 0), "Print flag must be 1 or 0");
   for (size_t f = 0; f < 6; f++) {
     Insist(reflect_bnd[f] == 1 || reflect_bnd[f] == 0,
            "Reflecting boundary condition must be zero or 1");

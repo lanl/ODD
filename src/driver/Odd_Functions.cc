@@ -10,6 +10,9 @@
 
 #include "Odd_Functions.hh"
 #include "solver/Constants.hh"
+#include "cdi/CDI.hh"
+#include "cdi_analytic/Analytic_EoS.hh"
+#include "cdi_analytic/Analytic_Models.hh"
 #include "ds++/dbc.hh"
 #include <iostream>
 #include <string>
@@ -26,6 +29,8 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       odd_data.opacity_file = argv[i + 1];
       args.control_data.opacity_file = &odd_data.opacity_file[0];
     }
+    if (str == "-pf" || str == "-print_frequency")
+      odd_data.print_frequency = std::stoi(argv[i + 1]);
     if (str == "-nc" || str == "-n_cycles")
       odd_data.n_cycles = std::stoi(argv[i + 1]);
     if (str == "-dt")
@@ -58,8 +63,18 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       odd_data.rad_temperature = std::stod(argv[i + 1]);
     if (str == "-rho" || str == "-density")
       odd_data.density = std::stod(argv[i + 1]);
-    if (str == "-cv" || str == "-specific_heat")
+    if (str == "-aeos" || str == "-analytic_eos") {
       odd_data.specific_heat = std::stod(argv[i + 1]);
+      odd_data.specific_heat_Tref = std::stod(argv[i + 2]);
+      odd_data.specific_heat_Tpow = std::stod(argv[i + 3]);
+      // Convert from jerks/g -> kJ/g
+      odd_data.eos =
+          std::make_unique<rtt_cdi_analytic::Analytic_EoS>(rtt_cdi_analytic::Analytic_EoS(
+              std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
+                  rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model(
+                      odd_data.specific_heat * 1.0e+6, odd_data.specific_heat_Tref,
+                      odd_data.specific_heat_Tpow, 0.0, 0.0, 0.0))));
+    }
     if (str == "-bt" || str == "-boundary_temp") {
       odd_data.bnd_temp[0] = std::stod(argv[i + 1]);
       odd_data.bnd_temp[1] = std::stod(argv[i + 2]);
@@ -173,8 +188,6 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   args.zonal_data.cell_mat_temperature = &odd_data.cell_mat_temperature[0];
   odd_data.cell_mat_density = std::vector<double>(ncells, odd_data.density);
   args.zonal_data.cell_mat_density = &odd_data.cell_mat_density[0];
-  odd_data.cell_mat_specific_heat = std::vector<double>(ncells, odd_data.specific_heat);
-  args.zonal_data.cell_mat_specific_heat = &odd_data.cell_mat_specific_heat[0];
   odd_data.cell_velocity = std::vector<double>(ncells * 3, 0.0);
   args.zonal_data.cell_velocity = &odd_data.cell_velocity[0];
   odd_data.cell_erad = std::vector<double>(ncells, odd_solver::constants::a *
@@ -191,6 +204,42 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   odd_data.output_cell_mat_delta_e = std::vector<double>(ncells, 0.0);
   args.output_data.cell_mat_delta_e = &odd_data.output_cell_mat_delta_e[0];
 
+  // Query the EOS in kJ/g
+  odd_data.cell_mat_specific_heat = odd_data.eos->getElectronHeatCapacity(
+      odd_data.cell_mat_temperature, odd_data.cell_mat_density);
+  args.zonal_data.cell_mat_specific_heat = &odd_data.cell_mat_specific_heat[0];
+  odd_data.cell_mat_energy_density = odd_data.eos->getSpecificElectronInternalEnergy(
+      odd_data.cell_mat_temperature, odd_data.cell_mat_density);
+
+  size_t mat_index = 0;
+  odd_data.total_rad_energy = 0.0;
+  odd_data.total_mat_energy = 0.0;
+  for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
+    // Convert from kJ/g -> jerks/g
+    double volume = 1.0;
+    for (size_t d = 0; d < args.zonal_data.dimensions; d++)
+      volume *= odd_data.cell_size[i * 3 + d];
+    odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
+    for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
+      // Convert from kJ/g -> jerks/g
+      odd_data.cell_mat_specific_heat[mat_index] *= 1.0e-6;
+      odd_data.cell_mat_energy_density[mat_index] *= 1.0e-6 * odd_data.cell_mat_density[mat_index];
+      odd_data.total_mat_energy += odd_data.cell_mat_energy_density[mat_index] *
+                                   odd_data.cell_mat_vol_frac[mat_index] * volume;
+    }
+  }
+  odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
+}
+
+void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) {
+
+  if (print_info) {
+    std::cout << " CONSERVATION DATA \n";
+    std::cout << "     total rad_energy0 = " << odd_data.total_rad_energy << "\n";
+    std::cout << "     total mat_energy0 = " << odd_data.total_mat_energy << "\n";
+    std::cout << "     total energy0 = " << odd_data.total_energy << "\n";
+  }
+  const double total_energy0 = odd_data.total_energy;
   size_t mat_index = 0;
   odd_data.total_rad_energy = 0.0;
   odd_data.total_mat_energy = 0.0;
@@ -198,45 +247,29 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     double volume = 1.0;
     for (size_t d = 0; d < args.zonal_data.dimensions; d++)
       volume *= odd_data.cell_size[i * 3 + d];
-    odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
-    for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-      odd_data.total_mat_energy += odd_data.cell_mat_temperature[mat_index] *
-                                   odd_data.cell_mat_specific_heat[mat_index] *
-                                   odd_data.cell_mat_vol_frac[mat_index] * volume;
-    }
-  }
-  odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
-}
-
-void energy_update(Arguments &args, Odd_Driver_Data &odd_data) {
-  std::cout << " CONSERVATION DATA \n";
-  std::cout << "     total rad_energy0 = " << odd_data.total_rad_energy << "\n";
-  std::cout << "     total mat_energy0 = " << odd_data.total_mat_energy << "\n";
-  std::cout << "     total energy0 = " << odd_data.total_energy << "\n";
-  const double total_energy0 = odd_data.total_energy;
-  size_t mat_index = 0;
-  odd_data.total_rad_energy = 0.0;
-  for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
-    double volume = 1.0;
-    for (size_t d = 0; d < args.zonal_data.dimensions; d++)
-      volume *= odd_data.cell_size[i * 3 + d];
     odd_data.cell_erad[i] = args.output_data.cell_erad[i];
     odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
     for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-      odd_data.total_mat_energy += args.output_data.cell_mat_delta_e[mat_index] * volume;
-      // This needs updated for non-constant specific heat
-      odd_data.cell_mat_temperature[mat_index] +=
-          args.output_data.cell_mat_delta_e[mat_index] /
-          (odd_data.cell_mat_specific_heat[mat_index] * odd_data.cell_mat_density[mat_index]);
+      odd_data.cell_mat_energy_density[mat_index] += args.output_data.cell_mat_delta_e[mat_index];
+      odd_data.total_mat_energy += odd_data.cell_mat_energy_density[mat_index] *
+                                   odd_data.cell_mat_vol_frac[mat_index] * volume;
+      // Convert from jerks/g -> kJ/g
+      odd_data.cell_mat_temperature[mat_index] =
+          odd_data.eos->getElectronTemperature(odd_data.cell_mat_density[mat_index],
+                                               odd_data.cell_mat_energy_density[mat_index] * 1.0e6 /
+                                                   odd_data.cell_mat_density[mat_index],
+                                               odd_data.cell_mat_temperature[mat_index]);
     }
   }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
 
-  std::cout << "     total rad_energy = " << odd_data.total_rad_energy << "\n";
-  std::cout << "     total mat_energy = " << odd_data.total_mat_energy << "\n";
-  std::cout << "     total energy = " << odd_data.total_energy << "\n";
-  std::cout << "     relative conservation = "
-            << std::abs(odd_data.total_energy - total_energy0) / odd_data.total_energy << "\n";
+  if (print_info) {
+    std::cout << "     total rad_energy = " << odd_data.total_rad_energy << "\n";
+    std::cout << "     total mat_energy = " << odd_data.total_mat_energy << "\n";
+    std::cout << "     total energy = " << odd_data.total_energy << "\n";
+    std::cout << "     relative conservation = "
+              << std::abs(odd_data.total_energy - total_energy0) / odd_data.total_energy << "\n";
+  }
 }
 
 } // namespace odd_driver
