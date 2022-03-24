@@ -11,12 +11,16 @@
 #include "api/Arguments.hh"
 #include "api/Function_Interface.hh"
 #include "driver/Odd_Functions.hh"
+#include "c4/global.hh"
 #include "ds++/dbc.hh"
 #include <iostream>
 #include <string>
 #include <vector>
 
 int main(int argc, char *argv[]) {
+
+  // Initialize MPI
+  rtt_c4::initialize(argc, argv);
 
   if (argc < 2) {
     std::cout << "Error: Missing Arguments" << std::endl;

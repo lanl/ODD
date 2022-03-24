@@ -80,6 +80,9 @@ struct Solver_Data {
   std::vector<std::vector<double>> off_diagonal;
   std::vector<std::vector<size_t>> off_diagonal_id;
   std::vector<double> source;
+  // Extra conservation data;
+  std::array<double, 6> boundary_source;
+  std::array<double, 6> boundary_leakage;
   // Mat Data
   std::vector<double> cell_density;
   std::vector<double> cell_cve;
