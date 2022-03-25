@@ -95,11 +95,12 @@ void Test_Multi_Mat_Builder(odd_solver::Interface_Data &iface) {
 //================================================================================================//
 
 void Test_1D_Interface_Builder(odd_solver::Interface_Data &iface, const bool dd = false) {
-  Require(rtt_c4::nodes() < 3);
   size_t n_global_cells = 2;
   size_t n_local_cells = n_global_cells;
-  if (dd)
+  if (dd) {
+    Require(rtt_c4::nodes() < 3);
     n_local_cells = n_global_cells / static_cast<size_t>(rtt_c4::nodes());
+  }
   std::vector<double> global_cell_positions = {0.25, 0.0, 0.0, 0.75, 0.0, 0.0};
   std::vector<double> global_cell_size = {0.5, 0.0, 0.0, 0.5, 0.0, 0.0};
   std::vector<size_t> global_cell_id = {0, 1};
@@ -131,14 +132,12 @@ void Test_1D_Interface_Builder(odd_solver::Interface_Data &iface, const bool dd 
                                               n_local_cells);
     iface.mesh_data.number_of_ghost_cells = 1;
     if (rtt_c4::node() == 0) {
-      iface.mesh_data.next_cell_id = {2, 1};
       iface.mesh_data.face_types = {odd_solver::FACE_TYPE::BOUNDARY_FACE,
                                     odd_solver::FACE_TYPE::GHOST_FACE};
       iface.mesh_data.ghost_cell_global_id = {1};
       iface.mesh_data.ghost_cell_proc = {1};
       iface.mesh_data.next_cell_id = {2, 0};
     } else {
-      iface.mesh_data.next_cell_id = {1, 2};
       iface.mesh_data.face_types = {odd_solver::FACE_TYPE::GHOST_FACE,
                                     odd_solver::FACE_TYPE::BOUNDARY_FACE};
       iface.mesh_data.ghost_cell_global_id = {0};
@@ -157,7 +156,7 @@ void Test_1D_Interface_Builder(odd_solver::Interface_Data &iface, const bool dd 
  */
 //================================================================================================//
 
-void Test_2D_Interface_Builder(odd_solver::Interface_Data &iface) {
+void Test_2D_Interface_Builder(odd_solver::Interface_Data &iface, const bool dd = false) {
   // Define mesh data
   // 4 zones with dx=0.5 dy=0.5 and dz=0.5
   //          ___  ___
@@ -165,25 +164,75 @@ void Test_2D_Interface_Builder(odd_solver::Interface_Data &iface) {
   //          ===  ===
   //         | 0 || 1 |
   //          ---  ---
-  iface.mesh_data.domain_decomposed = false;
-  iface.mesh_data.number_of_local_cells = 4;
-  iface.mesh_data.number_of_global_cells = 4;
+  // if dd -> cells_node_0={0} cell_node_1={1] cell_node_2={2,3}
+  size_t n_global_cells = 4;
+  size_t n_local_cells = n_global_cells;
+  if (dd) {
+    Insist(rtt_c4::nodes() == 3, "2D DD test mesh only supports 3 ranks");
+    if (rtt_c4::node() < 2)
+      n_local_cells = 1;
+    else
+      n_local_cells = 2;
+  }
+  iface.mesh_data.domain_decomposed = dd;
+  iface.mesh_data.number_of_local_cells = n_local_cells;
+  iface.mesh_data.number_of_global_cells = n_global_cells;
   iface.mesh_data.n_dims = 2;
   iface.mesh_data.coord_sys = odd_solver::COORDINATE_SYSTEM::CARTESIAN;
-  iface.mesh_data.cell_position = {0.25, 0.25, 0.0, 0.75, 0.25, 0.0,
-                                   0.25, 0.75, 0.0, 0.75, 0.75, 0.0};
-  iface.mesh_data.cell_size = {0.5, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0};
-  iface.mesh_data.cell_global_id = {0, 1, 2, 3};
-  iface.mesh_data.face_types = {
-      odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
-      odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
-      odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
-      odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
-      odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
-      odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
-      odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
-      odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE};
-  iface.mesh_data.next_cell_id = {4, 1, 4, 2, 0, 4, 4, 3, 4, 3, 0, 4, 2, 4, 1, 4};
+  if (!dd) {
+    iface.mesh_data.cell_position = {0.25, 0.25, 0.0, 0.75, 0.25, 0.0,
+                                     0.25, 0.75, 0.0, 0.75, 0.75, 0.0};
+    iface.mesh_data.cell_size = {0.5, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0};
+    iface.mesh_data.cell_global_id = {0, 1, 2, 3};
+    iface.mesh_data.face_types = {
+        odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
+        odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
+        odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
+        odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
+        odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
+        odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
+        odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
+        odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE};
+    iface.mesh_data.next_cell_id = {4, 1, 4, 2, 0, 4, 4, 3, 4, 3, 0, 4, 2, 4, 1, 4};
+  } else {
+    if (rtt_c4::node() == 0) {
+      iface.mesh_data.cell_position = {0.25, 0.25, 0.0};
+      iface.mesh_data.cell_size = {0.5, 0.5, 0.0};
+      iface.mesh_data.cell_global_id = {0};
+      iface.mesh_data.face_types = {
+          odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::GHOST_FACE,
+          odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::GHOST_FACE};
+      iface.mesh_data.number_of_ghost_cells = 2;
+      iface.mesh_data.next_cell_id = {4, 0, 4, 1};
+      iface.mesh_data.ghost_cell_global_id = {1, 2};
+      iface.mesh_data.ghost_cell_proc = {1, 2};
+
+    } else if (rtt_c4::node() == 1) {
+      iface.mesh_data.cell_position = {0.75, 0.25, 0.0};
+      iface.mesh_data.cell_size = {0.5, 0.5, 0.0};
+      iface.mesh_data.cell_global_id = {1};
+      iface.mesh_data.face_types = {
+          odd_solver::FACE_TYPE::GHOST_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
+          odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::GHOST_FACE};
+      iface.mesh_data.number_of_ghost_cells = 2;
+      iface.mesh_data.next_cell_id = {0, 4, 4, 1};
+      iface.mesh_data.ghost_cell_global_id = {0, 3};
+      iface.mesh_data.ghost_cell_proc = {0, 2};
+    } else {
+      iface.mesh_data.cell_position = {0.25, 0.75, 0.0, 0.75, 0.75, 0.0};
+      iface.mesh_data.cell_size = {0.5, 0.5, 0.0, 0.5, 0.5, 0.0};
+      iface.mesh_data.cell_global_id = {2, 3};
+      iface.mesh_data.face_types = {
+          odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::INTERNAL_FACE,
+          odd_solver::FACE_TYPE::GHOST_FACE,    odd_solver::FACE_TYPE::BOUNDARY_FACE,
+          odd_solver::FACE_TYPE::INTERNAL_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE,
+          odd_solver::FACE_TYPE::GHOST_FACE,    odd_solver::FACE_TYPE::BOUNDARY_FACE};
+      iface.mesh_data.number_of_ghost_cells = 2;
+      iface.mesh_data.next_cell_id = {4, 1, 0, 4, 0, 4, 1, 4};
+      iface.mesh_data.ghost_cell_global_id = {0, 1};
+      iface.mesh_data.ghost_cell_proc = {0, 1};
+    }
+  }
 }
 
 void Test_3D_Interface_Builder(odd_solver::Interface_Data &iface) {

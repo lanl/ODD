@@ -3,7 +3,7 @@
  * \file   solver/Ghost_Comm.hh
  * \author Mathew Cleveland
  * \brief  Collect ghost data between processors
- * \note   Copyright (C) 2010-2022 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -31,10 +31,10 @@ public:
 
   // DATA
   std::map<size_t, size_t> put_buffer_size;
-  // put_mpa[local_cell_id][face_id] = {rank_id, put_buffer_id}
+  // put_map[local_cell_id][face_id] = {rank_id, put_buffer_id}
   std::map<size_t, std::map<size_t, std::pair<size_t, size_t>>> put_map;
   size_t local_ghost_buffer_size;
-  // ghost_mpa[local_ghost_id][face_id][ghost_buffer_id]
+  // ghost_map[local_ghost_id][face_id] = ghost_buffer_id
   std::map<size_t, std::map<size_t, size_t>> ghost_map;
 
   // Interface functions
