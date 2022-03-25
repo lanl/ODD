@@ -4,7 +4,7 @@
  * \author Mathew Cleveland
  * \date   March 21st 2022
  * \brief  Collect Ghost data implementation
- * \note   Copyright (C) 2010-2022 Triad National Security, LLC., All rights reserved.
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
@@ -95,12 +95,10 @@ void Ghost_Comm::build_ghost_map(const Orthogonal_Mesh &mesh) {
     bool found = false;
     size_t buffer_global_id = local_global_id_buffer[i];
     size_t buffer_face_id = local_face_buffer[i];
-    size_t local_ghost_index = 0;
     for (size_t g = 0; g < mesh.number_of_ghost_cells(); g++) {
       size_t gid = mesh.ghost_cell_global_id(g);
       if (gid == buffer_global_id)
-        ghost_map[g][buffer_face_id] = local_ghost_index;
-      local_ghost_index++;
+        ghost_map[g][buffer_face_id] = i;
     }
   }
 }

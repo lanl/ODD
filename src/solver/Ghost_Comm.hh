@@ -30,6 +30,7 @@ public:
   Ghost_Comm(const Orthogonal_Mesh &mesh);
 
   // DATA
+  // put_buffer_size[rank_id] = n_put_cells
   std::map<size_t, size_t> put_buffer_size;
   // put_map[local_cell_id][face_id] = {rank_id, put_buffer_id}
   std::map<size_t, std::map<size_t, std::pair<size_t, size_t>>> put_map;
