@@ -10,8 +10,10 @@
 #ifndef odd_solver_Grey_Matrix_hh
 #define odd_solver_Grey_Matrix_hh
 
+#include "Ghost_Comm.hh"
 #include "Interface_Data.hh"
 #include "Orthogonal_Mesh.hh"
+#include <memory>
 
 namespace odd_solver {
 
@@ -52,6 +54,10 @@ private:
   std::vector<double> fleck;
   std::vector<double> sigma_a;
   std::vector<std::vector<double>> face_D;
+
+  // Ghost Data Communicator
+  bool domain_decomposed;
+  std::unique_ptr<Ghost_Comm> gcomm;
 
   //! Helper function for mass averaging
   double mass_average(const std::vector<double> &mass, const std::vector<double> &variable) const;

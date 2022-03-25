@@ -11,6 +11,7 @@
 #include "Grey_Matrix.hh"
 #include "Constants.hh"
 #include "Opacity_Reader.hh"
+#include "c4/global.hh"
 #include "ds++/dbc.hh"
 #include <cmath>
 #include <numeric>
@@ -69,9 +70,29 @@ double Grey_Matrix::mass_average(const std::vector<double> &mass,
 //================================================================================================//
 void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
                                          const double dt) {
-  Insist(!mesh.domain_decomposed(), "Domain decomposition currently not supported");
   Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
   const auto ncells = mesh.number_of_local_cells();
+  // declare some dd put data structures
+  std::map<size_t, std::vector<double>> put_ghost_cell_temp;
+  std::map<size_t, std::vector<double>> put_ghost_cell_eden;
+  std::map<size_t, std::vector<double>> put_face_D;
+  std::map<size_t, std::vector<double>> put_dist_center_to_face;
+  if (mesh.domain_decomposed()) {
+    gcomm = std::make_unique<Ghost_Comm>(Ghost_Comm(mesh));
+    const auto nghost = gcomm->local_ghost_buffer_size;
+    // Initialize dd receive (ghost) data structures
+    solver_data.ghost_cell_temperature.resize(nghost, 0.0);
+    solver_data.ghost_cell_eden.resize(nghost, 0.0);
+    solver_data.ghost_face_D.resize(nghost, 0.0);
+    solver_data.ghost_dist_center_to_face.resize(nghost, 0.0);
+    // Initialize dd put data structures
+    for (auto &map : gcomm->put_buffer_size) {
+      put_ghost_cell_temp[map.first] = std::vector<double>(map.second, 0.0);
+      put_ghost_cell_eden[map.first] = std::vector<double>(map.second, 0.0);
+      put_face_D[map.first] = std::vector<double>(map.second, 0.0);
+      put_dist_center_to_face[map.first] = std::vector<double>(map.second, 0.0);
+    }
+  }
   // Allocate solver cell data
   solver_data.diagonal.resize(ncells, 0.0);
   solver_data.source.resize(ncells, 0.0);
@@ -83,6 +104,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
   solver_data.cell_temperature.resize(ncells, 0.0);
   // Allocate solver face/neighbor data
   solver_data.off_diagonal.resize(ncells);
+  solver_data.face_type.resize(ncells);
   solver_data.off_diagonal_id.resize(ncells);
   solver_data.face_flux0.resize(ncells);
   solver_data.face_flux.resize(ncells);
@@ -157,6 +179,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     // Allocate face data
     const auto nfaces = mesh.number_of_faces(cell);
     solver_data.off_diagonal[cell].resize(nfaces, 0.0);
+    solver_data.face_type[cell].resize(nfaces, 0);
     solver_data.face_flux0[cell].resize(nfaces, 0.0);
     solver_data.face_flux[cell].resize(nfaces, 0.0);
     solver_data.off_diagonal_id[cell].resize(nfaces, ncells);
@@ -164,14 +187,27 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     // Loop over faces
     for (size_t face = 0; face < nfaces; face++) {
       const auto ftype = mesh.face_type(cell, face);
-      Check(ftype != FACE_TYPE::GHOST_FACE);
-      if (ftype == FACE_TYPE::INTERNAL_FACE) {
+      if (ftype == FACE_TYPE::INTERNAL_FACE || ftype == FACE_TYPE::GHOST_FACE) {
         solver_data.off_diagonal_id[cell][face] = mesh.next_cell(cell, face);
       } else {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
       }
     }
+  }
+  // collect ghost cell data
+  if (gcomm) {
+    for (auto &map : gcomm->put_map) {
+      auto cell = map.first;
+      for (auto &put_face : map.second) {
+        auto rank = put_face.second.first;
+        auto buffer_index = put_face.second.second;
+        put_ghost_cell_temp[rank][buffer_index] = solver_data.cell_temperature[cell];
+        put_ghost_cell_eden[rank][buffer_index] = solver_data.cell_eden[cell];
+      }
+    }
+    gcomm->exchange_ghost_data(put_ghost_cell_temp, solver_data.ghost_cell_temperature);
+    gcomm->exchange_ghost_data(put_ghost_cell_eden, solver_data.ghost_cell_eden);
   }
   // calculate the face diffusion coefficients
   for (size_t cell = 0; cell < ncells; cell++) {
@@ -181,10 +217,36 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     const auto nfaces = mesh.number_of_faces(cell);
     for (size_t face = 0; face < nfaces; face++) {
       const auto ftype = mesh.face_type(cell, face);
-      Check(ftype != FACE_TYPE::GHOST_FACE);
       // calculate the average face temperature
       const auto nmats = mat_data.number_of_cell_mats[cell];
-      if (ftype == FACE_TYPE::INTERNAL_FACE) {
+      if (ftype == FACE_TYPE::GHOST_FACE) {
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
+        // pull the ghost cell temperature
+        const auto ghost_T =
+            solver_data.ghost_cell_temperature[gcomm->ghost_map[next_cell][next_face]];
+        const auto next_cell_T4 = ghost_T * ghost_T * ghost_T * ghost_T;
+        // Calculate the face averaged temperature
+        const auto face_T = std::pow(0.5 * (next_cell_T4 + cell_T4), 0.25);
+        // Calculate the face opacity
+        std::vector<double> cell_mat_sigma_tr(nmats, 0.0);
+        for (size_t mat = 0; mat < nmats; mat++) {
+          size_t matid = mat_data.cell_mats[cell][mat];
+          cell_mat_sigma_tr[mat] = opacity_reader.mat_rosseland_total_models[matid]->getOpacity(
+                                       face_T, mat_data.cell_mat_density[cell][mat]) *
+                                   mat_data.cell_mat_density[cell][mat];
+        }
+        const double sigma_tr =
+            std::inner_product(cell_mat_sigma_tr.begin(), cell_mat_sigma_tr.end(),
+                               mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
+        face_D[cell][face] = 1.0 / (3.0 * sigma_tr);
+        // populate the put buffer
+        const auto rank = gcomm->put_map[cell][face].first;
+        const auto put_index = gcomm->put_map[cell][face].second;
+        put_face_D[rank][put_index] = face_D[cell][face];
+        put_dist_center_to_face[rank][put_index] = mesh.distance_center_to_face(cell, face);
+
+      } else if (ftype == FACE_TYPE::INTERNAL_FACE) {
         const auto next_cell = solver_data.off_diagonal_id[cell][face];
         const auto next_cell_T4 =
             solver_data.cell_temperature[next_cell] * solver_data.cell_temperature[next_cell] *
@@ -231,6 +293,12 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
       }
     }
   }
+
+  if (gcomm) {
+    // populate remaining face data
+    gcomm->exchange_ghost_data(put_face_D, solver_data.ghost_face_D);
+    gcomm->exchange_ghost_data(put_dist_center_to_face, solver_data.ghost_dist_center_to_face);
+  }
 }
 
 //================================================================================================//
@@ -245,7 +313,6 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
  */
 //================================================================================================//
 void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
-  Insist(!mesh.domain_decomposed(), "Domain decomposition currently not supported");
   const auto ncells = mesh.number_of_local_cells();
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
@@ -263,9 +330,23 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     const auto nfaces = mesh.number_of_faces(cell);
     for (size_t face = 0; face < nfaces; face++) {
       const auto ftype = mesh.face_type(cell, face);
-      Check(ftype != FACE_TYPE::GHOST_FACE);
+      solver_data.face_type[cell][face] = ftype;
       // calculate the fringe values
-      if (ftype == FACE_TYPE::INTERNAL_FACE) {
+      if (ftype == FACE_TYPE::GHOST_FACE) {
+        const auto face_area = mesh.face_area(cell, face);
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
+        const auto D = face_D[cell][face];
+        const auto next_D = solver_data.ghost_face_D[gcomm->ghost_map[next_cell][next_face]];
+        const auto half_width = mesh.distance_center_to_face(cell, face);
+        const auto next_half_width =
+            solver_data.ghost_dist_center_to_face[gcomm->ghost_map[next_cell][next_face]];
+        const double fring = -constants::c * dt * face_area * (D * next_D) /
+                             (cell_volume * (half_width * next_D + next_half_width * D));
+
+        solver_data.off_diagonal[cell][face] = fring;
+        solver_data.diagonal[cell] -= fring;
+      } else if (ftype == FACE_TYPE::INTERNAL_FACE) {
         const auto face_area = mesh.face_area(cell, face);
         const auto next_cell = solver_data.off_diagonal_id[cell][face];
         const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
@@ -308,35 +389,113 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
 void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool print) {
   Require(max_iter > 0);
   double max_error = 1.0;
-  size_t count = 0;
   std::stringstream diagnostics;
-  while (max_error > eps && count < max_iter) {
-    max_error = 0.0;
-    for (size_t i = 0; i < solver_data.diagonal.size(); i++) {
-      const double diag = solver_data.diagonal[i];
-      double b = solver_data.source[i];
-      for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
-        const size_t next_cell = solver_data.off_diagonal_id[i][f];
-        if (next_cell < solver_data.diagonal.size())
-          b -= solver_data.off_diagonal[i][f] * solver_data.cell_eden[next_cell];
-      }
-      Check(diag > 0.0);
-      const double last_eden = solver_data.cell_eden[i];
-      solver_data.cell_eden[i] = b / diag;
-      const double eden_diff =
-          solver_data.cell_eden[i] > 0.0
-              ? std::abs(solver_data.cell_eden[i] - last_eden) / solver_data.cell_eden[i]
-              : std::abs(solver_data.cell_eden[i] - last_eden);
-      max_error = std::max(max_error, eden_diff);
+  std::vector<double> last_ghost_eden;
+  std::map<size_t, std::vector<double>> put_ghost_cell_eden;
+  if (gcomm) {
+    last_ghost_eden = solver_data.ghost_cell_eden;
+    for (auto &map : gcomm->put_buffer_size) {
+      put_ghost_cell_eden[map.first] = std::vector<double>(map.second, 0.0);
     }
-    diagnostics << "  Iteration = " << count << " error = " << max_error << std::endl;
-    count++;
+  }
+  size_t global_count = 0;
+  size_t count = 0;
+  size_t total_inners = 0;
+  while (max_error > eps && count < max_iter && global_count < max_iter) {
+    count = 0;
+    while (max_error > eps && count < max_iter) {
+      max_error = 0.0;
+      for (size_t i = 0; i < solver_data.diagonal.size(); i++) {
+        const double diag = solver_data.diagonal[i];
+        double b = solver_data.source[i];
+        for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
+          const auto ftype = solver_data.face_type[i][f];
+          const size_t next_cell = solver_data.off_diagonal_id[i][f];
+          if (ftype == FACE_TYPE::INTERNAL_FACE) {
+            b -= solver_data.off_diagonal[i][f] * solver_data.cell_eden[next_cell];
+          } else if (ftype == FACE_TYPE::GHOST_FACE) {
+            const auto next_face = f % 2 == 0 ? f + 1 : f - 1;
+            b -= solver_data.off_diagonal[i][f] *
+                 last_ghost_eden[gcomm->ghost_map[next_cell][next_face]];
+          }
+        }
+        Check(diag > 0.0);
+        const double last_eden = solver_data.cell_eden[i];
+        solver_data.cell_eden[i] = b / diag;
+        const double eden_diff =
+            solver_data.cell_eden[i] > 0.0
+                ? std::abs(solver_data.cell_eden[i] - last_eden) / solver_data.cell_eden[i]
+                : std::abs(solver_data.cell_eden[i] - last_eden);
+        max_error = std::max(max_error, eden_diff);
+      }
+
+      // Inner loop communication increased mpi window calls but drastically reduces the total
+      // number of iterations
+      if (gcomm) {
+        // update the put vectors
+        for (auto &map : gcomm->put_map) {
+          auto cell = map.first;
+          for (auto &put_face : map.second) {
+            auto rank = put_face.second.first;
+            auto buffer_index = put_face.second.second;
+            put_ghost_cell_eden[rank][buffer_index] = solver_data.cell_eden[cell];
+          }
+        }
+        // write to the ghost window data
+        gcomm->exchange_ghost_data(put_ghost_cell_eden, solver_data.ghost_cell_eden);
+        for (size_t i = 0; i < solver_data.ghost_cell_eden.size(); i++) {
+          const double eden_diff =
+              solver_data.ghost_cell_eden[i] > 0.0
+                  ? std::abs(solver_data.ghost_cell_eden[i] - last_ghost_eden[i]) /
+                        solver_data.ghost_cell_eden[i]
+                  : std::abs(solver_data.cell_eden[i] - last_ghost_eden[i]);
+          max_error = std::max(max_error, eden_diff);
+        }
+        last_ghost_eden = solver_data.ghost_cell_eden;
+      }
+
+      diagnostics << "Node = " << rtt_c4::node() << "  Iteration = " << global_count << "." << count
+                  << " error = " << max_error << "\n";
+      count++;
+      total_inners++;
+    }
+    if (gcomm) {
+      rtt_c4::global_max(count);
+      // update the put vectors
+      for (auto &map : gcomm->put_map) {
+        auto cell = map.first;
+        for (auto &put_face : map.second) {
+          auto rank = put_face.second.first;
+          auto buffer_index = put_face.second.second;
+          put_ghost_cell_eden[rank][buffer_index] = solver_data.cell_eden[cell];
+        }
+      }
+      // echange ghost data
+      gcomm->exchange_ghost_data(put_ghost_cell_eden, solver_data.ghost_cell_eden);
+      // calculate difference on exchange
+      for (size_t i = 0; i < solver_data.ghost_cell_eden.size(); i++) {
+        const double eden_diff =
+            solver_data.ghost_cell_eden[i] > 0.0
+                ? std::abs(solver_data.ghost_cell_eden[i] - last_ghost_eden[i]) /
+                      solver_data.ghost_cell_eden[i]
+                : std::abs(solver_data.cell_eden[i] - last_ghost_eden[i]);
+        max_error = std::max(max_error, eden_diff);
+      }
+      last_ghost_eden = solver_data.ghost_cell_eden;
+      rtt_c4::global_max(max_error);
+    }
+    global_count++;
+  }
+  if (gcomm) {
+    rtt_c4::global_max(total_inners);
   }
   if (max_error > eps) {
     std::cout << "WARNING: Did not converge cell_eden max_error = " << max_error << std::endl;
     std::cout << diagnostics.str();
-  } else if (print) {
-    std::cout << "Converged eden -> Iteration = " << count << " error = " << max_error << std::endl;
+  } else if (print && rtt_c4::node() == 0) {
+    std::cout << "Converged eden -> Global_Iteration = " << global_count
+              << " Total_Inner_Iterations = " << total_inners << " error = " << max_error
+              << std::endl;
   }
 }
 
