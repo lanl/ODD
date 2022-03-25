@@ -10,8 +10,9 @@
 
 #include "api/Arguments.hh"
 #include "api/Function_Interface.hh"
+#include "odd_release/Release.hh"
+#include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
-#include "ds++/ScalarUnitTest.hh"
 
 using namespace rtt_dsxx;
 
@@ -114,7 +115,7 @@ void test(rtt_dsxx::UnitTest &ut) {
 
 //------------------------------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
-  ScalarUnitTest ut(argc, argv, release);
+  rtt_c4::ParallelUnitTest ut(argc, argv, rtt_odd::release);
   try {
     // >>> UNIT TESTS
     test(ut);
