@@ -97,9 +97,9 @@ struct Solver_Data {
   std::vector<double> cell_temperature;
   // Ghost Data
   std::vector<double> ghost_cell_temperature;
-  std::vector<double> ghost_cell_eden;
   std::vector<double> ghost_face_D;
   std::vector<double> ghost_dist_center_to_face;
+  std::vector<double> ghost_cell_eden;
 };
 
 //! Raw multigroup matrix data and the solution vectors

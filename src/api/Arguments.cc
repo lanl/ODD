@@ -85,7 +85,7 @@ void Zonal_Data::check_arguments() const {
          "Must define the ghost cell proc array for domain decomposed problems");
   // Check ghost array values
   if (domain_decomposed == 1) {
-    for (size_t i = 0; i < number_of_global_cells; i++) {
+    for (size_t i = 0; i < number_of_ghost_cells; i++) {
       Insist(ghost_cell_global_id[i] < number_of_global_cells, "Cell global id must be valid");
       Insist(ghost_cell_proc[i] < static_cast<size_t>(rtt_c4::nodes()),
              "Cell proc must be bound by mpi range");

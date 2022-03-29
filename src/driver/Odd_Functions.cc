@@ -10,6 +10,7 @@
 
 #include "Odd_Functions.hh"
 #include "solver/Constants.hh"
+#include "c4/global.hh"
 #include "cdi/CDI.hh"
 #include "cdi_analytic/Analytic_EoS.hh"
 #include "cdi_analytic/Analytic_Models.hh"
@@ -22,6 +23,8 @@ namespace odd_driver {
 void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,
                               Odd_Driver_Data &odd_data) {
 
+  // initialize DD mode
+  args.zonal_data.domain_decomposed = 0;
   for (size_t i = 0; i < argv.size(); i++) {
     std::string str = argv[i];
     // Parse control data
@@ -91,13 +94,16 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       odd_data.reflect_bnd[4] = std::stoi(argv[i + 4]);
       odd_data.reflect_bnd[5] = std::stoi(argv[i + 5]);
     }
+    if (str == "-dd" || str == "-domain_decomposed") {
+      args.zonal_data.domain_decomposed = 1;
+      odd_data.domain_decomposed = true;
+    }
   }
   // Assign remaining control data
   args.control_data.bnd_temp = &odd_data.bnd_temp[0];
   args.control_data.reflect_bnd = &odd_data.reflect_bnd[0];
 
   // Build mesh arguments
-  args.zonal_data.domain_decomposed = 0;
   const size_t nfaces_per_cell = args.zonal_data.dimensions * 2;
   size_t ncells = 1;
   for (size_t d = 0; d < args.zonal_data.dimensions; d++) {
@@ -174,6 +180,103 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     //std::cout << ")" << std::endl;
   }
 
+  // simple decomposition
+  if (args.zonal_data.domain_decomposed == 1) {
+    const size_t equal_ncells = std::max((ncells / static_cast<size_t>(rtt_c4::nodes())), 1UL);
+    size_t global_ncells = equal_ncells;
+    rtt_c4::global_sum(global_ncells);
+    Insist(!(global_ncells > ncells),
+           "The number of parallel global cells can not be more then the number of serial cells");
+
+    size_t local_ncells = equal_ncells;
+    if (rtt_c4::node() == (rtt_c4::nodes() - 1)) {
+      // add the remaining ranks to the last proc
+      size_t remainder = ncells - static_cast<size_t>(rtt_c4::nodes()) * equal_ncells;
+      local_ncells += remainder;
+    }
+    global_ncells = local_ncells;
+    rtt_c4::global_sum(global_ncells);
+    Insist(global_ncells == ncells, "Global cells does not match mesh specification");
+
+    const size_t cell_id_initial = static_cast<size_t>(rtt_c4::node()) * equal_ncells;
+    const size_t cell_id_final = cell_id_initial + local_ncells;
+    args.zonal_data.number_of_local_cells = local_ncells;
+
+    // make a local copy of my partition data
+    std::vector<double> local_cell_position(odd_data.cell_position.begin() + cell_id_initial * 3,
+                                            odd_data.cell_position.begin() + cell_id_final * 3);
+    std::vector<double> local_cell_size(odd_data.cell_size.begin() + cell_id_initial * 3,
+                                        odd_data.cell_size.begin() + cell_id_final * 3);
+    std::vector<size_t> local_cell_id(odd_data.cell_global_id.begin() + cell_id_initial,
+                                      odd_data.cell_global_id.begin() + cell_id_final);
+    std::vector<size_t> local_face_type(
+        odd_data.face_type.begin() + cell_id_initial * nfaces_per_cell,
+        odd_data.face_type.begin() + cell_id_final * nfaces_per_cell);
+    std::vector<size_t> local_next_cell_id(
+        odd_data.next_cell_id.begin() + cell_id_initial * nfaces_per_cell,
+        odd_data.next_cell_id.begin() + cell_id_final * nfaces_per_cell);
+
+    // Initialize ghost map from local global data
+    // ghost_map[global_id] = {proc, ghost_index}
+    std::map<size_t, std::array<size_t, 2>> local_ghost_map;
+    for (size_t i = 0; i < local_face_type.size(); i++) {
+      const size_t gid = local_next_cell_id[i];
+      if (gid < cell_id_initial || gid >= cell_id_final && gid < ncells) {
+        // reset the face type (GHOST OR BOUNDRAY=ncells)
+        const size_t proc =
+            std::min(static_cast<size_t>(gid / equal_ncells), static_cast<size_t>(rtt_c4::nodes()));
+        local_ghost_map[gid] = {proc, 0UL};
+      }
+    }
+    // now set the ghost data;
+    std::vector<size_t> local_ghost_ids(local_ghost_map.size(), 0UL);
+    std::vector<size_t> local_ghost_procs(local_ghost_map.size(), 0UL);
+    size_t local_gid = 0;
+    for (auto &map : local_ghost_map) {
+      local_ghost_ids[local_gid] = map.first;
+      local_ghost_procs[local_gid] = map.second[0];
+      map.second[1] = local_gid;
+      local_gid++;
+    }
+
+    // Alright now we can clean up the local face types and next cell ids
+    for (size_t i = 0; i < local_face_type.size(); i++) {
+      const size_t gid = local_next_cell_id[i];
+      local_next_cell_id[i] = gid - cell_id_initial;
+      if (gid < cell_id_initial || gid >= cell_id_final) {
+        // reset the face type (GHOST OR BOUNDRAY=ncells)
+        if (gid < ncells) {
+          Check(local_face_type[i] == 0);
+          // set as ghost
+          local_face_type[i] = 2;
+          // give it the ghost index;
+          local_next_cell_id[i] = local_ghost_map[gid][1];
+        } else {
+          // fix local
+          Check(local_face_type[i] == 1);
+          local_next_cell_id[i] = local_ncells;
+        }
+      }
+    }
+
+    // Now reset the ODD data
+    args.zonal_data.number_of_local_cells = local_ncells;
+    args.zonal_data.number_of_ghost_cells = local_ghost_ids.size();
+    args.zonal_data.number_of_global_cells = global_ncells;
+    odd_data.cell_position = local_cell_position;
+    odd_data.cell_size = local_cell_size;
+    odd_data.cell_global_id = local_cell_id;
+    odd_data.face_type = local_face_type;
+    odd_data.next_cell_id = local_next_cell_id;
+    odd_data.ghost_cell_global_id = local_ghost_ids;
+    args.zonal_data.ghost_cell_global_id = &odd_data.ghost_cell_global_id[0];
+    odd_data.ghost_cell_proc = local_ghost_procs;
+    args.zonal_data.ghost_cell_proc = &odd_data.ghost_cell_proc[0];
+
+    // rest ncells for the material population
+    ncells = local_ncells;
+  }
+
   // Allocate and assign the material data
   args.zonal_data.number_of_mats = 1;
   odd_data.problem_matids = std::vector<size_t>(1, odd_data.matid);
@@ -228,12 +331,16 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
                                    odd_data.cell_mat_vol_frac[mat_index] * volume;
     }
   }
+  if (odd_data.domain_decomposed) {
+    rtt_c4::global_sum(odd_data.total_mat_energy);
+    rtt_c4::global_sum(odd_data.total_rad_energy);
+  }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
 }
 
 void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) {
 
-  if (print_info) {
+  if (print_info && rtt_c4::node() == 0) {
     std::cout << " CONSERVATION DATA \n";
     std::cout << "     total rad_energy0 = " << odd_data.total_rad_energy << "\n";
     std::cout << "     total mat_energy0 = " << odd_data.total_mat_energy << "\n";
@@ -261,9 +368,13 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
                                                odd_data.cell_mat_temperature[mat_index]);
     }
   }
+  if (odd_data.domain_decomposed) {
+    rtt_c4::global_sum(odd_data.total_mat_energy);
+    rtt_c4::global_sum(odd_data.total_rad_energy);
+  }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
 
-  if (print_info) {
+  if (print_info && rtt_c4::node() == 0) {
     std::cout << "     total rad_energy = " << odd_data.total_rad_energy << "\n";
     std::cout << "     total mat_energy = " << odd_data.total_mat_energy << "\n";
     std::cout << "     total energy = " << odd_data.total_energy << "\n";

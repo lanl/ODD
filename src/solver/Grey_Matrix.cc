@@ -429,6 +429,7 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool 
         max_error = std::max(max_error, eden_diff);
       }
 
+      /* HANGS FOR DIFFERENT NUMBER OF INNER SOLVES
       // Inner loop communication increased mpi window calls but drastically reduces the total
       // number of iterations
       if (gcomm) {
@@ -453,6 +454,7 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool 
         }
         last_ghost_eden = solver_data.ghost_cell_eden;
       }
+      */
 
       diagnostics << "Node = " << rtt_c4::node() << "  Iteration = " << global_count << "." << count
                   << " error = " << max_error << "\n";
