@@ -223,8 +223,7 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
       const size_t gid = local_next_cell_id[i];
       if ((gid < cell_id_initial || gid >= cell_id_final) && gid < ncells) {
         // setup the local ghost map
-        const size_t proc =
-            std::min(static_cast<size_t>(gid / equal_ncells), static_cast<size_t>(rtt_c4::nodes()));
+        const size_t proc = std::min((gid / equal_ncells), static_cast<size_t>(rtt_c4::nodes()));
         local_ghost_map[gid] = {proc, 0UL};
       }
     }
