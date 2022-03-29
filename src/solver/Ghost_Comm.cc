@@ -58,7 +58,7 @@ Ghost_Comm::Ghost_Comm(const Orthogonal_Mesh &mesh) {
 // call MPI_put using a chunk style write to avoid error in MPI_put with large local buffers.
 auto chunk_put_lambda = [](auto &put_rank, auto &put_offset, auto &put_buffer, auto &win,
                            MPI_Datatype mpi_data_type) {
-  const int put_size = put_buffer.size();
+  const size_t put_size = put_buffer.size();
   // This is dumb, but we need to write in chunks because MPI_Put writes
   // junk with large (>10,000) buffer sizes.
   int chunk_size = 1000;
@@ -68,8 +68,8 @@ auto chunk_put_lambda = [](auto &put_rank, auto &put_offset, auto &put_buffer, a
   for (int c = 0; c < nchunks; c++) {
     chunk_size = std::min(chunk_size, static_cast<int>(put_size) - nput);
     Check(chunk_size > 0);
-    MPI_Put(&put_buffer[nput], chunk_size, mpi_data_type, put_rank, put_offset, chunk_size,
-            mpi_data_type, win);
+    MPI_Put(&put_buffer[nput], chunk_size, mpi_data_type, static_cast<int>(put_rank),
+            static_cast<int>(put_offset), chunk_size, mpi_data_type, win);
     nput += chunk_size;
   }
 };
@@ -92,7 +92,6 @@ void Ghost_Comm::build_ghost_map(const Orthogonal_Mesh &mesh) {
   exchange_ghost_data(put_face, local_face_buffer);
 
   for (size_t i = 0; i < local_ghost_buffer_size; i++) {
-    bool found = false;
     size_t buffer_global_id = local_global_id_buffer[i];
     size_t buffer_face_id = local_face_buffer[i];
     for (size_t g = 0; g < mesh.number_of_ghost_cells(); g++) {

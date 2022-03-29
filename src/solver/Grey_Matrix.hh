@@ -56,7 +56,6 @@ private:
   std::vector<std::vector<double>> face_D;
 
   // Ghost Data Communicator
-  bool domain_decomposed;
   std::unique_ptr<Ghost_Comm> gcomm;
 
   //! Helper function for mass averaging
