@@ -221,8 +221,8 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     std::map<size_t, std::array<size_t, 2>> local_ghost_map;
     for (size_t i = 0; i < local_face_type.size(); i++) {
       const size_t gid = local_next_cell_id[i];
-      if (gid < cell_id_initial || gid >= cell_id_final && gid < ncells) {
-        // reset the face type (GHOST OR BOUNDRAY=ncells)
+      if ((gid < cell_id_initial || gid >= cell_id_final) && gid < ncells) {
+        // setup the local ghost map
         const size_t proc =
             std::min(static_cast<size_t>(gid / equal_ncells), static_cast<size_t>(rtt_c4::nodes()));
         local_ghost_map[gid] = {proc, 0UL};

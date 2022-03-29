@@ -69,7 +69,7 @@ void test_1d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map.size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0][1] == 0);
-    FAIL_IF_NOT(local_ghost_data[0] == 4);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
   }
 
   // Check cell data
@@ -83,7 +83,7 @@ void test_1d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map.size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0][0] == 0);
-    FAIL_IF_NOT(local_ghost_data[0] == 3);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
   }
 
   if (ut.numFails == 0) {
@@ -149,8 +149,8 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[1].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[1][2] == 1);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 4);
-    FAIL_IF_NOT(local_ghost_data[1] == 5);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 5.0));
   }
 
   // Check cell data
@@ -176,8 +176,8 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[1].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[1][2] == 1);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 3);
-    FAIL_IF_NOT(local_ghost_data[1] == 5);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 5.0));
   }
 
   // Check cell data
@@ -203,8 +203,8 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[1].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[1][3] == 1);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 3);
-    FAIL_IF_NOT(local_ghost_data[1] == 4);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
   }
 
   if (ut.numFails == 0) {
@@ -277,9 +277,9 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[2].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[2][4] == 2);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 4);
-    FAIL_IF_NOT(local_ghost_data[1] == 4);
-    FAIL_IF_NOT(local_ghost_data[2] == 5);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 5.0));
   }
 
   // Check cell data
@@ -328,11 +328,11 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[3].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[3][4] == 4);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 3);
-    FAIL_IF_NOT(local_ghost_data[1] == 3);
-    FAIL_IF_NOT(local_ghost_data[2] == 5);
-    FAIL_IF_NOT(local_ghost_data[3] == 5);
-    FAIL_IF_NOT(local_ghost_data[4] == 5);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[3], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[4], 5.0));
   }
 
   // Check cell data
@@ -371,10 +371,10 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[3].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[3][5] == 3);
 
-    FAIL_IF_NOT(local_ghost_data[0] == 3);
-    FAIL_IF_NOT(local_ghost_data[1] == 4);
-    FAIL_IF_NOT(local_ghost_data[2] == 4);
-    FAIL_IF_NOT(local_ghost_data[3] == 4);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[3], 4.0));
   }
 
   if (ut.numFails == 0) {
