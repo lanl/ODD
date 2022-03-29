@@ -53,6 +53,14 @@ public:
   //! Get the cells global id
   size_t cell_global_id(const size_t cell) const { return mesh_data.cell_global_id[cell]; }
 
+  size_t ghost_cell_global_id(const size_t ghost_index) const {
+    return mesh_data.ghost_cell_global_id[ghost_index];
+  }
+
+  size_t ghost_cell_proc(const size_t ghost_index) const {
+    return mesh_data.ghost_cell_proc[ghost_index];
+  }
+
   //! get face type
   size_t face_type(const size_t cell, const size_t face) const;
 

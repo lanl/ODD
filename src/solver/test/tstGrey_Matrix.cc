@@ -9,10 +9,11 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "Test_Interface_Builder.hh"
+#include "odd_release/Release.hh"
 #include "solver/Grey_Matrix.hh"
 #include "solver/Orthogonal_Mesh.hh"
+#include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
-#include "ds++/ScalarUnitTest.hh"
 #include "ds++/dbc.hh"
 
 using namespace rtt_dsxx;
@@ -322,6 +323,82 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
   }
 }
 
+void test_1d_dd_matrix(rtt_dsxx::UnitTest &ut) {
+  FAIL_IF_NOT(rtt_c4::nodes() == 2);
+  // setup test interface
+  Interface_Data iface;
+  bool dd = true;
+  Test_1D_Interface_Builder(iface, dd);
+  Orthogonal_Mesh mesh(iface.mesh_data);
+  const double dt = 0.1;
+  // Test Single Material Matrix
+  {
+    Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
+    iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
+    Grey_Matrix matrix(iface.control_data);
+    matrix.initialize_solver_data(mesh, iface.mat_data, dt);
+    // Check initialized/homogenized data
+    for (auto &t : matrix.solver_data.cell_temperature0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &t : matrix.solver_data.cell_temperature)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &d : matrix.solver_data.cell_density)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &cv : matrix.solver_data.cell_cve)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(cv, 9.0));
+
+    matrix.build_matrix(mesh, dt);
+    // Check the matrix values
+    for (auto &d : matrix.solver_data.diagonal)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 17.9828, 1e-5));
+    for (auto &b : matrix.solver_data.source)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
+    // Check connectivity vector
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 0);
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 0);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
+    }
+    // Reflecting boundaries should be zero
+    if (rtt_c4::node() == 0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+    if (rtt_c4::node() == 1)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], 0.0));
+
+    if (rtt_c4::node() == 0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
+    if (rtt_c4::node() == 1)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -11.3227, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100, true);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+  }
+
+  if (ut.numFails == 0) {
+    std::ostringstream m;
+    m << "1D DD matrix test passed";
+    PASSMSG(m.str());
+  }
+}
+
 void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
   Interface_Data iface;
   Test_2D_Interface_Builder(iface);
@@ -401,7 +478,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][2], -11.3227, 1e-5));
 
     // Solve matrix using gauss siedel
-    matrix.gs_solver(1.0e-6, 100);
+    matrix.gs_solver(1.0e-6, 100, true);
     for (auto &e : matrix.solver_data.cell_eden)
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
@@ -506,6 +583,127 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
   if (ut.numFails == 0) {
     std::ostringstream m;
     m << "2D orthogonal mesh test passed";
+    PASSMSG(m.str());
+  }
+}
+
+void test_2d_dd_matrix(rtt_dsxx::UnitTest &ut) {
+  FAIL_IF_NOT(rtt_c4::nodes() == 3);
+  Interface_Data iface;
+  bool dd = true;
+  Test_2D_Interface_Builder(iface, dd);
+  Orthogonal_Mesh mesh(iface.mesh_data);
+  const double dt = 0.1;
+  // Test Single Material Matrix
+  {
+    Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
+    iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
+    Grey_Matrix matrix(iface.control_data);
+    matrix.initialize_solver_data(mesh, iface.mat_data, dt);
+    // Check initialized/homogenized data
+    for (auto &t : matrix.solver_data.cell_temperature0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &t : matrix.solver_data.cell_temperature)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &d : matrix.solver_data.cell_density)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &cv : matrix.solver_data.cell_cve)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(cv, 9.0));
+
+    matrix.build_matrix(mesh, dt);
+    // Check the matrix values
+    for (auto &d : matrix.solver_data.diagonal)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 29.3054, 1e-5));
+    for (auto &b : matrix.solver_data.source)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
+    // Check connectivity vector
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][1] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][3] == FACE_TYPE::GHOST_FACE);
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][0] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][3] == FACE_TYPE::GHOST_FACE);
+    }
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][2] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][2] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[1][2] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][3] == 2);
+    }
+
+    // Reflecting boundaries should be zero
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], 0.0));
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], 0.0));
+    }
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][3], 0.0));
+    }
+
+    // Internal leakage should match left==right==up==down
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
+                                       matrix.solver_data.off_diagonal[1][0]));
+    }
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], -11.3227, 1e-5));
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], -11.3227, 1e-5));
+    }
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][2], -11.3227, 1e-5));
+    }
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100, true);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+  }
+
+  if (ut.numFails == 0) {
+    std::ostringstream m;
+    m << "2D DD orthogonal mesh test passed";
     PASSMSG(m.str());
   }
 }
@@ -880,14 +1078,213 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
   }
 }
 
+void test_3d_dd_matrix(rtt_dsxx::UnitTest &ut) {
+  FAIL_IF_NOT(rtt_c4::nodes() == 3);
+  Interface_Data iface;
+  bool dd = true;
+  Test_3D_Interface_Builder(iface, dd);
+  Orthogonal_Mesh mesh(iface.mesh_data);
+  const double dt = 0.1;
+  // Test Single Material Matrix
+  {
+    Test_Single_Mat_Builder(iface);
+    Test_Output_Builder(iface);
+    iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
+    Grey_Matrix matrix(iface.control_data);
+    matrix.initialize_solver_data(mesh, iface.mat_data, dt);
+    // Check initialized/homogenized data
+    for (auto &t : matrix.solver_data.cell_temperature0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &t : matrix.solver_data.cell_temperature)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 3.0));
+    for (auto &d : matrix.solver_data.cell_density)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 3.0));
+    for (auto &cv : matrix.solver_data.cell_cve)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(cv, 9.0));
+
+    matrix.build_matrix(mesh, dt);
+    // Check the matrix values
+    for (auto &d : matrix.solver_data.diagonal)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 40.6281, 1e-5));
+    for (auto &b : matrix.solver_data.source)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 9.29023, 1e-5));
+    // Check connectivity vector
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][1] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][3] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][4] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][5] == 2);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][5] == FACE_TYPE::GHOST_FACE);
+    }
+
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][0] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][4] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][5] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][5] == FACE_TYPE::GHOST_FACE);
+
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][2] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[1][2] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][3] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][4] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][5] == 2);
+      FAIL_IF_NOT(matrix.solver_data.face_type[1][5] == FACE_TYPE::GHOST_FACE);
+
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][0] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][1] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][2] == 0);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][3] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][4] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][5] == 3);
+      FAIL_IF_NOT(matrix.solver_data.face_type[2][5] == FACE_TYPE::GHOST_FACE);
+    }
+
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][2] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][3] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][4] == 0);
+      FAIL_IF_NOT(matrix.solver_data.face_type[0][4] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][5] == 4);
+
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][2] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][3] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][4] == 1);
+      FAIL_IF_NOT(matrix.solver_data.face_type[1][4] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][5] == 4);
+
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][0] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][1] == 3);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][2] == 0);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][3] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][4] == 2);
+      FAIL_IF_NOT(matrix.solver_data.face_type[2][4] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[2][5] == 4);
+
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][0] == 2);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][1] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][2] == 1);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][3] == 4);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][4] == 3);
+      FAIL_IF_NOT(matrix.solver_data.face_type[3][4] == FACE_TYPE::GHOST_FACE);
+      FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[3][5] == 4);
+    }
+
+    // Reflecting boundaries should be zero
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][4], 0.0));
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][4], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][3], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][4], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][3], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][4], 0.0));
+    }
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][2], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][5], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][2], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][5], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][0], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][3], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][5], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][1], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][3], 0.0));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][5], 0.0));
+    }
+
+    if (rtt_c4::node() == 0) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][5], -11.3227, 1e-5));
+    }
+    if (rtt_c4::node() == 1) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][5], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][2], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][5], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][2], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][5], -11.3227, 1e-5));
+    }
+    if (rtt_c4::node() == 2) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][3], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][4], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][3], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][4], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][1], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][2], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[2][4], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][0], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][2], -11.3227, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[3][4], -11.3227, 1e-5));
+    }
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-8, 100, true);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv)
+      for (auto &e : mat_de)
+        FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
+  }
+
+  if (ut.numFails == 0) {
+    std::ostringstream m;
+    m << "3D DD orthogonal mesh test passed";
+    PASSMSG(m.str());
+  }
+}
+
 //------------------------------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
-  ScalarUnitTest ut(argc, argv, release);
+  rtt_c4::ParallelUnitTest ut(argc, argv, rtt_odd::release);
   try {
     // >>> UNIT TESTS
     test_1d_matrix(ut);
     test_2d_matrix(ut);
     test_3d_matrix(ut);
+    if (rtt_c4::nodes() == 2) {
+      test_1d_dd_matrix(ut);
+    } else if (rtt_c4::nodes() == 3) {
+      test_2d_dd_matrix(ut);
+      test_3d_dd_matrix(ut);
+    }
   }
   UT_EPILOG(ut);
 }

@@ -79,7 +79,11 @@ struct Solver_Data {
   std::vector<double> diagonal;
   std::vector<std::vector<double>> off_diagonal;
   std::vector<std::vector<size_t>> off_diagonal_id;
+  std::vector<std::vector<size_t>> face_type;
   std::vector<double> source;
+  // Extra conservation data;
+  std::array<double, 6> boundary_source;
+  std::array<double, 6> boundary_leakage;
   // Mat Data
   std::vector<double> cell_density;
   std::vector<double> cell_cve;
@@ -91,6 +95,11 @@ struct Solver_Data {
   std::vector<double> cell_eden;
   std::vector<std::vector<double>> face_flux;
   std::vector<double> cell_temperature;
+  // Ghost Data
+  std::vector<double> ghost_cell_temperature;
+  std::vector<double> ghost_face_D;
+  std::vector<double> ghost_dist_center_to_face;
+  std::vector<double> ghost_cell_eden;
 };
 
 //! Raw multigroup matrix data and the solution vectors
