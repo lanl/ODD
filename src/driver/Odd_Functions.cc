@@ -20,7 +20,7 @@
 
 namespace odd_driver {
 
-void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,
+void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &args,
                               Odd_Driver_Data &odd_data) {
 
   // initialize DD mode
@@ -31,6 +31,19 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
     if (str == "-if" || str == "-ipcress_file") {
       odd_data.opacity_file = argv[i + 1];
       args.control_data.opacity_file = &odd_data.opacity_file[0];
+    }
+    if (str == "-s" || str == "-solver") {
+      std::string solver = argv[i + 1];
+      std::cout << "Solver = " << solver << std::endl;
+      if (solver == "P1") {
+        args.control_data.diffusion_method = 0;
+      } else if (solver == "FLD") {
+        args.control_data.diffusion_method = 1;
+      } else if (solver == "DIFFUSION") {
+        args.control_data.diffusion_method = 2;
+      } else {
+        Insist(false, "Diffusion option (" + solver + ") not found");
+      }
     }
     if (str == "-pf" || str == "-print_frequency")
       odd_data.print_frequency = std::stoi(argv[i + 1]);
@@ -295,6 +308,8 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   odd_data.cell_erad = std::vector<double>(ncells, odd_solver::constants::a *
                                                        std::pow(odd_data.rad_temperature, 4.0));
   args.zonal_data.cell_erad = &odd_data.cell_erad[0];
+  odd_data.face_flux = std::vector<double>(ncells * nfaces_per_cell, 0.0);
+  args.zonal_data.face_flux = &odd_data.face_flux[0];
 
   // Output data
   odd_data.output_cell_erad = std::vector<double>(
@@ -305,6 +320,8 @@ void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &ar
   args.output_data.cell_Trad = &odd_data.output_cell_Trad[0];
   odd_data.output_cell_mat_delta_e = std::vector<double>(ncells, 0.0);
   args.output_data.cell_mat_delta_e = &odd_data.output_cell_mat_delta_e[0];
+  odd_data.output_face_flux = std::vector<double>(ncells * nfaces_per_cell, 0.0);
+  args.output_data.face_flux = &odd_data.output_face_flux[0];
 
   // Query the EOS in kJ/g
   odd_data.cell_mat_specific_heat = odd_data.eos->getElectronHeatCapacity(
@@ -347,6 +364,8 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
   }
   const double total_energy0 = odd_data.total_energy;
   size_t mat_index = 0;
+  size_t face_index = 0;
+  const size_t nfaces_per_cell = 2 * args.zonal_data.dimensions;
   odd_data.total_rad_energy = 0.0;
   odd_data.total_mat_energy = 0.0;
   for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
@@ -365,6 +384,9 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
                                                odd_data.cell_mat_energy_density[mat_index] * 1.0e6 /
                                                    odd_data.cell_mat_density[mat_index],
                                                odd_data.cell_mat_temperature[mat_index]);
+    }
+    for (size_t f = 0; f < nfaces_per_cell; f++, face_index++) {
+      odd_data.face_flux[face_index] = args.output_data.face_flux[face_index];
     }
   }
   if (odd_data.domain_decomposed) {

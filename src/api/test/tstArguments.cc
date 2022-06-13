@@ -87,6 +87,8 @@ void test(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_velocity{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   // cell radiation energy density
   std::vector<double> cell_rad_eden{32.0, 23.0};
+  // face flux for each cell (nfaces*ncells)
+  std::vector<double> face_flux{0.0, 1.0, 1.0, 0.0};
   arg.zonal_data.cell_mats = &cell_mats[0];
   arg.zonal_data.cell_mat_vol_frac = &cell_mat_vol_frac[0];
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
@@ -94,6 +96,7 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
+  arg.zonal_data.face_flux = &face_flux[0];
 
   // Check that the pointer matches the data
   FAIL_IF_NOT((*arg.zonal_data.problem_matids) == matids[0]);
@@ -103,16 +106,19 @@ void test(rtt_dsxx::UnitTest &ut) {
 
   try {
     arg.output_data.check_arguments(arg.zonal_data.number_of_local_cells,
-                                    arg.zonal_data.number_of_cell_mats);
+                                    arg.zonal_data.number_of_cell_mats,
+                                    2 * arg.zonal_data.dimensions);
   } catch (...) {
     std::cout << "Caught the expected Output_Data::check_arguments assertions" << std::endl;
   }
   std::vector<double> cell_erad = {17000.0, 17000.1};
   std::vector<double> cell_Trad = {18000.0, 18000.1};
   std::vector<double> cell_mat_delta_e = {-3.0, 4.0, -5.0};
+  std::vector<double> output_face_flux = {0.0, -1.0, -1.0, 0.0};
   arg.output_data.cell_erad = &cell_erad[0];
   arg.output_data.cell_Trad = &cell_Trad[0];
   arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
+  arg.output_data.face_flux = &output_face_flux[0];
   // Check that the pointer matches the data
   FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.cell_erad[0], cell_erad[0]));
   FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.cell_erad[1], cell_erad[1]));
@@ -121,8 +127,10 @@ void test(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.cell_mat_delta_e[0], cell_mat_delta_e[0]));
   FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.cell_mat_delta_e[1], cell_mat_delta_e[1]));
   FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.cell_mat_delta_e[2], cell_mat_delta_e[2]));
+  FAIL_IF_NOT(rtt_dsxx::soft_equiv(arg.output_data.face_flux[2], output_face_flux[2]));
   arg.output_data.check_arguments(arg.zonal_data.number_of_local_cells,
-                                  arg.zonal_data.number_of_cell_mats);
+                                  arg.zonal_data.number_of_cell_mats,
+                                  2 * arg.zonal_data.dimensions);
 
   if (ut.numFails == 0) {
     std::ostringstream m;
@@ -211,6 +219,7 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_mat_specific_heat;
   std::vector<double> cell_velocity;
   std::vector<double> cell_rad_eden;
+  std::vector<double> face_flux;
   if (rtt_c4::node() == 0) {
     // cell wise material data
     // 1 material in cell 1 and 2 materials in cell 2
@@ -229,6 +238,8 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {32.0};
+    // flux on each cell face
+    face_flux = {0.0, 1.0};
   }
   if (rtt_c4::node() == 1) {
     // cell wise material data
@@ -248,6 +259,8 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {23.0};
+    // flux on each cell face
+    face_flux = {1.0, 0.0};
   }
   arg.zonal_data.number_of_cell_mats = &cell_number_of_mats[0];
   arg.zonal_data.cell_mats = &cell_mats[0];
@@ -257,38 +270,44 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
+  arg.zonal_data.face_flux = &face_flux[0];
 
   arg.zonal_data.check_arguments();
 
   try {
     arg.output_data.check_arguments(arg.zonal_data.number_of_local_cells,
-                                    arg.zonal_data.number_of_cell_mats);
+                                    arg.zonal_data.number_of_cell_mats,
+                                    2 * arg.zonal_data.dimensions);
   } catch (...) {
     std::cout << "Caught the expected Output_Data::check_arguments assertions" << std::endl;
   }
   std::vector<double> cell_erad;
   std::vector<double> cell_Trad;
   std::vector<double> cell_mat_delta_e;
+  std::vector<double> output_face_flux;
   if (rtt_c4::node() == 0) {
     cell_erad = {17000.0};
     cell_Trad = {18000.0};
     cell_mat_delta_e = {-3.0};
+    output_face_flux = {0.0, -1.0};
     arg.output_data.cell_erad = &cell_erad[0];
     arg.output_data.cell_Trad = &cell_Trad[0];
     arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
-    arg.output_data.check_arguments(arg.zonal_data.number_of_local_cells,
-                                    arg.zonal_data.number_of_cell_mats);
+    arg.output_data.face_flux = &output_face_flux[0];
   }
   if (rtt_c4::node() == 1) {
     cell_erad = {17000.1};
     cell_Trad = {18000.1};
     cell_mat_delta_e = {4.0, -5.0};
+    output_face_flux = {-1.0, 0.0};
     arg.output_data.cell_erad = &cell_erad[0];
     arg.output_data.cell_Trad = &cell_Trad[0];
     arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
+    arg.output_data.face_flux = &output_face_flux[0];
   }
   arg.output_data.check_arguments(arg.zonal_data.number_of_local_cells,
-                                  arg.zonal_data.number_of_cell_mats);
+                                  arg.zonal_data.number_of_cell_mats,
+                                  2 * arg.zonal_data.dimensions);
 
   if (ut.numFails == 0) {
     std::ostringstream m;

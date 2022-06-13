@@ -36,7 +36,7 @@ public:
  *
  */
   //================================================================================================//
-  Orthogonal_Mesh(const Mesh_Data mData) : mesh_data(std::move(mData)) {}
+  Orthogonal_Mesh(Mesh_Data mData) : mesh_data(std::move(mData)) {}
 
   //! get the number of local cells
   size_t number_of_local_cells() const { return mesh_data.number_of_local_cells; }

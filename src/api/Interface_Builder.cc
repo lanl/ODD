@@ -95,6 +95,15 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
       v_index++;
     }
   }
+  mat_data.face_flux = std::vector<std::vector<double>>(ncells, std::vector<double>(nfaces, 32.0));
+  // fill in the face_flux data for p1 solver
+  size_t f_index = 0;
+  for (auto &flux : mat_data.face_flux) {
+    for (auto &face_flux : flux) {
+      face_flux = arg.zonal_data.face_flux[f_index];
+      f_index++;
+    }
+  }
 
   // build output_data
   auto &output_data = iface.output_data;
@@ -102,6 +111,8 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
   output_data.cell_mat_dedv = std::vector<std::vector<double>>(ncells);
   for (size_t i = 0; i < iface.mesh_data.number_of_local_cells; i++)
     output_data.cell_mat_dedv[i] = std::vector<double>(mat_data.number_of_cell_mats[i], 0.0);
+  output_data.face_flux =
+      std::vector<std::vector<double>>(ncells, std::vector<double>(nfaces, 0.0));
 
   return iface;
 }

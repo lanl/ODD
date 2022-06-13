@@ -64,12 +64,14 @@ struct Mat_Data {
   std::vector<std::vector<double>> cell_mat_density;
   std::vector<std::vector<double>> cell_mat_specific_heat;
   std::vector<double> cell_rad_eden;
+  std::vector<std::vector<double>> face_flux;
   std::vector<std::array<double, 3>> cell_velocity;
 };
 
 //! Raw output data
 struct Output_Data {
   std::vector<std::vector<double>> cell_mat_dedv;
+  std::vector<std::vector<double>> face_flux;
   std::vector<double> cell_rad_eden;
 };
 
@@ -78,6 +80,7 @@ struct Solver_Data {
   // Matrix Data
   std::vector<double> diagonal;
   std::vector<std::vector<double>> off_diagonal;
+  std::vector<std::vector<double>> flux_source;
   std::vector<std::vector<size_t>> off_diagonal_id;
   std::vector<std::vector<size_t>> face_type;
   std::vector<double> source;
@@ -93,11 +96,9 @@ struct Solver_Data {
   std::vector<double> cell_temperature0;
   // Solution Data
   std::vector<double> cell_eden;
-  std::vector<std::vector<double>> face_flux;
   std::vector<double> cell_temperature;
   // Ghost Data
   std::vector<double> ghost_cell_temperature;
-  std::vector<double> ghost_face_D;
   std::vector<double> ghost_dist_center_to_face;
   std::vector<double> ghost_cell_eden;
 };
@@ -114,11 +115,9 @@ struct MG_Solver_Data {
   std::vector<double> cell_cve;
   // Initial Conditions
   std::vector<std::vector<double>> cell_eden0;
-  std::vector<std::vector<std::vector<double>>> face_flux0;
   std::vector<double> cell_temperature0;
   // Solution Data
   std::vector<std::vector<double>> cell_eden;
-  std::vector<std::vector<std::vector<double>>> face_flux;
   std::vector<double> cell_temperature;
 };
 

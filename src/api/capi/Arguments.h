@@ -22,6 +22,7 @@ struct Control_Data {
   double *bnd_temp;
   size_t *reflect_bnd;
   size_t print;
+  size_t diffusion_method;
 };
 
 //! Zonal data
@@ -70,6 +71,9 @@ struct Zonal_Data {
   double *cell_velocity;
   // cell energy density [jerks/cc]
   double *cell_erad;
+  // Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_flux;
 };
 
 //! Output data
@@ -80,6 +84,9 @@ struct Output_Data {
   double *cell_Trad;
   // The change in material energy (strided by cells*mats) [jerks/cc]
   double *cell_mat_delta_e;
+  // Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_flux;
 };
 
 //! Arguments data
@@ -93,6 +100,7 @@ typedef struct Arguments Arguments_t;
 
 // Available C functions
 void Odd_Diffusion_Solve(Arguments_t *arg);
+void MPI_Initialize(int argc, char *argv[]);
 
 #endif // api_arguments_h
 

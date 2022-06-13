@@ -54,10 +54,12 @@ struct Odd_Driver_Data {
   std::vector<double> cell_mat_specific_heat;
   std::vector<double> cell_velocity;
   std::vector<double> cell_erad;
+  std::vector<double> face_flux;
   // Output data
   std::vector<double> output_cell_erad;
   std::vector<double> output_cell_Trad;
   std::vector<double> output_cell_mat_delta_e;
+  std::vector<double> output_face_flux;
   // ODD Conservation Data
   std::vector<double> cell_mat_energy_density;
   double total_energy;
@@ -68,7 +70,7 @@ struct Odd_Driver_Data {
   std::vector<size_t> reflect_bnd{1, 1, 1, 1, 1, 1};
 };
 
-void build_arguments_from_cmd(const std::vector<std::string> argv, Arguments &args,
+void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &args,
                               Odd_Driver_Data &odd_data);
 
 void energy_update(Arguments &args, Odd_Driver_Data &odd_data, const bool print_info);
