@@ -54,6 +54,8 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.face_type = &face_type[0];
   std::vector<size_t> next_cell_id{2, 1, 0, 2};
   arg.zonal_data.next_cell_id = &next_cell_id[0];
+  std::vector<double> face_flux{0.0, 0.0, 0.0, 0.0};
+  arg.zonal_data.face_flux = &face_flux[0];
 
   // global material data
   std::vector<size_t> matids = {10001, 10002};
@@ -86,12 +88,14 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_erad = &cell_erad0[0];
 
   // setup the output data
-  std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, 0.0);
-  std::vector<double> cell_Trad(arg.zonal_data.number_of_local_cells, 0.0);
-  std::vector<double> cell_mat_delta_e(cell_mats.size(), 0.0);
+  std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, -32.0);
+  std::vector<double> cell_Trad(arg.zonal_data.number_of_local_cells, -32.0);
+  std::vector<double> cell_mat_delta_e(cell_mats.size(), -32.0);
+  std::vector<double> output_face_flux(arg.zonal_data.number_of_local_cells * 2, -32.0);
   arg.output_data.cell_erad = &cell_erad[0];
   arg.output_data.cell_Trad = &cell_Trad[0];
   arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
+  arg.output_data.face_flux = &output_face_flux[0];
 
   // Call the solver on the fake arguments list
   std::cout << "Call solver" << std::endl;
@@ -99,12 +103,16 @@ void test(rtt_dsxx::UnitTest &ut) {
 
   // print out the opacity data
   size_t mat_index = 0;
+  size_t face_index = 0;
   for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
     std::cout << "erad[" << i << "] = " << arg.output_data.cell_erad[i] << std::endl;
     std::cout << "Trad[" << i << "] = " << arg.output_data.cell_Trad[i] << std::endl;
     for (size_t m = 0; m < cell_number_of_mats[i]; m++, mat_index++)
       std::cout << "cell_mat_delta_e[" << i << "][" << m
                 << "] = " << arg.output_data.cell_mat_delta_e[mat_index] << std::endl;
+    for (size_t f = 0; f < 2; f++, face_index++)
+      std::cout << "face_flux[" << i << "][" << f << "] = " << arg.output_data.face_flux[face_index]
+                << std::endl;
   }
 
   if (ut.numFails == 0) {
@@ -142,6 +150,7 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_size;
   std::vector<size_t> cell_global_id;
   std::vector<size_t> face_type;
+  std::vector<double> face_flux;
   std::vector<size_t> next_cell_id;
   std::vector<size_t> ghost_cell_global_id;
   std::vector<size_t> ghost_cell_proc;
@@ -151,6 +160,7 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_size = {0.5, 0.0, 0.0};
     cell_global_id = {0};
     face_type = {odd_solver::FACE_TYPE::BOUNDARY_FACE, odd_solver::FACE_TYPE::GHOST_FACE};
+    face_flux = {0.0, 0.0};
     next_cell_id = {1, 0};
     ghost_cell_global_id = {1};
     ghost_cell_proc = {1};
@@ -160,6 +170,7 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_size = {0.5, 0.0, 0.0};
     cell_global_id = {1};
     face_type = {odd_solver::FACE_TYPE::GHOST_FACE, odd_solver::FACE_TYPE::BOUNDARY_FACE};
+    face_flux = {0.0, 0.0};
     next_cell_id = {0, 1};
     ghost_cell_global_id = {0};
     ghost_cell_proc = {0};
@@ -168,6 +179,7 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_size = &cell_size[0];
   arg.zonal_data.cell_global_id = &cell_global_id[0];
   arg.zonal_data.face_type = &face_type[0];
+  arg.zonal_data.face_flux = &face_flux[0];
   arg.zonal_data.next_cell_id = &next_cell_id[0];
   arg.zonal_data.ghost_cell_global_id = &ghost_cell_global_id[0];
   arg.zonal_data.ghost_cell_proc = &ghost_cell_proc[0];
@@ -232,12 +244,14 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
 
   // setup the output data
-  std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, 0.0);
-  std::vector<double> cell_Trad(arg.zonal_data.number_of_local_cells, 0.0);
-  std::vector<double> cell_mat_delta_e(cell_mats.size(), 0.0);
+  std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, -32.0);
+  std::vector<double> cell_Trad(arg.zonal_data.number_of_local_cells, -32.0);
+  std::vector<double> cell_mat_delta_e(cell_mats.size(), -32.0);
+  std::vector<double> output_face_flux(arg.zonal_data.number_of_local_cells * 2, -32.0);
   arg.output_data.cell_erad = &cell_erad[0];
   arg.output_data.cell_Trad = &cell_Trad[0];
   arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
+  arg.output_data.face_flux = &output_face_flux[0];
 
   // Call the solver on the fake arguments list
   std::cout << "Call solver" << std::endl;
@@ -245,12 +259,16 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
 
   // print out the opacity data
   size_t mat_index = 0;
+  size_t face_index = 0;
   for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
     std::cout << "erad[" << i << "] = " << arg.output_data.cell_erad[i] << std::endl;
     std::cout << "Trad[" << i << "] = " << arg.output_data.cell_Trad[i] << std::endl;
     for (size_t m = 0; m < cell_number_of_mats[i]; m++, mat_index++)
       std::cout << "cell_mat_delta_e[" << i << "][" << m
                 << "] = " << arg.output_data.cell_mat_delta_e[mat_index] << std::endl;
+    for (size_t f = 0; f < 2; f++, face_index++)
+      std::cout << "face_flux[" << i << "][" << f << "] = " << arg.output_data.face_flux[face_index]
+                << std::endl;
   }
 
   if (ut.numFails == 0) {

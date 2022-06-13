@@ -33,6 +33,8 @@ void Test_Output_Builder(odd_solver::Interface_Data &iface) {
   iface.output_data.cell_mat_dedv = std::vector<std::vector<double>>(ncells);
   for (size_t cell = 0; cell < ncells; cell++)
     iface.output_data.cell_mat_dedv[cell].resize(iface.mat_data.number_of_cell_mats[cell], 0.0);
+  iface.output_data.face_flux = std::vector<std::vector<double>>(
+      ncells, std::vector<double>(iface.mesh_data.n_dims * 2, 0.0));
 }
 
 //================================================================================================//
@@ -58,6 +60,8 @@ void Test_Single_Mat_Builder(odd_solver::Interface_Data &iface) {
   iface.mat_data.cell_mat_specific_heat = std::vector<std::vector<double>>(ncells, {3.0});
   iface.mat_data.cell_rad_eden = std::vector<double>(ncells, 3.0);
   iface.mat_data.cell_velocity = std::vector<std::array<double, 3>>(ncells, {0.0, 0.0, 0.0});
+  iface.mat_data.face_flux = std::vector<std::vector<double>>(
+      ncells, std::vector<double>(iface.mesh_data.n_dims * 2, 0.0));
 }
 
 //================================================================================================//

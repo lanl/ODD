@@ -4,7 +4,7 @@
 # File  : .gitlab/ci/environments.sh
 # Date  : Monday, Jun 01, 2020, 15:43 pm
 # Author: Kelly Thompson
-# Note  : Copyright (C) 2020-2022 Triad National Security, LLC., All rights reserved.
+# Note  : Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
 #--------------------------------------------------------------------------------------------------#
 
 echo "==> Setting up CI environment..."
@@ -26,7 +26,7 @@ if [[ "${SITE_ID}" == "darwin" ]]; then
   DRACO_ARCH=$(/usr/projects/draco/vendors/bin/target_arch)
   run "module use --append /projects/draco/Modules"
   case ${DRACO_ENV} in
-    arm-gcc930 | power9-gcc930-smpi | power9-xl16117 | x64-gcc930 | x64-intel1905) ;;
+    arm-gcc930 | power9-gcc930-smpi | power9-xl16117 | x64-gcc930* | x64-intel1905) ;;
     *) die ".gitlab/ci/environments.sh :: DRACO_ENV not recognized, DRACO_ENV = ${DRACO_ENV}" ;;
   esac
   if [[ "${MPIARCH:-notset}" == "openmpi" ]]; then
@@ -47,10 +47,9 @@ if [[ "${SITE_ID}" == "darwin" ]]; then
 elif [[ "${SITE_ID}" =~ "ccscs" ]]; then
   run "module use --append /ccs/codes/radtran/Modules"
   export PATH=/scratch/vendors/bin:$PATH # clang-format
-  case ${DRACO_ENV} in
-    gcc1020* | llvm11 ) ;;
-    *) die ".gitlab/ci/environments.sh :: DRACO_ENV not recognized, DRACO_ENV = ${DRACO_ENV}" ;;
-  esac
+  if ! [[ -f "/ccs/codes/radtran/Modules/draco/${DRACO_ENV}.lua" ]]; then
+    die ".gitlab/ci/environments.sh :: DRACO_ENV not recognized, DRACO_ENV = ${DRACO_ENV}"
+  fi
   run "module load draco/${DRACO_ENV}"
 
 #------------------------------------------------------------------------------#
@@ -63,6 +62,19 @@ elif [[ "${SITE_ID}" =~ "snow" ]]; then
     lapse* | draco* ) ;;
     *) die ".gitlab/ci/environments.sh :: DRACO_ENV not recognized, DRACO_ENV = ${DRACO_ENV}" ;;
   esac
+  run "module load ${DRACO_ENV}"
+
+#------------------------------------------------------------------------------#
+# Trinitite
+#------------------------------------------------------------------------------#
+elif [[ "${SITE_ID}" =~ "trinitite" ]]; then
+  run "module use --append /usr/projects/draco/Modules/trinitite"
+  # export PATH=/scratch/vendors/bin:$PATH # clang-format
+  case ${DRACO_ENV} in
+    lapse* | draco* ) ;;
+    *) die ".gitlab/ci/environments.sh :: DRACO_ENV not recognized, DRACO_ENV = ${DRACO_ENV}" ;;
+  esac
+  run "module unload draco lapse"
   run "module load ${DRACO_ENV}"
 
 fi

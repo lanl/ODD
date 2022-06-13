@@ -30,7 +30,7 @@ namespace odd_solver {
 class Grey_Matrix {
 public:
   //! Default constructors.
-  Grey_Matrix(const Control_Data &control_data);
+  Grey_Matrix(const Control_Data &control_data, const bool flux_limiter = false);
 
   //! Initialize solver data
   void initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
@@ -43,9 +43,12 @@ public:
   void gs_solver(const double eps, const size_t max_iter, const bool print = false);
 
   //! Calculate the output data
-  void calculate_output_data(const Mat_Data &mat_data, const double dt, Output_Data &output_data);
+  void calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data, const double dt,
+                             Output_Data &output_data);
 
 private:
+  // flux limiter
+  const bool flux_limiter;
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;
   const std::array<double, 6> bnd_temp;
@@ -54,6 +57,9 @@ private:
   std::vector<double> fleck;
   std::vector<double> sigma_a;
   std::vector<std::vector<double>> face_D;
+  std::vector<std::vector<double>> face_sigma_tr;
+  // Local Ghost data
+  std::vector<double> ghost_face_D;
 
   // Ghost Data Communicator
   std::unique_ptr<Ghost_Comm> gcomm;

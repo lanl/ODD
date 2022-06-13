@@ -29,8 +29,9 @@ namespace odd_solver {
  *
  */
 //================================================================================================//
-Grey_Matrix::Grey_Matrix(const Control_Data &control_data)
-    : reflect_bnd(control_data.reflect_bnd), bnd_temp(control_data.bnd_temp) {
+Grey_Matrix::Grey_Matrix(const Control_Data &control_data, const bool flux_limiter_)
+    : flux_limiter(flux_limiter_), reflect_bnd(control_data.reflect_bnd),
+      bnd_temp(control_data.bnd_temp) {
   Insist(!control_data.multigroup, "Multigroup currently not supported");
 }
 
@@ -75,7 +76,6 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
   // declare some dd put data structures
   std::map<size_t, std::vector<double>> put_ghost_cell_temp;
   std::map<size_t, std::vector<double>> put_ghost_cell_eden;
-  std::map<size_t, std::vector<double>> put_face_D;
   std::map<size_t, std::vector<double>> put_dist_center_to_face;
   if (mesh.domain_decomposed()) {
     gcomm = std::make_unique<Ghost_Comm>(Ghost_Comm(mesh));
@@ -83,13 +83,11 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     // Initialize dd receive (ghost) data structures
     solver_data.ghost_cell_temperature.resize(nghost, 0.0);
     solver_data.ghost_cell_eden.resize(nghost, 0.0);
-    solver_data.ghost_face_D.resize(nghost, 0.0);
     solver_data.ghost_dist_center_to_face.resize(nghost, 0.0);
     // Initialize dd put data structures
     for (auto &map : gcomm->put_buffer_size) {
       put_ghost_cell_temp[map.first] = std::vector<double>(map.second, 0.0);
       put_ghost_cell_eden[map.first] = std::vector<double>(map.second, 0.0);
-      put_face_D[map.first] = std::vector<double>(map.second, 0.0);
       put_dist_center_to_face[map.first] = std::vector<double>(map.second, 0.0);
     }
   }
@@ -104,14 +102,14 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
   solver_data.cell_temperature.resize(ncells, 0.0);
   // Allocate solver face/neighbor data
   solver_data.off_diagonal.resize(ncells);
+  solver_data.flux_source.resize(ncells);
   solver_data.face_type.resize(ncells);
   solver_data.off_diagonal_id.resize(ncells);
   solver_data.face_flux0.resize(ncells);
-  solver_data.face_flux.resize(ncells);
   // Resize local matrix data
   sigma_a.resize(ncells, 0.0);
   fleck.resize(ncells, 0.0);
-  face_D.resize(ncells);
+  face_sigma_tr.resize(ncells);
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
     const auto cell_volume = mesh.cell_volume(cell);
@@ -179,11 +177,11 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
     // Allocate face data
     const auto nfaces = mesh.number_of_faces(cell);
     solver_data.off_diagonal[cell].resize(nfaces, 0.0);
+    solver_data.flux_source[cell].resize(nfaces, 0.0);
     solver_data.face_type[cell].resize(nfaces, 0);
     solver_data.face_flux0[cell].resize(nfaces, 0.0);
-    solver_data.face_flux[cell].resize(nfaces, 0.0);
     solver_data.off_diagonal_id[cell].resize(nfaces, ncells);
-    face_D[cell].resize(nfaces, 0.0);
+    face_sigma_tr[cell].resize(nfaces, 0.0);
     // Loop over faces
     for (size_t face = 0; face < nfaces; face++) {
       const auto ftype = mesh.face_type(cell, face);
@@ -239,11 +237,10 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
         const double sigma_tr =
             std::inner_product(cell_mat_sigma_tr.begin(), cell_mat_sigma_tr.end(),
                                mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
-        face_D[cell][face] = 1.0 / (3.0 * sigma_tr);
+        face_sigma_tr[cell][face] = sigma_tr;
         // populate the put buffer
         const auto rank = gcomm->put_map[cell][face].first;
         const auto put_index = gcomm->put_map[cell][face].second;
-        put_face_D[rank][put_index] = face_D[cell][face];
         put_dist_center_to_face[rank][put_index] = mesh.distance_center_to_face(cell, face);
 
       } else if (ftype == FACE_TYPE::INTERNAL_FACE) {
@@ -264,7 +261,7 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
         const double sigma_tr =
             std::inner_product(cell_mat_sigma_tr.begin(), cell_mat_sigma_tr.end(),
                                mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
-        face_D[cell][face] = 1.0 / (3.0 * sigma_tr);
+        face_sigma_tr[cell][face] = sigma_tr;
       } else {
         Check(ftype == FACE_TYPE::BOUNDARY_FACE);
         Check(solver_data.off_diagonal_id[cell][face] == ncells);
@@ -277,7 +274,6 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
               std::pow(0.5 * (bnd_temp[face] * bnd_temp[face] * bnd_temp[face] * bnd_temp[face] +
                               face_T * face_T * face_T * face_T),
                        0.25);
-
         // Calculate the face opacity
         std::vector<double> cell_mat_sigma_tr(nmats, 0.0);
         for (size_t mat = 0; mat < nmats; mat++) {
@@ -289,14 +285,12 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
         const double sigma_tr =
             std::inner_product(cell_mat_sigma_tr.begin(), cell_mat_sigma_tr.end(),
                                mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
-        face_D[cell][face] = 1.0 / (3.0 * sigma_tr);
+        face_sigma_tr[cell][face] = sigma_tr;
       }
     }
   }
-
   if (gcomm) {
-    // populate remaining face data
-    gcomm->exchange_ghost_data(put_face_D, solver_data.ghost_face_D);
+    // populate distance to center face data
     gcomm->exchange_ghost_data(put_dist_center_to_face, solver_data.ghost_dist_center_to_face);
   }
 }
@@ -314,6 +308,94 @@ void Grey_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_
 //================================================================================================//
 void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
   const auto ncells = mesh.number_of_local_cells();
+
+  std::map<size_t, std::vector<double>> put_face_D;
+  if (gcomm) {
+    const auto nghost = gcomm->local_ghost_buffer_size;
+    // Initialize dd receive (ghost) data structures
+    ghost_face_D.resize(nghost, 0.0);
+    // Initialize dd put data structures
+    for (auto &map : gcomm->put_buffer_size) {
+      put_face_D[map.first] = std::vector<double>(map.second, 0.0);
+    }
+  }
+  // Build face diffusion coefficients
+  face_D.resize(ncells);
+  for (size_t cell = 0; cell < ncells; cell++) {
+    const auto cell_eden = solver_data.cell_eden[cell];
+
+    const auto nfaces = mesh.number_of_faces(cell);
+    face_D[cell].resize(nfaces, 0.0);
+    for (size_t face = 0; face < nfaces; face++) {
+      const auto half_width = mesh.distance_center_to_face(cell, face);
+      const auto ftype = mesh.face_type(cell, face);
+      if (ftype == FACE_TYPE::GHOST_FACE) {
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
+        const auto ghost_eden = solver_data.ghost_cell_eden[gcomm->ghost_map[next_cell][next_face]];
+        const double deden = std::abs(cell_eden - ghost_eden) / half_width;
+        // J.E. Morel,
+        // Diffusion-limit asymptotics of the transport equation, the P1/3 equations, and two
+        // flux-limited diffusion theories,
+        // Journal of Quantitative Spectroscopy and Radiative Transfer,
+        // Volume 65, Issue 5,
+        // 2000,
+        // Pages 769-778,
+        const auto sigma_tr = face_sigma_tr[cell][face];
+        face_D[cell][face] = flux_limiter
+                                 ? 1.0 / std::sqrt(9.0 * sigma_tr * sigma_tr +
+                                                   (deden * deden) / (cell_eden * cell_eden))
+                                 : 1.0 / (3.0 * sigma_tr);
+        // populate the put buffer
+        const auto rank = gcomm->put_map[cell][face].first;
+        const auto put_index = gcomm->put_map[cell][face].second;
+        put_face_D[rank][put_index] = face_D[cell][face];
+
+      } else if (ftype == FACE_TYPE::INTERNAL_FACE) {
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        const auto next_eden = solver_data.cell_eden[next_cell];
+        const auto max_eden = std::max(cell_eden, next_eden);
+        const double deden = std::abs(cell_eden - next_eden) / half_width;
+        // J.E. Morel,
+        // Diffusion-limit asymptotics of the transport equation, the P1/3 equations, and two
+        // flux-limited diffusion theories,
+        // Journal of Quantitative Spectroscopy and Radiative Transfer,
+        // Volume 65, Issue 5,
+        // 2000,
+        // Pages 769-778,
+        const double sigma_tr = face_sigma_tr[cell][face];
+        face_D[cell][face] = flux_limiter ? 1.0 / std::sqrt(9.0 * sigma_tr * sigma_tr +
+                                                            (deden * deden) / (max_eden * max_eden))
+                                          : 1.0 / (3.0 * sigma_tr);
+      } else {
+        Check(ftype == FACE_TYPE::BOUNDARY_FACE);
+        Check(solver_data.off_diagonal_id[cell][face] == ncells);
+
+        const double bound_eden = constants::a * std::pow(bnd_temp[face], 4.0);
+        const auto max_eden = std::max(cell_eden, bound_eden);
+        const double deden = std::abs(cell_eden - bound_eden) / half_width;
+        // J.E. Morel,
+        // Diffusion-limit asymptotics of the transport equation, the P1/3 equations, and two
+        // flux-limited diffusion theories,
+        // Journal of Quantitative Spectroscopy and Radiative Transfer,
+        // Volume 65, Issue 5,
+        // 2000,
+        // Pages 769-778,
+        const double sigma_tr = face_sigma_tr[cell][face];
+        face_D[cell][face] = flux_limiter ? 1.0 / std::sqrt(9.0 * sigma_tr * sigma_tr +
+                                                            (deden * deden) / (max_eden * max_eden))
+                                          : 1.0 / (3.0 * sigma_tr);
+      }
+      if (flux_limiter)
+        face_D[cell][face] =
+            std::min(face_D[cell][face], 1.0 / (20 * half_width + constants::c * dt));
+    }
+  }
+
+  if (gcomm) {
+    // populate remaining face data
+    gcomm->exchange_ghost_data(put_face_D, ghost_face_D);
+  }
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
     // Populate the homogenized cell material data
@@ -337,7 +419,7 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         const auto next_cell = solver_data.off_diagonal_id[cell][face];
         const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
         const auto D = face_D[cell][face];
-        const auto next_D = solver_data.ghost_face_D[gcomm->ghost_map[next_cell][next_face]];
+        const auto next_D = ghost_face_D[gcomm->ghost_map[next_cell][next_face]];
         const auto half_width = mesh.distance_center_to_face(cell, face);
         const auto next_half_width =
             solver_data.ghost_dist_center_to_face[gcomm->ghost_map[next_cell][next_face]];
@@ -369,8 +451,11 @@ void Grey_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
           const auto face_area = mesh.face_area(cell, face);
           const double fring = constants::c * D * dt * face_area /
                                (cell_volume * half_width * (1.0 + 2.0 * D / half_width));
-          solver_data.source[cell] += fring * E0;
+          const double flux_source = fring * E0;
+          solver_data.source[cell] += flux_source;
           solver_data.diagonal[cell] += fring;
+          solver_data.off_diagonal[cell][face] = fring;
+          solver_data.flux_source[cell][face] = flux_source;
         }
       }
     }
@@ -455,12 +540,11 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool 
         last_ghost_eden = solver_data.ghost_cell_eden;
       }
       */
-
-      diagnostics << "Node = " << rtt_c4::node() << "  Iteration = " << global_count << "." << count
-                  << " error = " << max_error << "\n";
       count++;
       total_inners++;
     }
+    diagnostics << "Node = " << rtt_c4::node() << "  Iteration = " << global_count << "." << count
+                << " error = " << max_error << "\n";
     if (gcomm) {
       rtt_c4::global_max(count);
       // update the put vectors
@@ -512,14 +596,48 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool 
  *
  */
 //================================================================================================//
-void Grey_Matrix::calculate_output_data(const Mat_Data &mat_data, const double dt,
-                                        Output_Data &output_data) {
+void Grey_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
+                                        const double dt, Output_Data &output_data) {
+  const auto ncells = mesh.number_of_local_cells();
   Require(output_data.cell_mat_dedv.size() == solver_data.cell_eden.size());
   Require(output_data.cell_rad_eden.size() == solver_data.cell_eden.size());
+  Require(output_data.face_flux.size() == ncells);
+  Require(solver_data.off_diagonal.size() == ncells);
+  Require(solver_data.flux_source.size() == ncells);
   Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
-  const auto ncells = solver_data.cell_eden.size();
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
+    // compute the flux
+    const auto nfaces = mesh.number_of_faces(cell);
+    const auto volume = mesh.cell_volume(cell);
+    for (size_t face = 0; face < nfaces; face++) {
+      const auto area = mesh.face_area(cell, face);
+      const auto ftype = mesh.face_type(cell, face);
+      if (ftype == FACE_TYPE::INTERNAL_FACE) {
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        // calculate the current flux
+        output_data.face_flux[cell][face] =
+            (solver_data.off_diagonal[cell][face] *
+                 (solver_data.cell_eden[next_cell] - solver_data.cell_eden[cell]) +
+             solver_data.flux_source[cell][face]) *
+            volume / (area * dt);
+      } else if (ftype == FACE_TYPE::GHOST_FACE) {
+        const auto next_cell = solver_data.off_diagonal_id[cell][face];
+        const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
+        // calculate the current flux
+        output_data.face_flux[cell][face] =
+            (solver_data.off_diagonal[cell][face] *
+                 (solver_data.ghost_cell_eden[gcomm->ghost_map[next_cell][next_face]] -
+                  solver_data.cell_eden[cell]) +
+             solver_data.flux_source[cell][face]) *
+            volume / (area * dt);
+      } else if (ftype == FACE_TYPE::BOUNDARY_FACE) {
+        output_data.face_flux[cell][face] =
+            (solver_data.flux_source[cell][face] -
+             solver_data.off_diagonal[cell][face] * solver_data.cell_eden[cell]) *
+            volume / (area * dt);
+      }
+    }
     output_data.cell_rad_eden[cell] = solver_data.cell_eden[cell];
     const double cell_vol_edep =
         fleck[cell] * sigma_a[cell] * constants::c * solver_data.cell_eden[cell] * dt;

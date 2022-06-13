@@ -76,7 +76,7 @@ done
 # common ancestor of feature branch (MR) and develop
 echo -ne "\n--------------------------------------------------------------------------------\n"
 currentbranch=$(git rev-parse --abbrev-ref HEAD)
-comancest=$(git merge-base origin/develop "${currentbranch}")
+comancest=$(git merge-base origin/master "${currentbranch}")
 echo "==> current branch       : ${currentbranch}"
 echo -ne "==> common ancestor hash : ${comancest}\n"
 
@@ -148,7 +148,7 @@ echo -ne "Checking modified C/C++ code for style conformance...\n\n"
 mkdir -p "/tmp/$USER" || die "Could not create /tmp/$USER"
 patchfile_c=$(mktemp "/tmp/$USER/gcf.patch.XXXXXXXX")
 
-# don't actually modify the files (originally we compared to branch 'develop', but let's try
+# don't actually modify the files (originally we compared to branch 'master', but let's try
 # ORIG_HEAD or maybe use CI variables like TRAVIS_BRANCH or CI_MERGE_REQUEST_TARGET_BRANCH_NAME).
 target_branch=$comancest
 echo "Looking at code changes compared to target branch = $target_branch"

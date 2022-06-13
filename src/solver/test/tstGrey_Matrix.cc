@@ -76,7 +76,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
@@ -118,7 +118,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
@@ -131,7 +131,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.cell_eden[0] < matrix.solver_data.cell_eden[1]);
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     // Just check for the expected slope
     FAIL_IF_NOT(iface.output_data.cell_rad_eden[0] < iface.output_data.cell_rad_eden[1]);
     // reset the boundary condition for the rest of the tests
@@ -172,9 +172,9 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
-    // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
+    // Vacuum boundaries store the leakage coefficient
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.9006, 1e-5));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
                                      matrix.solver_data.off_diagonal[1][0]));
@@ -187,7 +187,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 0.474943, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, -3.60202, 1e-5));
@@ -234,8 +234,10 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[0][0], 110.624, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[1][1], 110.624, 1e-5));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
                                      matrix.solver_data.off_diagonal[1][0]));
@@ -248,7 +250,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 6.13038, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 28.4082, 1e-5));
@@ -306,7 +308,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
@@ -384,7 +386,7 @@ void test_1d_dd_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
@@ -483,7 +485,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
@@ -570,7 +572,7 @@ void test_2d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
@@ -693,7 +695,7 @@ void test_2d_dd_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
@@ -883,7 +885,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));
@@ -1061,7 +1063,7 @@ void test_3d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 13.541, 1e-5));
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -14.4443, 1e-5));
@@ -1256,7 +1258,7 @@ void test_3d_dd_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.39491, 1e-5));
 
     // Update the output data
-    matrix.calculate_output_data(iface.mat_data, dt, iface.output_data);
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     for (auto &mat_de : iface.output_data.cell_mat_dedv)
       for (auto &e : mat_de)
         FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 1.60509, 1e-5));

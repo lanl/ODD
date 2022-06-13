@@ -25,6 +25,8 @@ struct Control_Data {
   double *bnd_temp{nullptr};
   size_t *reflect_bnd{nullptr};
   size_t print{0};
+  // Diffusion methods (0=P1/3, 1=FLD, 2=Diffusion)
+  size_t diffusion_method{0};
   Control_Data() = default;
   void check_arguments() const;
 };
@@ -75,6 +77,9 @@ struct Zonal_Data {
   double *cell_velocity{nullptr};
   // cell energy density [jerks/cc]
   double *cell_erad{nullptr};
+  // Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_flux{nullptr};
 
   // constructor to initialize data
   Zonal_Data() = default;
@@ -90,10 +95,14 @@ struct Output_Data {
   double *cell_Trad{nullptr};
   // The change in material energy (strided by cells*mats) [jerks/cc]
   double *cell_mat_delta_e{nullptr};
+  // Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_flux{nullptr};
 
   // constructor to initialize data
   Output_Data() = default;
-  void check_arguments(const size_t ncells, const size_t *number_of_cell_mats) const;
+  void check_arguments(const size_t ncells, const size_t *number_of_cell_mats,
+                       const size_t nfaces_per_cell) const;
 };
 
 //! Arguments data

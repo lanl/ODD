@@ -1,7 +1,18 @@
+//--------------------------------------------*-C++-*---------------------------------------------//
+/*!
+ * \file   api/capi/example.c
+ * \author Mathew Cleveland
+ * \date   January 5th 2022
+ * \brief  C example code
+ * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
+ */
+//------------------------------------------------------------------------------------------------//
+
 #include "../Arguments.h"
 
 int main(int argc, char *argv[]) {
 
+  MPI_Initialize(argc, argv);
   if (argc > 1)
     printf("%s", argv[1]);
 
@@ -12,6 +23,7 @@ int main(int argc, char *argv[]) {
   arg.control_data.max_iter = 20;
   arg.control_data.min_tol = 1.0e-12;
   arg.control_data.print = 1;
+  arg.control_data.diffusion_method = 0;
   double bnd_temp[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   arg.control_data.bnd_temp = &bnd_temp[0];
   size_t reflect_bnd[6] = {1, 1, 1, 1, 1, 1};
@@ -35,6 +47,8 @@ int main(int argc, char *argv[]) {
   arg.zonal_data.face_type = &face_type[0];
   size_t next_cell_id[4] = {2, 1, 0, 2};
   arg.zonal_data.next_cell_id = &next_cell_id[0];
+  double face_flux[4] = {0.0, 0.0, 0.0, 0.0};
+  arg.zonal_data.face_flux = &face_flux[0];
 
   // global material data
   size_t matids[2] = {10001, 10002};
@@ -70,19 +84,24 @@ int main(int argc, char *argv[]) {
   double cell_erad[2] = {17000.0, 17000.1};
   double cell_Trad[2] = {18000.0, 18000.1};
   double cell_mat_delta_e[3] = {-3.0, 4.0, -5.0};
+  double output_face_flux[4] = {0.0, 1.0, -1.0, 0.0};
   arg.output_data.cell_erad = &cell_erad[0];
   arg.output_data.cell_Trad = &cell_Trad[0];
   arg.output_data.cell_mat_delta_e = &cell_mat_delta_e[0];
+  arg.output_data.face_flux = &output_face_flux[0];
 
   Odd_Diffusion_Solve(&arg);
 
   // print out the opacity data
   size_t mat_index = 0;
+  size_t face_index = 0;
   for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
     printf("erad[%lu] = %e\n", i, arg.output_data.cell_erad[i]);
     printf("Trad[%lu] = %e\n", i, arg.output_data.cell_Trad[i]);
     for (size_t m = 0; m < cell_number_of_mats[i]; m++, mat_index++)
       printf("cell_mat_delta_e[%lu][%lu] = %e\n", i, m,
              arg.output_data.cell_mat_delta_e[mat_index]);
+    for (size_t f = 0; f < arg.zonal_data.dimensions * 2; f++, face_index++)
+      printf("face_flux[%lu][%lu] = %e\n", i, f, arg.output_data.face_flux[face_index]);
   }
 }

@@ -17,6 +17,8 @@ extern "C" {
 //! Odd solver interface call
 void Odd_Diffusion_Solve(Arguments &arg);
 
+void MPI_Initialize(int argc, char *argv[]);
+
 } // end extern "C"
 
 #endif // api_Function_Interface_hh

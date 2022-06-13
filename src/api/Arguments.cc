@@ -12,6 +12,7 @@
 #include "c4/global.hh"
 #include "ds++/DracoMath.hh"
 #include "ds++/dbc.hh"
+#include <cmath>
 
 //================================================================================================//
 /*!
@@ -27,10 +28,12 @@ void Control_Data::check_arguments() const {
   Insist(bnd_temp != nullptr, "Boundary temperature array must be defined");
   Insist(reflect_bnd != nullptr, "Reflecting boundary array must be defined");
   Insist((print == 1 || print == 0), "Print flag must be 1 or 0");
+  Insist(diffusion_method < 3,
+         "Must specify a valid diffusion method ((0=P1/3, 1=FLD, 2=Diffusion)");
   for (size_t f = 0; f < 6; f++) {
     Insist(reflect_bnd[f] == 1 || reflect_bnd[f] == 0,
            "Reflecting boundary condition must be zero or 1");
-    Insist(rtt_dsxx::isFinite(bnd_temp[f]) && !(bnd_temp[f] < 0.0),
+    Insist(std::isfinite(bnd_temp[f]) && !(bnd_temp[f] < 0.0),
            "Boundary temperature must be finite and non-negative");
   }
 }
@@ -62,9 +65,9 @@ void Zonal_Data::check_arguments() const {
   for (size_t i = 0; i < number_of_local_cells; i++) {
     Insist(cell_global_id[i] < number_of_global_cells, "Cell global id must be greater then zero");
     for (size_t d = 0; d < dimensions; d++) {
-      Insist(rtt_dsxx::isFinite(cell_position[i * 3 + d]), "Cell position must be finite");
-      Insist(rtt_dsxx::isFinite(cell_size[i * 3 + d]), "Cell size must be finite");
-      Insist(rtt_dsxx::isFinite(cell_velocity[i * 3 + d]), "Cell velocity must be finite");
+      Insist(std::isfinite(cell_position[i * 3 + d]), "Cell position must be finite");
+      Insist(std::isfinite(cell_size[i * 3 + d]), "Cell size must be finite");
+      Insist(std::isfinite(cell_velocity[i * 3 + d]), "Cell velocity must be finite");
       Insist(face_type[i * dimensions * 2 + d * 2] < odd_solver::FACE_TYPE::N_FACE_TYPES,
              "Cell lower face type must be a valid type (0=internal, 1=boundary, or 2=ghost");
       Insist(face_type[i * dimensions * 2 + d * 2 + 1] < odd_solver::FACE_TYPE::N_FACE_TYPES,
@@ -106,25 +109,24 @@ void Zonal_Data::check_arguments() const {
   Insist(cell_velocity != nullptr, "Cell velocity was not specified");
   Insist(cell_erad != nullptr,
          "cell radiation energy density array must be allocated and assigned");
+  Insist(face_flux != nullptr, "face_flux zonal array must be allocated and assigned");
   // Check mat data array values
   size_t index = 0;
   for (size_t i = 0; i < number_of_local_cells; i++) {
     Insist(number_of_cell_mats[i] <= number_of_mats,
            "Number of cell mats must be less then or equal to the total number of mats");
     for (size_t d = 0; d < 3; d++)
-      Insist(rtt_dsxx::isFinite(cell_velocity[i * 3 + d]), "The cell velocity must be finite");
+      Insist(std::isfinite(cell_velocity[i * 3 + d]), "The cell velocity must be finite");
     for (size_t m = 0; m < number_of_cell_mats[i]; m++) {
       Insist(cell_mats[index] < number_of_mats,
              "Cell mat must be less then or equal to the total number of mats");
       Insist(!(cell_mat_vol_frac[index] < 0.0) && cell_mat_vol_frac[index] < (1.0 + 1.0e-6),
              "Cell mat vol frac must be bound between zero and one");
-      Insist(rtt_dsxx::isFinite(cell_mat_temperature[index]) &&
-                 !(cell_mat_temperature[index] < 0.0),
+      Insist(std::isfinite(cell_mat_temperature[index]) && !(cell_mat_temperature[index] < 0.0),
              "Cell mat temperature must be non-negative and finite");
-      Insist(rtt_dsxx::isFinite(cell_mat_density[index]) && !(cell_mat_density[index] < 0.0),
+      Insist(std::isfinite(cell_mat_density[index]) && !(cell_mat_density[index] < 0.0),
              "Cell mat density must be non-negative and finite");
-      Insist(rtt_dsxx::isFinite(cell_mat_specific_heat[index]) &&
-                 !(cell_mat_specific_heat[index] < 0.0),
+      Insist(std::isfinite(cell_mat_specific_heat[index]) && !(cell_mat_specific_heat[index] < 0.0),
              "Cell mat temperature must be non-negative and finite");
       index++;
     }
@@ -137,20 +139,27 @@ void Zonal_Data::check_arguments() const {
  *
  */
 //================================================================================================//
-void Output_Data::check_arguments(const size_t ncells, const size_t *number_of_cell_mats) const {
+void Output_Data::check_arguments(const size_t ncells, const size_t *number_of_cell_mats,
+                                  const size_t nfaces_per_cell) const {
   Insist(number_of_cell_mats != nullptr, "Passed a null pointer for number_oc_cell_mats");
   Insist(cell_erad != nullptr, "cell_erad output array must be allocated and assigned");
   Insist(cell_Trad != nullptr, "cell_Trad output array must be allocated and assigned");
   Insist(cell_mat_delta_e != nullptr,
          "cell_mat_delta_e output array must be allocated and assigned");
+  Insist(face_flux != nullptr, "face_flux output array must be allocated and assigned");
+
   size_t index = 0;
+  size_t findex = 0;
   for (size_t i = 0; i < ncells; i++) {
-    Insist(rtt_dsxx::isFinite(cell_erad[i]), "The cell erad must be finite");
-    Insist(rtt_dsxx::isFinite(cell_Trad[i]), "The cell erad must be finite");
+    Insist(std::isfinite(cell_erad[i]), "The cell erad must be finite");
+    Insist(std::isfinite(cell_Trad[i]), "The cell erad must be finite");
     for (size_t m = 0; m < number_of_cell_mats[i]; m++) {
-      Insist(rtt_dsxx::isFinite(cell_mat_delta_e[index]),
-             "The cell_mat_delta_e values must be finite");
+      Insist(std::isfinite(cell_mat_delta_e[index]), "The cell_mat_delta_e values must be finite");
       index++;
+    }
+    for (size_t f = 0; f < nfaces_per_cell; f++) {
+      Insist(std::isfinite(face_flux[findex]), "The face_flux values must be finite");
+      findex++;
     }
   }
 }

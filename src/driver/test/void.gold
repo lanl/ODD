@@ -1,0 +1,451 @@
+Solver = P1
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 4.27151e-10
+####################################
+    t = 1.0000e-03
+    cycle = 10
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.000319613
+     total mat_energy0 = 3e-12
+     total energy0 = 0.000319613
+     total rad_energy = 0.000385462
+     total mat_energy = 3e-12
+     total energy = 0.000385462
+     relative conservation = 0.170833
+Cell = 0 loc = (5.0000e-01) erad[0] = 3.8389e-04 Trad[0] = 4.0899e-01 cell_mat_delta_e[0][0] = 1.1509e-23 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 1.5656e-06 Trad[1] = 1.0336e-01 cell_mat_delta_e[1][0] = 4.6936e-26 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 3.3480e-09 Trad[2] = 2.2226e-02 cell_mat_delta_e[2][0] = 1.0037e-28 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 4.9241e-12 Trad[3] = 4.3525e-03 cell_mat_delta_e[3][0] = 1.4762e-31 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 5.6428e-15 Trad[4] = 8.0082e-04 cell_mat_delta_e[4][0] = 1.6917e-34 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 5.4026e-18 Trad[5] = 1.4087e-04 cell_mat_delta_e[5][0] = 1.6197e-37 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 4.5138e-21 Trad[6] = 2.3949e-05 cell_mat_delta_e[6][0] = 1.3532e-40 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 3.4019e-24 Trad[7] = 3.9682e-06 cell_mat_delta_e[7][0] = 1.0158e-43 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 1.6053e-26 Trad[8] = 1.0400e-06 cell_mat_delta_e[8][0] = 6.9925e-47 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 1.3722e-26 Trad[9] = 1.0000e-06 cell_mat_delta_e[9][0] = 4.4818e-50 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 1.3720e-26 Trad[10] = 1.0000e-06 cell_mat_delta_e[10][0] = 2.7052e-53 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.3720e-26 Trad[11] = 1.0000e-06 cell_mat_delta_e[11][0] = 1.5514e-56 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.3720e-26 Trad[12] = 1.0000e-06 cell_mat_delta_e[12][0] = 7.7010e-60 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3720e-26 Trad[13] = 1.0000e-06 cell_mat_delta_e[13][0] = -7.7788e-61 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = -7.7788e-61 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = -7.7788e-61 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = -7.7788e-61 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = -7.7788e-61 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -7.7788e-61 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -7.7788e-61 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -7.7788e-61 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -7.7788e-61 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -1.5589e-58 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3720e-26 Trad[26] = 1.0000e-06 cell_mat_delta_e[26][0] = -1.4346e-55 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3720e-26 Trad[27] = 1.0000e-06 cell_mat_delta_e[27][0] = -9.9962e-53 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.3719e-26 Trad[28] = 9.9997e-07 cell_mat_delta_e[28][0] = -4.6936e-50 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 1.3336e-26 Trad[29] = 9.9293e-07 cell_mat_delta_e[29][0] = -1.1509e-47 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 6.7946e-10
+####################################
+    t = 2.0000e-03
+    cycle = 20
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00118075
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00118075
+     total rad_energy = 0.00128771
+     total mat_energy = 3e-12
+     total energy = 0.00128771
+     relative conservation = 0.0830597
+Cell = 0 loc = (5.0000e-01) erad[0] = 1.2699e-03 Trad[0] = 5.5157e-01 cell_mat_delta_e[0][0] = 3.8071e-23 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 1.7700e-05 Trad[1] = 1.8952e-01 cell_mat_delta_e[1][0] = 5.3063e-25 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 1.1068e-07 Trad[2] = 5.3294e-02 cell_mat_delta_e[2][0] = 3.3181e-27 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 4.2569e-10 Trad[3] = 1.3272e-02 cell_mat_delta_e[3][0] = 1.2762e-29 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 1.1681e-12 Trad[4] = 3.0376e-03 cell_mat_delta_e[4][0] = 3.5020e-32 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 2.4914e-15 Trad[5] = 6.5279e-04 cell_mat_delta_e[5][0] = 7.4690e-35 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 4.3633e-18 Trad[6] = 1.3354e-04 cell_mat_delta_e[6][0] = 1.3081e-37 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 6.5181e-21 Trad[7] = 2.6254e-05 cell_mat_delta_e[7][0] = 1.9541e-40 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 8.5509e-24 Trad[8] = 4.9965e-06 cell_mat_delta_e[8][0] = 2.5594e-43 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 2.3729e-26 Trad[9] = 1.1468e-06 cell_mat_delta_e[9][0] = 3.0006e-46 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 1.3731e-26 Trad[10] = 1.0002e-06 cell_mat_delta_e[10][0] = 3.1997e-49 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.3720e-26 Trad[11] = 1.0000e-06 cell_mat_delta_e[11][0] = 3.1432e-52 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.3720e-26 Trad[12] = 1.0000e-06 cell_mat_delta_e[12][0] = 2.8735e-55 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3720e-26 Trad[13] = 1.0000e-06 cell_mat_delta_e[13][0] = 2.4596e-58 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = -5.4451e-61 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = -7.7788e-61 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = -7.7788e-61 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = -7.7788e-61 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -7.7788e-61 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -7.7788e-61 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -7.7788e-61 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -7.4209e-59 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -3.4801e-56 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3720e-26 Trad[26] = 1.0000e-06 cell_mat_delta_e[26][0] = -1.2742e-53 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3720e-26 Trad[27] = 1.0000e-06 cell_mat_delta_e[27][0] = -3.3177e-51 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.3702e-26 Trad[28] = 9.9968e-07 cell_mat_delta_e[28][0] = -5.3063e-49 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 1.2450e-26 Trad[29] = 9.7601e-07 cell_mat_delta_e[29][0] = -3.8071e-47 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 7.91357e-10
+####################################
+    t = 3.0000e-03
+    cycle = 30
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00236512
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00236512
+     total rad_energy = 0.00249472
+     total mat_energy = 3e-12
+     total energy = 0.00249472
+     relative conservation = 0.0519491
+Cell = 0 loc = (5.0000e-01) erad[0] = 2.4196e-03 Trad[0] = 6.4803e-01 cell_mat_delta_e[0][0] = 7.2537e-23 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 7.4198e-05 Trad[1] = 2.7118e-01 cell_mat_delta_e[1][0] = 2.2244e-24 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 9.4261e-07 Trad[2] = 9.1042e-02 cell_mat_delta_e[2][0] = 2.8259e-26 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 6.9756e-09 Trad[3] = 2.6703e-02 cell_mat_delta_e[3][0] = 2.0912e-28 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 3.5257e-11 Trad[4] = 7.1199e-03 cell_mat_delta_e[4][0] = 1.0570e-30 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 1.3346e-13 Trad[5] = 1.7660e-03 cell_mat_delta_e[5][0] = 4.0010e-33 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 4.0167e-16 Trad[6] = 4.1364e-04 cell_mat_delta_e[6][0] = 1.2042e-35 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 1.0021e-18 Trad[7] = 9.2446e-05 cell_mat_delta_e[7][0] = 3.0042e-38 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 2.1367e-21 Trad[8] = 1.9865e-05 cell_mat_delta_e[8][0] = 6.4055e-41 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 3.9989e-24 Trad[9] = 4.1318e-06 cell_mat_delta_e[9][0] = 1.1947e-43 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 2.0341e-26 Trad[10] = 1.1035e-06 cell_mat_delta_e[10][0] = 1.9849e-46 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.3730e-26 Trad[11] = 1.0002e-06 cell_mat_delta_e[11][0] = 2.9806e-49 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.3720e-26 Trad[12] = 1.0000e-06 cell_mat_delta_e[12][0] = 4.0933e-52 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3720e-26 Trad[13] = 1.0000e-06 cell_mat_delta_e[13][0] = 5.1918e-55 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = 6.1250e-58 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = -2.3336e-61 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = -7.7788e-61 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = -7.7788e-61 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -7.7788e-61 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -7.7788e-61 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -1.2524e-59 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -3.9887e-57 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -1.0559e-54 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3720e-26 Trad[26] = 1.0000e-06 cell_mat_delta_e[26][0] = -2.0908e-52 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3719e-26 Trad[27] = 9.9998e-07 cell_mat_delta_e[27][0] = -2.8259e-50 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.3646e-26 Trad[28] = 9.9865e-07 cell_mat_delta_e[28][0] = -2.2244e-48 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 1.1301e-26 Trad[29] = 9.5265e-07 cell_mat_delta_e[29][0] = -7.2537e-47 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 7.95343e-10
+####################################
+    t = 4.0000e-03
+    cycle = 40
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00371253
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00371253
+     total rad_energy = 0.00385157
+     total mat_energy = 3e-12
+     total energy = 0.00385157
+     relative conservation = 0.0360973
+Cell = 0 loc = (5.0000e-01) erad[0] = 3.6455e-03 Trad[0] = 7.1796e-01 cell_mat_delta_e[0][0] = 1.0929e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 2.0166e-04 Trad[1] = 3.4819e-01 cell_mat_delta_e[1][0] = 6.0456e-24 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 4.3711e-06 Trad[2] = 1.3360e-01 cell_mat_delta_e[2][0] = 1.3104e-25 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 5.3285e-08 Trad[3] = 4.4393e-02 cell_mat_delta_e[3][0] = 1.5974e-27 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 4.3161e-10 Trad[4] = 1.3318e-02 cell_mat_delta_e[4][0] = 1.2939e-29 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 2.5580e-12 Trad[5] = 3.6952e-03 cell_mat_delta_e[5][0] = 7.6687e-32 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 1.1810e-14 Trad[6] = 9.6320e-04 cell_mat_delta_e[6][0] = 3.5404e-34 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 4.4372e-17 Trad[7] = 2.3847e-04 cell_mat_delta_e[7][0] = 1.3302e-36 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 1.4014e-19 Trad[8] = 5.6532e-05 cell_mat_delta_e[8][0] = 4.2012e-39 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 3.8130e-22 Trad[9] = 1.2911e-05 cell_mat_delta_e[9][0] = 1.1431e-41 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 9.2493e-25 Trad[10] = 2.8654e-06 cell_mat_delta_e[10][0] = 2.7317e-44 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.5663e-26 Trad[11] = 1.0337e-06 cell_mat_delta_e[11][0] = 5.8245e-47 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.3724e-26 Trad[12] = 1.0001e-06 cell_mat_delta_e[12][0] = 1.1222e-49 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3720e-26 Trad[13] = 1.0000e-06 cell_mat_delta_e[13][0] = 1.9745e-52 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = 3.2014e-55 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = 4.8112e-58 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = -7.7788e-62 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = -7.7788e-61 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -7.7788e-61 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -1.7891e-60 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -3.5393e-58 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -7.6621e-56 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -1.2936e-53 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3720e-26 Trad[26] = 1.0000e-06 cell_mat_delta_e[26][0] = -1.5974e-51 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3716e-26 Trad[27] = 9.9992e-07 cell_mat_delta_e[27][0] = -1.3104e-49 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.3519e-26 Trad[28] = 9.9631e-07 cell_mat_delta_e[28][0] = -6.0456e-48 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 1.0075e-26 Trad[29] = 9.2570e-07 cell_mat_delta_e[29][0] = -1.0929e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 7.2162e-10
+####################################
+    t = 5.0000e-03
+    cycle = 50
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00511109
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00511109
+     total rad_energy = 0.00525067
+     total mat_energy = 3e-12
+     total energy = 0.00525067
+     relative conservation = 0.0265834
+Cell = 0 loc = (5.0000e-01) erad[0] = 4.8078e-03 Trad[0] = 7.6939e-01 cell_mat_delta_e[0][0] = 1.4414e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 4.2828e-04 Trad[1] = 4.2033e-01 cell_mat_delta_e[1][0] = 1.2840e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 1.4296e-05 Trad[2] = 1.7966e-01 cell_mat_delta_e[2][0] = 4.2858e-25 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 2.6135e-07 Trad[3] = 6.6064e-02 cell_mat_delta_e[3][0] = 7.8350e-27 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 3.1122e-09 Trad[4] = 2.1824e-02 cell_mat_delta_e[4][0] = 9.3301e-29 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 2.6671e-11 Trad[5] = 6.6401e-03 cell_mat_delta_e[5][0] = 7.9959e-31 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 1.7549e-13 Trad[6] = 1.8911e-03 cell_mat_delta_e[6][0] = 5.2611e-33 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 9.2759e-16 Trad[7] = 5.0992e-04 cell_mat_delta_e[7][0] = 2.7809e-35 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 4.0725e-18 Trad[8] = 1.3126e-04 cell_mat_delta_e[8][0] = 1.2209e-37 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 1.5236e-20 Trad[9] = 3.2462e-05 cell_mat_delta_e[9][0] = 4.5677e-40 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 4.9577e-23 Trad[10] = 7.7532e-06 cell_mat_delta_e[10][0] = 1.4859e-42 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.5621e-25 Trad[11] = 1.8369e-06 cell_mat_delta_e[11][0] = 4.2716e-45 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.4087e-26 Trad[12] = 1.0066e-06 cell_mat_delta_e[12][0] = 1.0999e-47 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3721e-26 Trad[13] = 1.0000e-06 cell_mat_delta_e[13][0] = 2.5650e-50 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = 5.4690e-53 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = 1.0747e-55 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 1.9556e-58 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = -4.6673e-61 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -7.7788e-61 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -2.8081e-59 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -5.2577e-57 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -7.9935e-55 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -9.3293e-53 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3720e-26 Trad[26] = 1.0000e-06 cell_mat_delta_e[26][0] = -7.8349e-51 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3706e-26 Trad[27] = 9.9974e-07 cell_mat_delta_e[27][0] = -4.2858e-49 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.3292e-26 Trad[28] = 9.9210e-07 cell_mat_delta_e[28][0] = -1.2840e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 8.9123e-27 Trad[29] = 8.9776e-07 cell_mat_delta_e[29][0] = -1.4414e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 5.97497e-10
+####################################
+    t = 6.0000e-03
+    cycle = 60
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00648828
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00648828
+     total rad_energy = 0.006623
+     total mat_energy = 3e-12
+     total energy = 0.006623
+     relative conservation = 0.020342
+Cell = 0 loc = (5.0000e-01) erad[0] = 5.8105e-03 Trad[0] = 8.0670e-01 cell_mat_delta_e[0][0] = 1.7420e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 7.7429e-04 Trad[1] = 4.8740e-01 cell_mat_delta_e[1][0] = 2.3213e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 3.7212e-05 Trad[2] = 2.2821e-01 cell_mat_delta_e[2][0] = 1.1156e-24 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 9.5817e-07 Trad[3] = 9.1416e-02 cell_mat_delta_e[3][0] = 2.8725e-26 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 1.5819e-08 Trad[4] = 3.2769e-02 cell_mat_delta_e[4][0] = 4.7425e-28 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 1.8556e-10 Trad[5] = 1.0784e-02 cell_mat_delta_e[5][0] = 5.5631e-30 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 1.6528e-12 Trad[6] = 3.3130e-03 cell_mat_delta_e[6][0] = 4.9550e-32 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 1.1710e-14 Trad[7] = 9.6117e-04 cell_mat_delta_e[7][0] = 3.5106e-34 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 6.8293e-17 Trad[8] = 2.6562e-04 cell_mat_delta_e[8][0] = 2.0474e-36 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 3.3658e-19 Trad[9] = 7.0377e-05 cell_mat_delta_e[9][0] = 1.0090e-38 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 1.4312e-21 Trad[10] = 1.7972e-05 cell_mat_delta_e[10][0] = 4.2906e-41 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 5.3532e-24 Trad[11] = 4.4444e-06 cell_mat_delta_e[11][0] = 1.6007e-43 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 3.1440e-26 Trad[12] = 1.2304e-06 cell_mat_delta_e[12][0] = 5.3124e-46 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.3773e-26 Trad[13] = 1.0010e-06 cell_mat_delta_e[13][0] = 1.5865e-48 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3720e-26 Trad[14] = 1.0000e-06 cell_mat_delta_e[14][0] = 4.3057e-51 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = 1.0708e-53 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 2.4578e-56 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = 5.2118e-59 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = -7.7788e-61 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -2.4892e-60 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -3.5113e-58 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -4.9534e-56 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -5.5624e-54 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -4.7423e-52 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3719e-26 Trad[26] = 9.9998e-07 cell_mat_delta_e[26][0] = -2.8725e-50 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3683e-26 Trad[27] = 9.9932e-07 cell_mat_delta_e[27][0] = -1.1156e-48 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.2946e-26 Trad[28] = 9.8558e-07 cell_mat_delta_e[28][0] = -2.3213e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 7.9096e-27 Trad[29] = 8.7136e-07 cell_mat_delta_e[29][0] = -1.7420e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 4.46712e-10
+####################################
+    t = 7.0000e-03
+    cycle = 70
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00780282
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00780282
+     total rad_energy = 0.00792999
+     total mat_energy = 3e-12
+     total energy = 0.00792999
+     relative conservation = 0.0160363
+Cell = 0 loc = (5.0000e-01) erad[0] = 6.5964e-03 Trad[0] = 8.3270e-01 cell_mat_delta_e[0][0] = 1.9776e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 1.2482e-03 Trad[1] = 5.4921e-01 cell_mat_delta_e[1][0] = 3.7421e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 8.2380e-05 Trad[2] = 2.7837e-01 cell_mat_delta_e[2][0] = 2.4697e-24 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 2.8570e-06 Trad[3] = 1.2013e-01 cell_mat_delta_e[3][0] = 8.5650e-26 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 6.2682e-08 Trad[4] = 4.6232e-02 cell_mat_delta_e[4][0] = 1.8792e-27 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 9.6685e-10 Trad[5] = 1.6293e-02 cell_mat_delta_e[5][0] = 2.8985e-29 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 1.1223e-11 Trad[6] = 5.3479e-03 cell_mat_delta_e[6][0] = 3.3645e-31 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 1.0281e-13 Trad[7] = 1.6545e-03 cell_mat_delta_e[7][0] = 3.0820e-33 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 7.6964e-16 Trad[8] = 4.8667e-04 cell_mat_delta_e[8][0] = 2.3073e-35 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 4.8371e-18 Trad[9] = 1.3703e-04 cell_mat_delta_e[9][0] = 1.4501e-37 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 2.6068e-20 Trad[10] = 3.7127e-05 cell_mat_delta_e[10][0] = 7.8150e-40 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.2256e-22 Trad[11] = 9.7218e-06 cell_mat_delta_e[11][0] = 3.6738e-42 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 5.2340e-25 Trad[12] = 2.4852e-06 cell_mat_delta_e[12][0] = 1.5280e-44 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 1.5618e-26 Trad[13] = 1.0329e-06 cell_mat_delta_e[13][0] = 5.6893e-47 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3727e-26 Trad[14] = 1.0001e-06 cell_mat_delta_e[14][0] = 1.9156e-49 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3720e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = 5.8828e-52 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 1.6601e-54 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = 4.3330e-57 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = 9.8012e-60 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = -7.7788e-61 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -7.7788e-61 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -2.3570e-59 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -3.0813e-57 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -3.3640e-55 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -2.8984e-53 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -1.8791e-51 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3717e-26 Trad[26] = 9.9995e-07 cell_mat_delta_e[26][0] = -8.5650e-50 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3638e-26 Trad[27] = 9.9850e-07 cell_mat_delta_e[27][0] = -2.4697e-48 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.2472e-26 Trad[28] = 9.7644e-07 cell_mat_delta_e[28][0] = -3.7421e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 7.1237e-27 Trad[29] = 8.4886e-07 cell_mat_delta_e[29][0] = -1.9776e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 4.23693e-10
+####################################
+    t = 8.0000e-03
+    cycle = 80
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.00903729
+     total mat_energy0 = 3e-12
+     total energy0 = 0.00903729
+     total rad_energy = 0.00915621
+     total mat_energy = 3e-12
+     total energy = 0.00915621
+     relative conservation = 0.0129878
+Cell = 0 loc = (5.0000e-01) erad[0] = 7.1419e-03 Trad[0] = 8.4940e-01 cell_mat_delta_e[0][0] = 2.1411e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 1.8453e-03 Trad[1] = 6.0558e-01 cell_mat_delta_e[1][0] = 5.5319e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 1.6150e-04 Trad[2] = 3.2938e-01 cell_mat_delta_e[2][0] = 4.8415e-24 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 7.2956e-06 Trad[3] = 1.5185e-01 cell_mat_delta_e[3][0] = 2.1872e-25 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 2.0602e-07 Trad[4] = 6.2250e-02 cell_mat_delta_e[4][0] = 6.1763e-27 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 4.0528e-09 Trad[5] = 2.3313e-02 cell_mat_delta_e[5][0] = 1.2150e-28 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 5.9546e-11 Trad[6] = 8.1166e-03 cell_mat_delta_e[6][0] = 1.7851e-30 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 6.8586e-13 Trad[7] = 2.6590e-03 cell_mat_delta_e[7][0] = 2.0561e-32 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 6.4180e-15 Trad[8] = 8.2701e-04 cell_mat_delta_e[8][0] = 1.9241e-34 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 5.0143e-17 Trad[9] = 2.4587e-04 cell_mat_delta_e[9][0] = 1.5033e-36 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 3.3424e-19 Trad[10] = 7.0254e-05 cell_mat_delta_e[10][0] = 1.0020e-38 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 1.9342e-21 Trad[11] = 1.9377e-05 cell_mat_delta_e[11][0] = 5.7986e-41 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 9.8721e-24 Trad[12] = 5.1792e-06 cell_mat_delta_e[12][0] = 2.9555e-43 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 5.8513e-26 Trad[13] = 1.4371e-06 cell_mat_delta_e[13][0] = 1.3429e-45 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.3903e-26 Trad[14] = 1.0033e-06 cell_mat_delta_e[14][0] = 5.4951e-48 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3721e-26 Trad[15] = 1.0000e-06 cell_mat_delta_e[15][0] = 2.0431e-50 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 6.9544e-53 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = 2.1818e-55 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = 6.3381e-58 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = 1.0112e-60 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -1.7891e-60 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -1.9284e-58 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -2.0558e-56 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -1.7850e-54 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -1.2150e-52 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 1.0000e-06 cell_mat_delta_e[25][0] = -6.1762e-51 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3713e-26 Trad[26] = 9.9987e-07 cell_mat_delta_e[26][0] = -2.1872e-49 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3559e-26 Trad[27] = 9.9704e-07 cell_mat_delta_e[27][0] = -4.8415e-48 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.1875e-26 Trad[28] = 9.6453e-07 cell_mat_delta_e[28][0] = -5.5319e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 6.5782e-27 Trad[29] = 8.3212e-07 cell_mat_delta_e[29][0] = -2.1411e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 4.84986e-10
+####################################
+    t = 9.0000e-03
+    cycle = 90
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0101915
+     total mat_energy0 = 3e-12
+     total energy0 = 0.0101915
+     total rad_energy = 0.0103029
+     total mat_energy = 3e-12
+     total energy = 0.0103029
+     relative conservation = 0.0108095
+Cell = 0 loc = (5.0000e-01) erad[0] = 7.4508e-03 Trad[0] = 8.5844e-01 cell_mat_delta_e[0][0] = 2.2337e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 2.5471e-03 Trad[1] = 6.5641e-01 cell_mat_delta_e[1][0] = 7.6361e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 2.8784e-04 Trad[2] = 3.8058e-01 cell_mat_delta_e[2][0] = 8.6292e-24 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 1.6507e-05 Trad[3] = 1.8624e-01 cell_mat_delta_e[3][0] = 4.9486e-25 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 5.8519e-07 Trad[4] = 8.0814e-02 cell_mat_delta_e[4][0] = 1.7543e-26 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 1.4334e-08 Trad[5] = 3.1971e-02 cell_mat_delta_e[5][0] = 4.2972e-28 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 2.6049e-10 Trad[6] = 1.1738e-02 cell_mat_delta_e[6][0] = 7.8092e-30 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 3.6898e-12 Trad[7] = 4.0496e-03 cell_mat_delta_e[7][0] = 1.1062e-31 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 4.2248e-14 Trad[8] = 1.3247e-03 cell_mat_delta_e[8][0] = 1.2666e-33 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 4.0202e-16 Trad[9] = 4.1373e-04 cell_mat_delta_e[9][0] = 1.2052e-35 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 3.2497e-18 Trad[10] = 1.2406e-04 cell_mat_delta_e[10][0] = 9.7424e-38 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 2.2715e-20 Trad[11] = 3.5871e-05 cell_mat_delta_e[11][0] = 6.8098e-40 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.3933e-22 Trad[12] = 1.0039e-05 cell_mat_delta_e[12][0] = 4.1765e-42 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 7.7268e-25 Trad[13] = 2.7394e-06 cell_mat_delta_e[13][0] = 2.2753e-44 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 1.7431e-26 Trad[14] = 1.0617e-06 cell_mat_delta_e[14][0] = 1.1126e-46 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.3737e-26 Trad[15] = 1.0003e-06 cell_mat_delta_e[15][0] = 4.9267e-49 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3720e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 1.9911e-51 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = 7.3947e-54 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = 2.5386e-56 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = 8.0510e-59 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -1.1979e-59 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -1.2668e-57 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -1.1061e-55 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -7.8088e-54 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -4.2972e-52 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3720e-26 Trad[25] = 9.9999e-07 cell_mat_delta_e[25][0] = -1.7543e-50 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3704e-26 Trad[26] = 9.9970e-07 cell_mat_delta_e[26][0] = -4.9486e-49 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3432e-26 Trad[27] = 9.9471e-07 cell_mat_delta_e[27][0] = -8.6292e-48 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.1173e-26 Trad[28] = 9.4995e-07 cell_mat_delta_e[28][0] = -7.6361e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 6.2694e-27 Trad[29] = 8.2218e-07 cell_mat_delta_e[29][0] = -2.2337e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
+Converged eden -> Global_Iteration = 1 Total_Inner_Iterations = 3 error = 5.24241e-10
+####################################
+    t = 1.0000e-02
+    cycle = 100
+    dt = 1.0000e-04
+####################################
+ CONSERVATION DATA 
+     total rad_energy0 = 0.0112767
+     total mat_energy0 = 3e-12
+     total energy0 = 0.0112767
+     total rad_energy = 0.0113821
+     total mat_energy = 3e-12
+     total energy = 0.0113821
+     relative conservation = 0.00925828
+Cell = 0 loc = (5.0000e-01) erad[0] = 7.5477e-03 Trad[0] = 8.6122e-01 cell_mat_delta_e[0][0] = 2.2627e-22 cell_mat_T[0][0] = 1.0000e-06
+Cell = 1 loc = (1.5000e+00) erad[1] = 3.3241e-03 Trad[1] = 7.0158e-01 cell_mat_delta_e[1][0] = 9.9653e-23 cell_mat_T[1][0] = 1.0000e-06
+Cell = 2 loc = (2.5000e+00) erad[2] = 4.7497e-04 Trad[2] = 4.3135e-01 cell_mat_delta_e[2][0] = 1.4239e-23 cell_mat_T[2][0] = 1.0000e-06
+Cell = 3 loc = (3.5000e+00) erad[3] = 3.3878e-05 Trad[3] = 2.2292e-01 cell_mat_delta_e[3][0] = 1.0156e-24 cell_mat_T[3][0] = 1.0000e-06
+Cell = 4 loc = (4.5000e+00) erad[4] = 1.4781e-06 Trad[4] = 1.0188e-01 cell_mat_delta_e[4][0] = 4.4313e-26 cell_mat_T[4][0] = 1.0000e-06
+Cell = 5 loc = (5.5000e+00) erad[5] = 4.4220e-08 Trad[5] = 4.2371e-02 cell_mat_delta_e[5][0] = 1.3257e-27 cell_mat_T[5][0] = 1.0000e-06
+Cell = 6 loc = (6.5000e+00) erad[6] = 9.7555e-10 Trad[6] = 1.6329e-02 cell_mat_delta_e[6][0] = 2.9246e-29 cell_mat_T[6][0] = 1.0000e-06
+Cell = 7 loc = (7.5000e+00) erad[7] = 1.6691e-11 Trad[7] = 5.9058e-03 cell_mat_delta_e[7][0] = 5.0038e-31 cell_mat_T[7][0] = 1.0000e-06
+Cell = 8 loc = (8.5000e+00) erad[8] = 2.2980e-13 Trad[8] = 2.0230e-03 cell_mat_delta_e[8][0] = 6.8892e-33 cell_mat_T[8][0] = 1.0000e-06
+Cell = 9 loc = (9.5000e+00) erad[9] = 2.6188e-15 Trad[9] = 6.6097e-04 cell_mat_delta_e[9][0] = 7.8509e-35 cell_mat_T[9][0] = 1.0000e-06
+Cell = 10 loc = (1.0500e+01) erad[10] = 2.5258e-17 Trad[10] = 2.0714e-04 cell_mat_delta_e[10][0] = 7.5722e-37 cell_mat_T[10][0] = 1.0000e-06
+Cell = 11 loc = (1.1500e+01) erad[11] = 2.0993e-19 Trad[11] = 6.2543e-05 cell_mat_delta_e[11][0] = 6.2935e-39 cell_mat_T[11][0] = 1.0000e-06
+Cell = 12 loc = (1.2500e+01) erad[12] = 1.5260e-21 Trad[12] = 1.8262e-05 cell_mat_delta_e[12][0] = 4.5747e-41 cell_mat_T[12][0] = 1.0000e-06
+Cell = 13 loc = (1.3500e+01) erad[13] = 9.8361e-24 Trad[13] = 5.1745e-06 cell_mat_delta_e[13][0] = 2.9447e-43 cell_mat_T[13][0] = 1.0000e-06
+Cell = 14 loc = (1.4500e+01) erad[14] = 7.0302e-26 Trad[14] = 1.5045e-06 cell_mat_delta_e[14][0] = 1.6963e-45 cell_mat_T[14][0] = 1.0000e-06
+Cell = 15 loc = (1.5500e+01) erad[15] = 1.4015e-26 Trad[15] = 1.0053e-06 cell_mat_delta_e[15][0] = 8.8246e-48 cell_mat_T[15][0] = 1.0000e-06
+Cell = 16 loc = (1.6500e+01) erad[16] = 1.3722e-26 Trad[16] = 1.0000e-06 cell_mat_delta_e[16][0] = 4.1787e-50 cell_mat_T[16][0] = 1.0000e-06
+Cell = 17 loc = (1.7500e+01) erad[17] = 1.3720e-26 Trad[17] = 1.0000e-06 cell_mat_delta_e[17][0] = 1.8136e-52 cell_mat_T[17][0] = 1.0000e-06
+Cell = 18 loc = (1.8500e+01) erad[18] = 1.3720e-26 Trad[18] = 1.0000e-06 cell_mat_delta_e[18][0] = 7.2581e-55 cell_mat_T[18][0] = 1.0000e-06
+Cell = 19 loc = (1.9500e+01) erad[19] = 1.3720e-26 Trad[19] = 1.0000e-06 cell_mat_delta_e[19][0] = 2.6921e-57 cell_mat_T[19][0] = 1.0000e-06
+Cell = 20 loc = (2.0500e+01) erad[20] = 1.3720e-26 Trad[20] = 1.0000e-06 cell_mat_delta_e[20][0] = -6.9075e-59 cell_mat_T[20][0] = 1.0000e-06
+Cell = 21 loc = (2.1500e+01) erad[21] = 1.3720e-26 Trad[21] = 1.0000e-06 cell_mat_delta_e[21][0] = -6.8884e-57 cell_mat_T[21][0] = 1.0000e-06
+Cell = 22 loc = (2.2500e+01) erad[22] = 1.3720e-26 Trad[22] = 1.0000e-06 cell_mat_delta_e[22][0] = -5.0035e-55 cell_mat_T[22][0] = 1.0000e-06
+Cell = 23 loc = (2.3500e+01) erad[23] = 1.3720e-26 Trad[23] = 1.0000e-06 cell_mat_delta_e[23][0] = -2.9246e-53 cell_mat_T[23][0] = 1.0000e-06
+Cell = 24 loc = (2.4500e+01) erad[24] = 1.3720e-26 Trad[24] = 1.0000e-06 cell_mat_delta_e[24][0] = -1.3257e-51 cell_mat_T[24][0] = 1.0000e-06
+Cell = 25 loc = (2.5500e+01) erad[25] = 1.3719e-26 Trad[25] = 9.9997e-07 cell_mat_delta_e[25][0] = -4.4313e-50 cell_mat_T[25][0] = 1.0000e-06
+Cell = 26 loc = (2.6500e+01) erad[26] = 1.3686e-26 Trad[26] = 9.9938e-07 cell_mat_delta_e[26][0] = -1.0156e-48 cell_mat_T[26][0] = 1.0000e-06
+Cell = 27 loc = (2.7500e+01) erad[27] = 1.3245e-26 Trad[27] = 9.9123e-07 cell_mat_delta_e[27][0] = -1.4239e-47 cell_mat_T[27][0] = 1.0000e-06
+Cell = 28 loc = (2.8500e+01) erad[28] = 1.0396e-26 Trad[28] = 9.3299e-07 cell_mat_delta_e[28][0] = -9.9653e-47 cell_mat_T[28][0] = 1.0000e-06
+Cell = 29 loc = (2.9500e+01) erad[29] = 6.1725e-27 Trad[29] = 8.1898e-07 cell_mat_delta_e[29][0] = -2.2627e-46 cell_mat_T[29][0] = 1.0000e-06
+####################################
