@@ -35,6 +35,12 @@ struct Odd_Driver_Data {
   double specific_heat_Tref{1.0};
   double specific_heat_Tpow{0.0};
   double rad_temperature;
+  // Volume source
+  std::array<double, 3> vol_source_upper_bound{0.0, 0.0, 0.0};
+  std::array<double, 3> vol_source_lower_bound{0.0, 0.0, 0.0};
+  std::array<double, 3> vol_source_eir_split{0.0, 0.0, 0.0};
+  std::array<double, 2> vol_source_duration{0.0, 0.0};
+  double vol_source_strength;
   // Mesh data holder
   std::vector<double> cell_position;
   std::vector<double> cell_size;
@@ -52,8 +58,10 @@ struct Odd_Driver_Data {
   std::vector<double> cell_mat_temperature;
   std::vector<double> cell_mat_density;
   std::vector<double> cell_mat_specific_heat;
+  std::vector<double> cell_mat_electron_source;
   std::vector<double> cell_velocity;
   std::vector<double> cell_erad;
+  std::vector<double> cell_rad_source;
   std::vector<double> face_flux;
   // Output data
   std::vector<double> output_cell_erad;
@@ -65,6 +73,7 @@ struct Odd_Driver_Data {
   double total_energy;
   double total_rad_energy;
   double total_mat_energy;
+  double total_source_energy;
   // Boundary conditions
   std::vector<double> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   std::vector<size_t> reflect_bnd{1, 1, 1, 1, 1, 1};
@@ -74,6 +83,8 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
                               Odd_Driver_Data &odd_data);
 
 void energy_update(Arguments &args, Odd_Driver_Data &odd_data, const bool print_info);
+
+void update_source(Arguments &args, Odd_Driver_Data &odd_data, const double time);
 
 } // end namespace odd_driver
 

@@ -54,6 +54,8 @@ private:
   const std::array<double, 6> bnd_temp;
 
   // Local matrix data
+  std::vector<double> ext_imp_source;
+  std::vector<double> rad_source;
   std::vector<double> fleck;
   std::vector<double> sigma_a;
   std::vector<std::vector<double>> face_D;

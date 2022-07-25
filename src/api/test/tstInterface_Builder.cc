@@ -89,11 +89,16 @@ void test(rtt_dsxx::UnitTest &ut) {
   // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
   std::vector<double> cell_mat_specific_heat{0.1, 0.1, 0.01};
   std::vector<std::vector<double>> cell_mat_specific_heat_ref{{0.1}, {0.1, 0.01}};
+  // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
+  std::vector<double> cell_mat_electron_source{0.1, 0.1, 0.01};
+  std::vector<std::vector<double>> cell_mat_electron_source_ref{{0.1}, {0.1, 0.01}};
   // cell velocity
   std::vector<double> cell_velocity{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   std::vector<std::array<double, 3>> cell_velocity_ref{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
   // cell radiation energy density
   std::vector<double> cell_rad_eden{32.0, 23.0};
+  // cell radiation source
+  std::vector<double> cell_rad_source{32.0, 23.0};
   // face flux for each cell (nfaces*ncells);
   std::vector<double> face_flux{0.0, 1.0, 1.0, 0.0};
   arg.zonal_data.cell_mats = &cell_mats[0];
@@ -101,8 +106,10 @@ void test(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
+  arg.zonal_data.cell_mat_electron_source = &cell_mat_electron_source[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
+  arg.zonal_data.cell_rad_source = &cell_rad_source[0];
   arg.zonal_data.face_flux = &face_flux[0];
 
   // Check that the pointer matches the data
@@ -189,11 +196,16 @@ void test(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_mat_specific_heat.begin(),
                          iface.mat_data.cell_mat_specific_heat.end(),
                          cell_mat_specific_heat_ref.begin(), cell_mat_specific_heat_ref.end()));
+  FAIL_IF_NOT(std::equal(iface.mat_data.cell_mat_electron_source.begin(),
+                         iface.mat_data.cell_mat_electron_source.end(),
+                         cell_mat_electron_source_ref.begin(), cell_mat_electron_source_ref.end()));
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_velocity.begin(), iface.mat_data.cell_velocity.end(),
                          cell_velocity_ref.begin(), cell_velocity_ref.end()));
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_rad_eden.begin(), iface.mat_data.cell_rad_eden.end(),
                          cell_rad_eden.begin(), cell_rad_eden.end()));
-
+  FAIL_IF_NOT(std::equal(iface.mat_data.cell_rad_source.begin(),
+                         iface.mat_data.cell_rad_source.end(), cell_rad_source.begin(),
+                         cell_rad_source.end()));
   if (ut.numFails == 0) {
     std::ostringstream m;
     m << "the ODD Interface Builder seem to be working";
@@ -281,14 +293,17 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_mat_temperature;
   std::vector<double> cell_mat_density;
   std::vector<double> cell_mat_specific_heat;
+  std::vector<double> cell_mat_electron_source;
   std::vector<double> cell_velocity;
   std::vector<double> cell_rad_eden;
+  std::vector<double> cell_rad_source;
   std::vector<double> face_flux;
   std::vector<std::vector<size_t>> cell_mats_ref;
   std::vector<std::vector<double>> cell_mat_vol_frac_ref;
   std::vector<std::vector<double>> cell_mat_temperature_ref;
   std::vector<std::vector<double>> cell_mat_density_ref;
   std::vector<std::vector<double>> cell_mat_specific_heat_ref;
+  std::vector<std::vector<double>> cell_mat_electron_source_ref;
   std::vector<std::array<double, 3>> cell_velocity_ref;
   if (rtt_c4::node() == 0) {
     // cell wise material data
@@ -304,16 +319,21 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_mat_density = {10.0};
     // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
     cell_mat_specific_heat = {0.1};
+    // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
+    cell_mat_electron_source = {0.1};
     // cell velocity
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {32.0};
+    // cell radiation source
+    cell_rad_source = {32.0};
     face_flux = {0.0, 1.0};
     cell_mats_ref = {{0}};
     cell_mat_vol_frac_ref = {{1.0}};
     cell_mat_temperature_ref = {{1.0}};
     cell_mat_density_ref = {{10.0}};
     cell_mat_specific_heat_ref = {{0.1}};
+    cell_mat_electron_source_ref = {{0.1}};
     cell_velocity_ref = {{0.0, 0.0, 0.0}};
   }
   if (rtt_c4::node() == 1) {
@@ -330,16 +350,21 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_mat_density = {1.0, 10.0};
     // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
     cell_mat_specific_heat = {0.1, 0.01};
+    // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
+    cell_mat_electron_source = {0.1, 0.01};
     // cell velocity
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {23.0};
+    // cell radiation source
+    cell_rad_source = {23.0};
     face_flux = {1.0, 0.0};
     cell_mats_ref = {{0, 1}};
     cell_mat_vol_frac_ref = {{0.5, 0.5}};
     cell_mat_temperature_ref = {{10.0, 1.0}};
     cell_mat_density_ref = {{1.0, 10.0}};
     cell_mat_specific_heat_ref = {{0.1, 0.01}};
+    cell_mat_electron_source_ref = {{0.1, 0.01}};
     cell_velocity_ref = {{0.0, 0.0, 0.0}};
   }
   arg.zonal_data.number_of_cell_mats = &cell_number_of_mats[0];
@@ -348,8 +373,10 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
+  arg.zonal_data.cell_mat_electron_source = &cell_mat_electron_source[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
+  arg.zonal_data.cell_rad_source = &cell_rad_source[0];
   arg.zonal_data.face_flux = &face_flux[0];
 
   arg.zonal_data.check_arguments();
@@ -448,10 +475,16 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_mat_specific_heat.begin(),
                          iface.mat_data.cell_mat_specific_heat.end(),
                          cell_mat_specific_heat_ref.begin(), cell_mat_specific_heat_ref.end()));
+  FAIL_IF_NOT(std::equal(iface.mat_data.cell_mat_electron_source.begin(),
+                         iface.mat_data.cell_mat_electron_source.end(),
+                         cell_mat_electron_source_ref.begin(), cell_mat_electron_source_ref.end()));
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_velocity.begin(), iface.mat_data.cell_velocity.end(),
                          cell_velocity_ref.begin(), cell_velocity_ref.end()));
   FAIL_IF_NOT(std::equal(iface.mat_data.cell_rad_eden.begin(), iface.mat_data.cell_rad_eden.end(),
                          cell_rad_eden.begin(), cell_rad_eden.end()));
+  FAIL_IF_NOT(std::equal(iface.mat_data.cell_rad_source.begin(),
+                         iface.mat_data.cell_rad_source.end(), cell_rad_source.begin(),
+                         cell_rad_source.end()));
 
   if (ut.numFails == 0) {
     std::ostringstream m;

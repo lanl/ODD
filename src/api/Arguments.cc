@@ -106,13 +106,17 @@ void Zonal_Data::check_arguments() const {
   Insist(cell_mat_density != nullptr, "Vector of cell material densities was not specified");
   Insist(cell_mat_specific_heat != nullptr,
          "Vector of cell material specific heat was not specified");
+  Insist(cell_mat_electron_source != nullptr, "Cell mat electron source was not specified");
   Insist(cell_velocity != nullptr, "Cell velocity was not specified");
   Insist(cell_erad != nullptr,
          "cell radiation energy density array must be allocated and assigned");
+  Insist(cell_rad_source != nullptr, "cell radiation source array must be allocated and assigned");
   Insist(face_flux != nullptr, "face_flux zonal array must be allocated and assigned");
   // Check mat data array values
   size_t index = 0;
   for (size_t i = 0; i < number_of_local_cells; i++) {
+    Insist(!(cell_erad[i] < 0.0), "Radiation energy must be non-negative");
+    Insist(!(cell_rad_source[i] < 0.0), "Radiation source must be non-negative");
     Insist(number_of_cell_mats[i] <= number_of_mats,
            "Number of cell mats must be less then or equal to the total number of mats");
     for (size_t d = 0; d < 3; d++)
@@ -128,6 +132,9 @@ void Zonal_Data::check_arguments() const {
              "Cell mat density must be non-negative and finite");
       Insist(std::isfinite(cell_mat_specific_heat[index]) && !(cell_mat_specific_heat[index] < 0.0),
              "Cell mat temperature must be non-negative and finite");
+      Insist(std::isfinite(cell_mat_electron_source[index]),
+             "Cell mat electron source must be finite");
+
       index++;
     }
   }
