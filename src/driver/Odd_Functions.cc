@@ -91,6 +91,20 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
                       odd_data.specific_heat * 1.0e+6, odd_data.specific_heat_Tref,
                       odd_data.specific_heat_Tpow, 0.0, 0.0, 0.0))));
     }
+    if (str == "-vsrc" || str == "-volume_source") {
+      odd_data.vol_source_strength = std::stod(argv[i + 1]);
+      odd_data.vol_source_duration[0] = std::stod(argv[i + 2]);
+      odd_data.vol_source_duration[1] = std::stod(argv[i + 3]);
+      odd_data.vol_source_eir_split[0] = std::stod(argv[i + 4]);
+      odd_data.vol_source_eir_split[1] = std::stod(argv[i + 5]);
+      odd_data.vol_source_eir_split[2] = std::stod(argv[i + 6]);
+      odd_data.vol_source_lower_bound[0] = std::stod(argv[i + 7]);
+      odd_data.vol_source_lower_bound[1] = std::stod(argv[i + 8]);
+      odd_data.vol_source_lower_bound[2] = std::stod(argv[i + 9]);
+      odd_data.vol_source_upper_bound[0] = std::stod(argv[i + 10]);
+      odd_data.vol_source_upper_bound[1] = std::stod(argv[i + 11]);
+      odd_data.vol_source_upper_bound[2] = std::stod(argv[i + 12]);
+    }
     if (str == "-bt" || str == "-boundary_temp") {
       odd_data.bnd_temp[0] = std::stod(argv[i + 1]);
       odd_data.bnd_temp[1] = std::stod(argv[i + 2]);
@@ -311,6 +325,12 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
   odd_data.face_flux = std::vector<double>(ncells * nfaces_per_cell, 0.0);
   args.zonal_data.face_flux = &odd_data.face_flux[0];
 
+  // Allocate mat source arrays
+  odd_data.cell_mat_electron_source = std::vector<double>(ncells, 0.0);
+  args.zonal_data.cell_mat_electron_source = &odd_data.cell_mat_electron_source[0];
+  odd_data.cell_rad_source = std::vector<double>(ncells, 0.0);
+  args.zonal_data.cell_rad_source = &odd_data.cell_rad_source[0];
+
   // Output data
   odd_data.output_cell_erad = std::vector<double>(
       ncells, odd_solver::constants::a * std::pow(odd_data.rad_temperature, 4.0));
@@ -368,16 +388,21 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
   const size_t nfaces_per_cell = 2 * args.zonal_data.dimensions;
   odd_data.total_rad_energy = 0.0;
   odd_data.total_mat_energy = 0.0;
+  odd_data.total_source_energy = 0.0;
   for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
     double volume = 1.0;
     for (size_t d = 0; d < args.zonal_data.dimensions; d++)
       volume *= odd_data.cell_size[i * 3 + d];
     odd_data.cell_erad[i] = args.output_data.cell_erad[i];
     odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
+    odd_data.total_source_energy += odd_data.cell_rad_source[i] * volume;
     for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
       odd_data.cell_mat_energy_density[mat_index] += args.output_data.cell_mat_delta_e[mat_index];
       odd_data.total_mat_energy += odd_data.cell_mat_energy_density[mat_index] *
                                    odd_data.cell_mat_vol_frac[mat_index] * volume;
+      odd_data.total_source_energy += odd_data.cell_mat_electron_source[mat_index] *
+                                      odd_data.cell_mat_vol_frac[mat_index] * volume;
+
       // Convert from jerks/g -> kJ/g
       odd_data.cell_mat_temperature[mat_index] =
           odd_data.eos->getElectronTemperature(odd_data.cell_mat_density[mat_index],
@@ -392,15 +417,53 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
   if (odd_data.domain_decomposed) {
     rtt_c4::global_sum(odd_data.total_mat_energy);
     rtt_c4::global_sum(odd_data.total_rad_energy);
+    rtt_c4::global_sum(odd_data.total_source_energy);
   }
   odd_data.total_energy = odd_data.total_mat_energy + odd_data.total_rad_energy;
 
   if (print_info && rtt_c4::node() == 0) {
+    std::cout << "     total source_energy = " << odd_data.total_source_energy << "\n";
     std::cout << "     total rad_energy = " << odd_data.total_rad_energy << "\n";
     std::cout << "     total mat_energy = " << odd_data.total_mat_energy << "\n";
     std::cout << "     total energy = " << odd_data.total_energy << "\n";
     std::cout << "     relative conservation = "
-              << std::abs(odd_data.total_energy - total_energy0) / odd_data.total_energy << "\n";
+              << std::abs(odd_data.total_energy - (total_energy0 + odd_data.total_source_energy)) /
+                     odd_data.total_energy
+              << "\n";
+  }
+}
+
+void update_source(Arguments &args, Odd_Driver_Data &odd_data, const double time) {
+  const double normal = odd_data.vol_source_eir_split[0] + odd_data.vol_source_eir_split[1] +
+                        odd_data.vol_source_eir_split[2];
+  const double eratio = normal > 0 ? odd_data.vol_source_eir_split[0] / normal : 0.0;
+  const double rratio = normal > 0 ? odd_data.vol_source_eir_split[2] / normal : 0.0;
+  Insist(!rtt_dsxx::soft_equiv(odd_data.vol_source_eir_split[1], 0.0),
+         "Ion sources are not currently supported so eir_split for ions must be zero");
+  size_t mat_index = 0;
+  for (size_t i = 0; i < args.zonal_data.number_of_local_cells; i++) {
+    const size_t n_mats = odd_data.number_of_cell_mats[i];
+    const std::array<double, 3> position{odd_data.cell_position[i * 3],
+                                         odd_data.cell_position[i * 3 + 1],
+                                         odd_data.cell_position[i * 3 + 2]};
+    if (position[0] <= odd_data.vol_source_upper_bound[0] &&
+        position[0] >= odd_data.vol_source_lower_bound[0] &&
+        position[1] <= odd_data.vol_source_upper_bound[1] &&
+        position[1] >= odd_data.vol_source_lower_bound[1] &&
+        position[2] <= odd_data.vol_source_upper_bound[2] &&
+        position[2] >= odd_data.vol_source_lower_bound[2] &&
+        time >= odd_data.vol_source_duration[0] && time <= odd_data.vol_source_duration[1]) {
+      odd_data.cell_rad_source[i] = rratio * odd_data.vol_source_strength * args.control_data.dt;
+      for (size_t mat = 0; mat < n_mats; mat++, mat_index++) {
+        odd_data.cell_mat_electron_source[mat_index] =
+            eratio * odd_data.vol_source_strength * args.control_data.dt;
+      }
+    } else {
+      odd_data.cell_rad_source[i] = 0.0;
+      for (size_t mat = 0; mat < n_mats; mat++, mat_index++) {
+        odd_data.cell_mat_electron_source[mat_index] = 0.0;
+      }
+    }
   }
 }
 

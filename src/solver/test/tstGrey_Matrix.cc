@@ -318,6 +318,67 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
       FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.45166, 1e-5));
   }
 
+  // Test Multi Material Matrix with internal and radiation source
+  {
+    Test_Multi_Mat_Builder(iface);
+    Test_Output_Builder(iface);
+    iface.mat_data.ipcress_filename = ut.getTestSourcePath() + iface.mat_data.ipcress_filename;
+    // ADD sources
+    iface.mat_data.cell_rad_source =
+        std::vector<double>(iface.mesh_data.number_of_local_cells, 1.0);
+    iface.mat_data.cell_mat_electron_source =
+        std::vector<std::vector<double>>(iface.mesh_data.number_of_local_cells, {0.5, 1.0});
+    Grey_Matrix matrix(iface.control_data);
+    matrix.initialize_solver_data(mesh, iface.mat_data, dt);
+    // Check initialized/homogenized data
+    for (auto &t : matrix.solver_data.cell_temperature0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 4.27236, 1.0e-5));
+    for (auto &t : matrix.solver_data.cell_temperature)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(t, 4.27236, 1.0e-5));
+    for (auto &d : matrix.solver_data.cell_density)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 4.0));
+    for (auto &e : matrix.solver_data.cell_eden0)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.0));
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.0));
+    for (auto &cv : matrix.solver_data.cell_cve)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(cv, 17.0));
+
+    matrix.build_matrix(mesh, dt);
+    // Check the matrix values
+    for (auto &d : matrix.solver_data.diagonal)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(d, 12.6124, 1e-5));
+    for (auto &b : matrix.solver_data.source)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(b, 22.9851, 1e-5));
+    // Check connectivity vector
+    FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][0] == 2);
+    FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[0][1] == 1);
+    FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
+    FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
+    // Reflecting boundaries should be zero
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
+    // Internal leakage should match left==right
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
+                                     matrix.solver_data.off_diagonal[1][0]));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1], -7.83406, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][0], -7.83406, 1e-5));
+
+    // Solve matrix using gauss siedel
+    matrix.gs_solver(1.0e-6, 100);
+    for (auto &e : matrix.solver_data.cell_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.81024, 1e-5));
+
+    // Update the output data
+    matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
+    for (auto &mat_de : iface.output_data.cell_mat_dedv) {
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[0], 14.997, 1e-5));
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(mat_de[1], -13.1834, 1e-5));
+    }
+    for (auto &e : iface.output_data.cell_rad_eden)
+      FAIL_IF_NOT(rtt_dsxx::soft_equiv(e, 4.81024, 1e-5));
+  }
+
   if (ut.numFails == 0) {
     std::ostringstream m;
     m << "1D matrix test passed";

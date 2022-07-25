@@ -72,11 +72,15 @@ struct Zonal_Data {
   double *cell_mat_density{nullptr};
   // cell specific heat [jerks/keV/g]
   double *cell_mat_specific_heat{nullptr};
+  // cell mat electron source [jerks/g]
+  double *cell_mat_electron_source{nullptr};
 
   // cell velocity ncells*3 [cm/sh]
   double *cell_velocity{nullptr};
   // cell energy density [jerks/cc]
   double *cell_erad{nullptr};
+  // cell rad source [jerks/cc]
+  double *cell_rad_source{nullptr};
   // Flux on cell faces ncells*nfaces (strided by cells*face)
   // ergs/cm^2/sh
   double *face_flux{nullptr};

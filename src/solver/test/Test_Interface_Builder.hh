@@ -54,11 +54,13 @@ void Test_Single_Mat_Builder(odd_solver::Interface_Data &iface) {
   iface.mat_data.problem_matids = {10001};
   iface.mat_data.number_of_cell_mats = std::vector<size_t>(ncells, 1);
   iface.mat_data.cell_mats = std::vector<std::vector<size_t>>(ncells, {0});
+  iface.mat_data.cell_mat_electron_source = std::vector<std::vector<double>>(ncells, {0.0});
   iface.mat_data.cell_mat_vol_frac = std::vector<std::vector<double>>(ncells, {1.0});
   iface.mat_data.cell_mat_temperature = std::vector<std::vector<double>>(ncells, {3.0});
   iface.mat_data.cell_mat_density = std::vector<std::vector<double>>(ncells, {3.0});
   iface.mat_data.cell_mat_specific_heat = std::vector<std::vector<double>>(ncells, {3.0});
   iface.mat_data.cell_rad_eden = std::vector<double>(ncells, 3.0);
+  iface.mat_data.cell_rad_source = std::vector<double>(ncells, 0.0);
   iface.mat_data.cell_velocity = std::vector<std::array<double, 3>>(ncells, {0.0, 0.0, 0.0});
   iface.mat_data.face_flux = std::vector<std::vector<double>>(
       ncells, std::vector<double>(iface.mesh_data.n_dims * 2, 0.0));
@@ -81,11 +83,13 @@ void Test_Multi_Mat_Builder(odd_solver::Interface_Data &iface) {
   iface.mat_data.problem_matids = {10001, 10002};
   iface.mat_data.number_of_cell_mats = std::vector<size_t>(ncells, 2);
   iface.mat_data.cell_mats = std::vector<std::vector<size_t>>(ncells, {0, 1});
+  iface.mat_data.cell_mat_electron_source = std::vector<std::vector<double>>(ncells, {0.0, 0.0});
   iface.mat_data.cell_mat_vol_frac = std::vector<std::vector<double>>(ncells, {0.5, 0.5});
   iface.mat_data.cell_mat_temperature = std::vector<std::vector<double>>(ncells, {3.0, 5.0});
   iface.mat_data.cell_mat_density = std::vector<std::vector<double>>(ncells, {3.0, 5.0});
   iface.mat_data.cell_mat_specific_heat = std::vector<std::vector<double>>(ncells, {3.0, 5.0});
   iface.mat_data.cell_rad_eden = std::vector<double>(ncells, 4.0);
+  iface.mat_data.cell_rad_source = std::vector<double>(ncells, 0.0);
   iface.mat_data.cell_velocity = std::vector<std::array<double, 3>>(ncells, {0.0, 0.0, 0.0});
 }
 

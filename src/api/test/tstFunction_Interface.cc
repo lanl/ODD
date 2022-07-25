@@ -75,17 +75,23 @@ void test(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_mat_density{10.0, 1.0, 10.0};
   // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
   std::vector<double> cell_mat_specific_heat{0.1, 0.1, 0.01};
+  // cell 1 (0.1) cell 2 mat_0 (0.1) and mat 1 (0.01)
+  std::vector<double> cell_mat_electron_source{0.1, 0.1, 0.01};
   // cell velocity
   std::vector<double> cell_velocity{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   // cell radiation energy density
   std::vector<double> cell_erad0{32.0, 23.0};
+  // cell radiation source
+  std::vector<double> cell_rad_source{32.0, 23.0};
   arg.zonal_data.cell_mats = &cell_mats[0];
   arg.zonal_data.cell_mat_vol_frac = &cell_mat_vol_frac[0];
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
+  arg.zonal_data.cell_mat_electron_source = &cell_mat_electron_source[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_erad0[0];
+  arg.zonal_data.cell_rad_source = &cell_rad_source[0];
 
   // setup the output data
   std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, -32.0);
@@ -194,8 +200,10 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   std::vector<double> cell_mat_temperature;
   std::vector<double> cell_mat_density;
   std::vector<double> cell_mat_specific_heat;
+  std::vector<double> cell_mat_electron_source;
   std::vector<double> cell_velocity;
   std::vector<double> cell_rad_eden;
+  std::vector<double> cell_rad_source;
   if (rtt_c4::node() == 0) {
     // cell wise material data
     // 1 material in cell 1 and 2 materials in cell 2
@@ -210,10 +218,14 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_mat_density = {10.0};
     // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
     cell_mat_specific_heat = {0.1};
+    // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
+    cell_mat_electron_source = {0.1};
     // cell velocity
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {32.0};
+    // cell radiation source
+    cell_rad_source = {32.0};
   }
   if (rtt_c4::node() == 1) {
     // cell wise material data
@@ -229,10 +241,14 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
     cell_mat_density = {1.0, 10.0};
     // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
     cell_mat_specific_heat = {0.1, 0.01};
+    // cell 1 (0.1) cell 2 mat 0 (0.1) and mat 1 (0.01)
+    cell_mat_electron_source = {0.1, 0.01};
     // cell velocity
     cell_velocity = {0.0, 0.0, 0.0};
     // cell radiation energy density
     cell_rad_eden = {23.0};
+    // cell radiation source
+    cell_rad_source = {23.0};
   }
   arg.zonal_data.number_of_cell_mats = &cell_number_of_mats[0];
   arg.zonal_data.cell_mats = &cell_mats[0];
@@ -240,8 +256,10 @@ void test_dd(rtt_dsxx::UnitTest &ut) {
   arg.zonal_data.cell_mat_temperature = &cell_mat_temperature[0];
   arg.zonal_data.cell_mat_density = &cell_mat_density[0];
   arg.zonal_data.cell_mat_specific_heat = &cell_mat_specific_heat[0];
+  arg.zonal_data.cell_mat_electron_source = &cell_mat_electron_source[0];
   arg.zonal_data.cell_velocity = &cell_velocity[0];
   arg.zonal_data.cell_erad = &cell_rad_eden[0];
+  arg.zonal_data.cell_rad_source = &cell_rad_source[0];
 
   // setup the output data
   std::vector<double> cell_erad(arg.zonal_data.number_of_local_cells, -32.0);

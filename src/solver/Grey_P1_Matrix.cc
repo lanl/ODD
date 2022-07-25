@@ -108,6 +108,8 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
   solver_data.face_flux0.resize(ncells);
   // Resize local matrix data
   sigma_a.resize(ncells, 0.0);
+  ext_imp_source.resize(ncells, 0.0);
+  rad_source.resize(ncells, 0.0);
   fleck.resize(ncells, 0.0);
   face_sigma_tr.resize(ncells);
   // Loop over all cells
@@ -168,6 +170,12 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
     Check(cell_cve > 0.0);
     fleck[cell] = 1.0 / (1.0 + constants::a * constants::c * sigma_a[cell] * 4.0 * cell_T * cell_T *
                                    cell_T * dt / cell_cve);
+    const double src_val = std::inner_product(mat_data.cell_mat_electron_source[cell].begin(),
+                                              mat_data.cell_mat_electron_source[cell].end(),
+                                              mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
+
+    ext_imp_source[cell] = src_val * (1.0 - fleck[cell]);
+    rad_source[cell] = mat_data.cell_rad_source[cell];
 
     // Set initial conditions
     solver_data.cell_temperature0[cell] = cell_T;
@@ -364,7 +372,8 @@ void Grey_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) 
         solver_data.cell_eden0[cell] +
         constants::a * constants::c * fleck[cell] * sigma_a[cell] *
             solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] *
-            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] * dt;
+            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] * dt +
+        ext_imp_source[cell] + rad_source[cell];
 
     const auto nfaces = mesh.number_of_faces(cell);
     for (size_t face = 0; face < nfaces; face++) {
@@ -628,7 +637,9 @@ void Grey_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Ma
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat];
       const double mat_vol_emission =
           fleck[cell] * mat_sigma_a * constants::a * constants::c * mat_T4 * dt;
-      output_data.cell_mat_dedv[cell][mat] = (mat_vol_edep - mat_vol_emission);
+      output_data.cell_mat_dedv[cell][mat] =
+          (mat_vol_edep - mat_vol_emission) +
+          mat_data.cell_mat_electron_source[cell][mat] * fleck[cell] * dt;
     }
   }
 }

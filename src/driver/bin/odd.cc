@@ -42,6 +42,10 @@ int main(int argc, char *argv[]) {
   for (size_t cycle = 0; cycle < odd_data.n_cycles; cycle++) {
     const bool print_cycle = ((cycle + 1) % odd_data.print_frequency == 0);
 
+    // calculate volume source if specified
+    if (odd_data.vol_source_strength > 0.0)
+      odd_driver::update_source(arg, odd_data, t);
+
     arg.control_data.print = print_cycle ? 1 : 0;
     // Call the solver on the fake arguments list
     Odd_Diffusion_Solve(arg);

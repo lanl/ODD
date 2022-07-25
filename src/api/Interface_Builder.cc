@@ -66,6 +66,7 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
   mat_data.cell_mat_temperature.resize(iface.mesh_data.number_of_local_cells);
   mat_data.cell_mat_density.resize(iface.mesh_data.number_of_local_cells);
   mat_data.cell_mat_specific_heat.resize(iface.mesh_data.number_of_local_cells);
+  mat_data.cell_mat_electron_source.resize(iface.mesh_data.number_of_local_cells);
   size_t mat_index = 0;
   for (size_t i = 0; i < iface.mesh_data.number_of_local_cells; i++) {
     // resize cell material arrays
@@ -74,6 +75,7 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
     mat_data.cell_mat_temperature[i].resize(mat_data.number_of_cell_mats[i]);
     mat_data.cell_mat_density[i].resize(mat_data.number_of_cell_mats[i]);
     mat_data.cell_mat_specific_heat[i].resize(mat_data.number_of_cell_mats[i]);
+    mat_data.cell_mat_electron_source[i].resize(mat_data.number_of_cell_mats[i]);
     // populate arrays
     for (size_t m = 0; m < mat_data.number_of_cell_mats[i]; m++, mat_index++) {
       mat_data.cell_mats[i][m] = arg.zonal_data.cell_mats[mat_index];
@@ -81,12 +83,15 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
       mat_data.cell_mat_temperature[i][m] = arg.zonal_data.cell_mat_temperature[mat_index];
       mat_data.cell_mat_density[i][m] = arg.zonal_data.cell_mat_density[mat_index];
       mat_data.cell_mat_specific_heat[i][m] = arg.zonal_data.cell_mat_specific_heat[mat_index];
+      mat_data.cell_mat_electron_source[i][m] = arg.zonal_data.cell_mat_electron_source[mat_index];
     }
   }
 
   // cell material data
   mat_data.cell_rad_eden =
       std::vector<double>(arg.zonal_data.cell_erad, arg.zonal_data.cell_erad + ncells);
+  mat_data.cell_rad_source =
+      std::vector<double>(arg.zonal_data.cell_rad_source, arg.zonal_data.cell_rad_source + ncells);
   mat_data.cell_velocity.resize(ncells, {32.0, 32.0, 32.0});
   size_t v_index = 0;
   for (auto &cell_v : mat_data.cell_velocity) {
