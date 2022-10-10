@@ -80,11 +80,9 @@ std::string const release(std::string const &codename) {
   std::ostringstream package_name_version;
   if (codename.length() > 0)
     package_name_version << codename << ": ";
-  package_name_version << Term::ccolor(Term::style::bold)
-                       << Term::ccolor(Term::fg::cyan) << "Odd-"
-                       << Odd_VERSION_MAJOR << "_" << Odd_VERSION_MINOR << "_"
-                       << Odd_VERSION_PATCH << Term::ccolor(Term::fg::reset)
-                       << Term::ccolor(Term::style::reset);
+  package_name_version << Term::ccolor(Term::style::bold) << Term::ccolor(Term::fg::cyan) << "odd-"
+                       << Odd_VERSION_MAJOR << "_" << Odd_VERSION_MINOR << "_" << Odd_VERSION_PATCH
+                       << Term::ccolor(Term::fg::reset) << Term::ccolor(Term::style::reset);
 
   std::string const build_date(ODD_BUILD_DATE);
   std::string const build_type(ODD_BUILD_TYPE);
@@ -173,16 +171,15 @@ std::string const authors(bool const use_doxygen_formatting) {
 std::string const copyright() {
   std::ostringstream msg;
   msg << "\n"
-      << Term::ccolor(Term::fg::green) << "Copyright (C) 1998-2021 Triad National "
-      << "Security, LLC. (C19029, LA-CC-16-001)\n     OD999 Export Controlled Software\n"
+      << Term::ccolor(Term::fg::green) << "Copyright (C) 2021-2022 Triad National "
+      << "Security, LLC. (C22079)\n Open Source BSD-3 License\n"
       << Term::ccolor(Term::fg::reset) << std::endl;
   return msg.str();
 }
 
 //------------------------------------------------------------------------------------------------//
 //! Print a code banner
-void printBanner(std::ostream &os, std::string const &codename,
-                 std::string const &desc) {
+void printBanner(std::ostream &os, std::string const &codename, std::string const &desc) {
   std::ostringstream out;
   std::string const divider1(100, '=');
   std::string const divider2(40, '-');

@@ -23,7 +23,7 @@
 //================================================================================================//
 namespace rtt_odd {
 
-/*! Returns a version string of the form "mcgrid-8_9_0, build date 2011/10/06; build type: DEBUG;
+/*! Returns a version string of the form "ODD-0_1_0, build date 2022/07/25; build type: DEBUG;
  *      REPRODUCIBLE, GPU kernel: UNAVAILABLE, Roundoff Mode: ACCURATE, DBC: 7, and
  *      DRACO_DIAGNOSTICS: 0." */
 std::string const release(std::string const &codename);
@@ -45,7 +45,7 @@ std::string const authors(bool const use_doxygen_formatting = false);
  * \verbatim
  *
  * ================================================================================================
- * Odd : odd-8_9_0, build date 2011/10/06; build type: DEBUG; DBC: 7, and
+ * ODD : odd-0_1_0, build date 2022/07/25; build type: DEBUG; DBC: 7, and
  * DRACO_DIAGNOSTICS: 0.
  *
  * Odd API
