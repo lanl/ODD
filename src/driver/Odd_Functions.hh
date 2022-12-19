@@ -19,15 +19,40 @@
 
 namespace odd_driver {
 
+struct Odd_Region {
+  // material data
+  size_t region_number;
+  size_t matid;
+  double temperature;
+  double density;
+  double specific_heat;
+  double specific_heat_Tref{1.0};
+  double specific_heat_Tpow{0.0};
+  std::unique_ptr<rtt_cdi::EoS> eos{nullptr};
+  double rad_temperature;
+
+  bool sphere{false};
+  double sphere_radius;
+  std::array<double, 3> sphere_center;
+  bool block{false};
+  std::array<double, 3> block_p0;
+  std::array<double, 3> block_p1;
+};
+
 struct Odd_Driver_Data {
   // simple mesh and single material data
   std::string opacity_file;
   bool domain_decomposed{false};
   size_t print_frequency{1};
   size_t n_cycles;
+  double dt_ramp{1.0};
+  std::vector<odd_driver::Odd_Region> regions;
   std::array<double, 3> mesh_size;
   std::array<size_t, 3> mesh_n_cells;
+  // background EOS
   std::unique_ptr<rtt_cdi::EoS> eos{nullptr};
+  // per-material EOS
+  std::vector<std::unique_ptr<rtt_cdi::EoS>> mat_eos;
   size_t matid;
   double temperature;
   double density;

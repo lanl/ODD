@@ -52,9 +52,14 @@ private:
   const std::array<double, 6> bnd_temp;
 
   // Local matrix data
+  double current_dt;
   std::vector<double> ext_imp_source;
+  std::vector<double> ext_exp_source;
   std::vector<double> rad_source;
   std::vector<double> fleck;
+  std::vector<double> cell_epsilon;
+  std::vector<double> cell_correction_source;
+  std::vector<double> volume;
   std::vector<double> sigma_a;
   std::vector<std::vector<double>> face_D;
   std::vector<std::vector<double>> face_sigma_tr;
@@ -66,6 +71,11 @@ private:
 
   //! Helper function for mass averaging
   double mass_average(const std::vector<double> &mass, const std::vector<double> &variable) const;
+
+  void calc_correction(double &epsilon, double &cell_correction_source, double &Tstar,
+                       const double eden, double sigma_a, const double fleck, const double cv,
+                       const double volume, const double dt, const double T0,
+                       const double ext_exp_source);
 
 public:
   //! Fundamental matrix data and solution vectors

@@ -72,6 +72,7 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
                                             const double dt) {
   Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
   const auto ncells = mesh.number_of_local_cells();
+  current_dt = dt;
   Require(mat_data.face_flux.size() == ncells);
   // declare some dd put data structures
   std::map<size_t, std::vector<double>> put_ghost_cell_temp;
@@ -109,12 +110,17 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
   // Resize local matrix data
   sigma_a.resize(ncells, 0.0);
   ext_imp_source.resize(ncells, 0.0);
+  ext_exp_source.resize(ncells, 0.0);
   rad_source.resize(ncells, 0.0);
   fleck.resize(ncells, 0.0);
+  cell_epsilon.resize(ncells, 0.0);
+  cell_correction_source.resize(ncells, 0.0);
+  volume.resize(ncells, 0.0);
   face_sigma_tr.resize(ncells);
   // Loop over all cells
   for (size_t cell = 0; cell < ncells; cell++) {
     const auto cell_volume = mesh.cell_volume(cell);
+    volume[cell] = cell_volume;
     Check(cell_volume > 0.0);
     // Populate the homogenized cell material data
     const auto nmats = mat_data.number_of_cell_mats[cell];
@@ -127,7 +133,7 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
     std::vector<double> cell_mat_emission(nmats, 0.0);
     for (size_t mat = 0; mat < nmats; mat++) {
       size_t matid = mat_data.cell_mats[cell][mat];
-      cell_mat_sigma_a[matid] =
+      cell_mat_sigma_a[mat] =
           opacity_reader.mat_planck_abs_models[matid]->getOpacity(
               mat_data.cell_mat_temperature[cell][mat], mat_data.cell_mat_density[cell][mat]) *
           mat_data.cell_mat_density[cell][mat];
@@ -151,7 +157,6 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
     const double cell_cve = std::inner_product(cell_mat_cv.begin(), cell_mat_cv.end(),
                                                mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
     Check(cell_cve > 0.0);
-
     sigma_a[cell] = std::inner_product(cell_mat_sigma_a.begin(), cell_mat_sigma_a.end(),
                                        mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
 
@@ -175,6 +180,7 @@ void Grey_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const M
                                               mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
 
     ext_imp_source[cell] = src_val * (1.0 - fleck[cell]);
+    ext_exp_source[cell] = src_val * fleck[cell];
     rad_source[cell] = mat_data.cell_rad_source[cell];
 
     // Set initial conditions
@@ -371,8 +377,8 @@ void Grey_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) 
     solver_data.source[cell] =
         solver_data.cell_eden0[cell] +
         constants::a * constants::c * fleck[cell] * sigma_a[cell] *
-            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] *
-            solver_data.cell_temperature[cell] * solver_data.cell_temperature[cell] * dt +
+            solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] *
+            solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] * dt +
         ext_imp_source[cell] + rad_source[cell];
 
     const auto nfaces = mesh.number_of_faces(cell);
@@ -462,15 +468,15 @@ void Grey_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bo
     }
   }
   size_t global_count = 0;
-  size_t count = 0;
   size_t total_inners = 0;
-  while (max_error > eps && count < max_iter && global_count < max_iter) {
-    count = 0;
-    while (max_error > eps && count < max_iter) {
+  double local_max_error = 0.0;
+  while (max_error > eps && global_count < max_iter) {
+    size_t inner_count = 0;
+    while (max_error > eps && inner_count < max_iter) {
       max_error = 0.0;
       for (size_t i = 0; i < solver_data.diagonal.size(); i++) {
         const double diag = solver_data.diagonal[i];
-        double b = solver_data.source[i];
+        double b = solver_data.source[i] + cell_correction_source[i];
         for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
           const auto ftype = solver_data.face_type[i][f];
           const size_t next_cell = solver_data.off_diagonal_id[i][f];
@@ -485,6 +491,10 @@ void Grey_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bo
         Check(diag > 0.0);
         const double last_eden = solver_data.cell_eden[i];
         solver_data.cell_eden[i] = b / diag;
+        calc_correction(cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
+                        solver_data.cell_eden[i], sigma_a[i], fleck[i], solver_data.cell_cve[i],
+                        volume[i], current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
+        Check(!(solver_data.cell_eden[i] < 0.0));
         const double eden_diff =
             solver_data.cell_eden[i] > 0.0
                 ? std::abs(solver_data.cell_eden[i] - last_eden) / solver_data.cell_eden[i]
@@ -518,14 +528,12 @@ void Grey_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bo
         last_ghost_eden = solver_data.ghost_cell_eden;
       }
       */
-      count++;
+      inner_count++;
       total_inners++;
     }
 
-    diagnostics << "Node = " << rtt_c4::node() << "  Iteration = " << global_count << "." << count
-                << " error = " << max_error << "\n";
     if (gcomm) {
-      rtt_c4::global_max(count);
+      rtt_c4::global_max(inner_count);
       // update the put vectors
       for (auto &map : gcomm->put_map) {
         auto cell = map.first;
@@ -547,10 +555,14 @@ void Grey_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bo
         max_error = std::max(max_error, eden_diff);
       }
       last_ghost_eden = solver_data.ghost_cell_eden;
+      local_max_error = max_error;
       rtt_c4::global_max(max_error);
     }
     global_count++;
   }
+  diagnostics << "Node = " << rtt_c4::node() << " Glogal Iteration = " << global_count
+              << " Total Inner Iteration = " << total_inners << " error = " << local_max_error
+              << "\n";
 
   if (gcomm) {
     rtt_c4::global_max(total_inners);
@@ -619,8 +631,8 @@ void Grey_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Ma
     }
     // compute the remaining output data
     output_data.cell_rad_eden[cell] = solver_data.cell_eden[cell];
-    const double cell_vol_edep =
-        fleck[cell] * sigma_a[cell] * constants::c * solver_data.cell_eden[cell] * dt;
+    const double cell_vol_edep = (fleck[cell] + cell_epsilon[cell]) * sigma_a[cell] * constants::c *
+                                 solver_data.cell_eden[cell] * dt;
     // Populate the homogenized cell material data
     const auto nmats = mat_data.number_of_cell_mats[cell];
     Check(output_data.cell_mat_dedv[cell].size() == nmats);
@@ -635,13 +647,50 @@ void Grey_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Ma
       const double mat_T4 =
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat] *
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat];
-      const double mat_vol_emission =
-          fleck[cell] * mat_sigma_a * constants::a * constants::c * mat_T4 * dt;
+      const double mat_vol_emission = (fleck[cell] + cell_epsilon[cell]) * mat_sigma_a *
+                                      constants::a * constants::c * mat_T4 * dt;
       output_data.cell_mat_dedv[cell][mat] =
           (mat_vol_edep - mat_vol_emission) +
-          mat_data.cell_mat_electron_source[cell][mat] * fleck[cell] * dt;
+          mat_data.cell_mat_electron_source[cell][mat] * (fleck[cell] + cell_epsilon[cell]) * dt;
     }
   }
+}
+
+void Grey_P1_Matrix::calc_correction(double &epsilon, double &correction_source, double &Tstar,
+                                     double eden, const double sigma_a, const double fleck,
+                                     const double cv, const double volume, const double dt,
+                                     const double T0, const double ext_exp_source) {
+  double error = 1.0;
+  const double convergence = 1e-6;
+  const double dep = fleck * eden * sigma_a * constants::c * dt * volume;
+  const double sampled =
+      fleck * sigma_a * constants::a * constants::c * T0 * T0 * T0 * T0 * dt * volume;
+  const double Sc = 1.0 / fleck * (dep + ext_exp_source - sampled);
+  size_t count = 0;
+  while (error > convergence && count < 1000) {
+    double last_Tstar = Tstar;
+    count++;
+    const double Tc = std::pow(0.25 * (Tstar + T0) * (Tstar * Tstar + T0 * T0), 1.0 / 3.0);
+    const double fleck_c =
+        1.0 / (1.0 + constants::a * constants::c * sigma_a * 4.0 * Tc * Tc * Tc * dt / cv);
+    epsilon = fleck_c - fleck;
+    const double delta_E = dep - sampled + ext_exp_source + epsilon * Sc;
+    const double q = 1.0 / (fleck_c) * ((Tstar - T0) * cv - delta_E / volume);
+    const double dqdT =
+        4.0 * sigma_a * constants::a * constants::c * dt * Tstar * Tstar * Tstar + cv;
+    Tstar = (Tstar - q / dqdT);
+    error = fabs(Tstar - last_Tstar) / Tstar;
+    correction_source = -epsilon * Sc / volume;
+  }
+  std::cout << " T0 = " << T0;
+  std::cout << " Tstar = " << Tstar;
+  std::cout << " Tr0 = " << std::pow(eden / constants::a, 0.25);
+  std::cout << " TrStar = " << std::pow((eden + correction_source) / constants::a, 0.25);
+  std::cout << " correction_source " << correction_source;
+  std::cout << " count = " << count;
+  std::cout << " eps = " << epsilon;
+  std::cout << std::endl;
+  //Check(!(correction_source < 0.0));
 }
 
 } // namespace odd_solver

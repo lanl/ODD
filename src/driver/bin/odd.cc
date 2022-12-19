@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   // Populate data
   odd_driver::build_arguments_from_cmd(argv_strings, arg, odd_data);
 
-  double t = arg.control_data.dt;
+  double t = 0.0;
   for (size_t cycle = 0; cycle < odd_data.n_cycles; cycle++) {
     const bool print_cycle = ((cycle + 1) % odd_data.print_frequency == 0);
 
@@ -55,8 +55,8 @@ int main(int argc, char *argv[]) {
     p_out.setf(std::ios::scientific, std::ios::floatfield);
     if (print_cycle && rtt_c4::node() == 0) {
       // print out the opacity data
-      p_out << "####################################\n";
-      p_out << "    t = " << t << "\n";
+      p_out << "############ CYCLE BEGIN ############\n";
+      p_out << "    t = " << t + arg.control_data.dt << "\n";
       p_out << "    cycle = " << cycle + 1 << "\n";
       p_out << "    dt = " << arg.control_data.dt << "\n";
       p_out << "####################################\n";
@@ -73,31 +73,34 @@ int main(int argc, char *argv[]) {
       for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
         const size_t cell_id = arg.zonal_data.cell_global_id[i];
         p_out << "Cell = " << cell_id;
-        p_out << " loc = (" << arg.zonal_data.cell_position[i * 3];
+        p_out << "; loc = (" << arg.zonal_data.cell_position[i * 3];
         for (size_t d = 1; d < arg.zonal_data.dimensions; d++)
           p_out << ", " << arg.zonal_data.cell_position[i * 3 + d];
         p_out << ")";
-        p_out << " erad[" << cell_id << "] = " << arg.output_data.cell_erad[i];
-        p_out << " Trad[" << cell_id << "] = " << arg.output_data.cell_Trad[i];
+        p_out << "; erad[" << cell_id << "] = " << arg.output_data.cell_erad[i];
+        p_out << "; Trad[" << cell_id << "] = " << arg.output_data.cell_Trad[i];
         for (size_t m = 0; m < arg.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
-          p_out << " cell_mat_delta_e[" << cell_id << "][" << m
+          p_out << "; cell_mats[" << cell_id << "][" << m
+                << "] = " << arg.zonal_data.cell_mats[mat_index];
+          p_out << "; cell_mat_delta_e[" << cell_id << "][" << m
                 << "] = " << arg.output_data.cell_mat_delta_e[mat_index];
-          p_out << " cell_mat_T[" << cell_id << "][" << m
+          p_out << "; cell_mat_T[" << cell_id << "][" << m
                 << "] = " << arg.zonal_data.cell_mat_temperature[mat_index];
         }
         if (odd_data.domain_decomposed)
-          p_out << " Rank = " << rtt_c4::node();
+          p_out << "; Rank = " << rtt_c4::node();
         p_out << "\n";
       }
       if (odd_data.domain_decomposed)
         p_out.send();
       if (rtt_c4::node() == 0)
-        p_out << "####################################\n";
+        p_out << "############  CYCLE END  ############\n";
     }
     p_out.send();
     for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++)
       arg.zonal_data.cell_erad[i] = arg.output_data.cell_erad[i];
     t += arg.control_data.dt;
+    arg.control_data.dt *= odd_data.dt_ramp;
   }
 }
 
