@@ -21,6 +21,14 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
     iface.control_data.reflect_bnd[f] = (arg.control_data.reflect_bnd[f] == 1);
     iface.control_data.bnd_temp[f] = arg.control_data.bnd_temp[f];
   }
+  iface.control_data.correction = (arg.control_data.correction == 1);
+  iface.control_data.multigroup = (arg.control_data.multigroup == 1);
+  if (iface.control_data.multigroup) {
+    iface.control_data.ngroups = arg.control_data.ngroups;
+    iface.control_data.group_bounds.resize(iface.control_data.ngroups, 0.0);
+    for (size_t g = 0; g < (iface.control_data.ngroups + 1); g++)
+      iface.control_data.group_bounds[g] = arg.control_data.group_bounds[g];
+  }
 
   //construct the zonal data
   arg.zonal_data.check_arguments();

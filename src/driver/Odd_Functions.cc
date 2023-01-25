@@ -28,6 +28,16 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
   for (size_t i = 0; i < argv.size(); i++) {
     std::string str = argv[i];
     // Parse control data
+    if (str == "-c" || str == "-correction")
+      args.control_data.correction = std::stoi(argv[i + 1]);
+    if (str == "-mgb" || str == "-mg_bounds") {
+      args.control_data.multigroup = 1;
+      args.control_data.ngroups = std::stoi(argv[i + 1]);
+      odd_data.group_bounds = std::vector<double>(args.control_data.ngroups + 1, 0.0);
+      for (size_t g = 2; g < (args.control_data.ngroups + 3); g++)
+        odd_data.group_bounds[g - 2] = std::stod(argv[i + g]);
+      args.control_data.group_bounds = &odd_data.group_bounds[0];
+    }
     if (str == "-if" || str == "-ipcress_file") {
       odd_data.opacity_file = argv[i + 1];
       args.control_data.opacity_file = &odd_data.opacity_file[0];

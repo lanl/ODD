@@ -43,6 +43,7 @@ struct Odd_Driver_Data {
   // simple mesh and single material data
   std::string opacity_file;
   bool domain_decomposed{false};
+  std::vector<double> group_bounds;
   size_t print_frequency{1};
   size_t n_cycles;
   double dt_ramp{1.0};
