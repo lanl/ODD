@@ -72,11 +72,6 @@ private:
   //! Helper function for mass averaging
   double mass_average(const std::vector<double> &mass, const std::vector<double> &variable) const;
 
-  void calc_correction(double &epsilon, double &cell_correction_source, double &Tstar,
-                       const double eden, double sigma_a, const double fleck, const double cv,
-                       const double volume, const double dt, const double T0,
-                       const double ext_exp_source);
-
 public:
   //! Fundamental matrix data and solution vectors
   Solver_Data solver_data;

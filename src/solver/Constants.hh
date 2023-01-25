@@ -10,6 +10,8 @@
 #ifndef odd_solver_constants_hh
 #define odd_solver_constants_hh
 
+#include "units/PhysicalConstexprs.hh"
+
 namespace odd_solver {
 namespace constants {
 

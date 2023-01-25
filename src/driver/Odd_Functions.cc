@@ -86,12 +86,10 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
       odd_data.specific_heat_Tref = std::stod(argv[i + 2]);
       odd_data.specific_heat_Tpow = std::stod(argv[i + 3]);
       // Convert from jerks/g -> kJ/g
-      odd_data.eos =
-          std::make_unique<rtt_cdi_analytic::Analytic_EoS>(rtt_cdi_analytic::Analytic_EoS(
-              std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
-                  rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model(
-                      odd_data.specific_heat * 1.0e+6, odd_data.specific_heat_Tref,
-                      odd_data.specific_heat_Tpow, 0.0, 0.0, 0.0))));
+      odd_data.eos = std::make_unique<rtt_cdi_analytic::Analytic_EoS>(
+          std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
+              odd_data.specific_heat * 1.0e+6, odd_data.specific_heat_Tref,
+              odd_data.specific_heat_Tpow, 0.0, 0.0, 0.0));
     }
     if (str == "-vsrc" || str == "-volume_source") {
       odd_data.vol_source_strength = std::stod(argv[i + 1]);
@@ -139,12 +137,10 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
       block_region.specific_heat_Tref = std::stod(argv[i + 6]);
       block_region.specific_heat_Tpow = std::stod(argv[i + 7]);
       // Convert from jerks/g -> kJ/g
-      block_region.eos =
-          std::make_unique<rtt_cdi_analytic::Analytic_EoS>(rtt_cdi_analytic::Analytic_EoS(
-              std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
-                  rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model(
-                      block_region.specific_heat * 1.0e+6, block_region.specific_heat_Tref,
-                      block_region.specific_heat_Tpow, 0.0, 0.0, 0.0))));
+      block_region.eos = std::make_unique<rtt_cdi_analytic::Analytic_EoS>(
+          std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
+              block_region.specific_heat * 1.0e+6, block_region.specific_heat_Tref,
+              block_region.specific_heat_Tpow, 0.0, 0.0, 0.0));
       block_region.block_p0[0] = std::stod(argv[i + 8]);
       block_region.block_p0[1] = std::stod(argv[i + 9]);
       block_region.block_p0[2] = std::stod(argv[i + 10]);
@@ -165,12 +161,10 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
       sphere_region.specific_heat_Tref = std::stod(argv[i + 6]);
       sphere_region.specific_heat_Tpow = std::stod(argv[i + 7]);
       // Convert from jerks/g -> kJ/g
-      sphere_region.eos =
-          std::make_unique<rtt_cdi_analytic::Analytic_EoS>(rtt_cdi_analytic::Analytic_EoS(
-              std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
-                  rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model(
-                      sphere_region.specific_heat * 1.0e+6, sphere_region.specific_heat_Tref,
-                      sphere_region.specific_heat_Tpow, 0.0, 0.0, 0.0))));
+      sphere_region.eos = std::make_unique<rtt_cdi_analytic::Analytic_EoS>(
+          std::make_unique<rtt_cdi_analytic::Polynomial_Specific_Heat_Analytic_EoS_Model>(
+              sphere_region.specific_heat * 1.0e+6, sphere_region.specific_heat_Tref,
+              sphere_region.specific_heat_Tpow, 0.0, 0.0, 0.0));
       sphere_region.sphere_radius = std::stod(argv[i + 8]);
       sphere_region.sphere_center[0] = std::stod(argv[i + 9]);
       sphere_region.sphere_center[1] = std::stod(argv[i + 10]);

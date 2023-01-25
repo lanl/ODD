@@ -26,6 +26,8 @@ enum FACE_TYPE { INTERNAL_FACE, BOUNDARY_FACE, GHOST_FACE, N_FACE_TYPES };
 //! Control Data
 struct Control_Data {
   bool multigroup{false};
+  size_t ngroups;
+  std::vector<double> group_bounds;
   std::array<bool, 6> reflect_bnd{true, true, true, true, true, true};
   std::array<double, 6> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 };
@@ -65,8 +67,10 @@ struct Mat_Data {
   std::vector<std::vector<double>> cell_mat_specific_heat;
   std::vector<std::vector<double>> cell_mat_electron_source;
   std::vector<double> cell_rad_eden;
+  std::vector<std::vector<double>> cell_rad_mg_eden;
   std::vector<double> cell_rad_source;
   std::vector<std::vector<double>> face_flux;
+  std::vector<std::vector<std::vector<double>>> mg_face_flux;
   std::vector<std::array<double, 3>> cell_velocity;
 };
 
@@ -74,7 +78,9 @@ struct Mat_Data {
 struct Output_Data {
   std::vector<std::vector<double>> cell_mat_dedv;
   std::vector<std::vector<double>> face_flux;
+  std::vector<std::vector<std::vector<double>>> face_mg_flux;
   std::vector<double> cell_rad_eden;
+  std::vector<std::vector<double>> cell_rad_mg_eden;
 };
 
 //! Raw matrix data and the solution vectors
@@ -110,17 +116,27 @@ struct MG_Solver_Data {
   // Matrix Data
   std::vector<std::vector<double>> diagonal;
   std::vector<std::vector<std::vector<double>>> off_diagonal;
-  std::vector<size_t> off_diagonal_id;
+  std::vector<std::vector<std::vector<double>>> flux_source;
+  std::vector<std::vector<size_t>> off_diagonal_id;
+  std::vector<std::vector<size_t>> face_type;
   std::vector<std::vector<double>> source;
+  // Extra conservation data;
+  std::array<double, 6> boundary_source;
+  std::array<double, 6> boundary_leakage;
   // Mat Data
   std::vector<double> cell_density;
   std::vector<double> cell_cve;
   // Initial Conditions
   std::vector<std::vector<double>> cell_eden0;
+  std::vector<std::vector<std::vector<double>>> face_flux0;
   std::vector<double> cell_temperature0;
   // Solution Data
   std::vector<std::vector<double>> cell_eden;
   std::vector<double> cell_temperature;
+  // Ghost Data
+  std::vector<double> ghost_cell_temperature;
+  std::vector<double> ghost_dist_center_to_face;
+  std::vector<double> ghost_cell_eden;
 };
 
 //================================================================================================//

@@ -32,6 +32,15 @@ Opacity_Reader::Opacity_Reader(const std::string &ipcressfile)
         my_opacity_file, id, rtt_cdi::Model::PLANCK, rtt_cdi::Reaction::ABSORPTION));
     mat_rosseland_total_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressGrayOpacity>(
         my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
+
+    mat_mg_rosseland_abs_models.push_back(
+        std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+            my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::ABSORPTION));
+    mat_mg_planck_abs_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+        my_opacity_file, id, rtt_cdi::Model::PLANCK, rtt_cdi::Reaction::ABSORPTION));
+    mat_mg_rosseland_total_models.push_back(
+        std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+            my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
   }
 }
 
@@ -55,6 +64,15 @@ Opacity_Reader::Opacity_Reader(const std::string &ipcressfile, const std::vector
         my_opacity_file, id, rtt_cdi::Model::PLANCK, rtt_cdi::Reaction::ABSORPTION));
     mat_rosseland_total_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressGrayOpacity>(
         my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
+
+    mat_mg_rosseland_abs_models.push_back(
+        std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+            my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::ABSORPTION));
+    mat_mg_planck_abs_models.push_back(std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+        my_opacity_file, id, rtt_cdi::Model::PLANCK, rtt_cdi::Reaction::ABSORPTION));
+    mat_mg_rosseland_total_models.push_back(
+        std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
+            my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
   }
 }
 

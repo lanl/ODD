@@ -184,6 +184,48 @@ void Ghost_Comm::exchange_ghost_data(const std::map<size_t, std::vector<double>>
 #endif
 }
 
+//------------------------------------------------------------------------------------------------//
+/*!
+ * \brief exchange ghost double data packed with a fixed stride
+ *
+ * Collect ghost data for vector of 3 dimensional arrays. This function uses RMA and the local
+ * put_window_map to allow each rank to independently fill in its data to ghost cells of other
+ * ranks.
+ *
+ * \param[in] put_data Ghost data to be put on the other ranks
+ * \param[inout] ghost_data vector to write the new ghost data to
+ * \param[in] stride of packed data to be exchanged
+ */
+void Ghost_Comm::exchange_ghost_data(const std::map<size_t, std::vector<double>> &put_data,
+                                     std::vector<double> &ghost_data, const size_t stride) const {
+#ifdef C4_MPI // temporary work around until RMA is available in c4
+  Require(ghost_data.size() == local_ghost_buffer_size * stride);
+  Require(put_data.size() == put_buffer_size.size());
+
+  // Use one sided MPI Put commands to fill up the ghost cell location data
+  MPI_Win win;
+  MPI_Win_create(ghost_data.data(), local_ghost_buffer_size * sizeof(double) * stride,
+                 sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
+  // working from my local data put the ghost data on the other ranks
+  Remember(int errorcode =) MPI_Win_fence(MPI_MODE_NOSTORE, win);
+  Check(errorcode == MPI_SUCCESS);
+  // temporary work around until RMA is available in c4
+  // loop over all ranks we need to send this buffer too.
+  for (auto &put : put_data) {
+    const size_t put_rank = put.first;
+    auto &put_buffer = put.second;
+    // use map.at() to allow const access
+    const size_t put_offset = put_rank_offset.at(put_rank) * stride;
+    chunk_put_lambda(put_rank, put_offset, put_buffer, win, MPI_DOUBLE);
+  }
+  Remember(errorcode =) MPI_Win_fence((MPI_MODE_NOSTORE | MPI_MODE_NOSUCCEED), win);
+  Check(errorcode == MPI_SUCCESS);
+  Remember(errorcode =) MPI_Win_fence((MPI_MODE_NOSTORE | MPI_MODE_NOSUCCEED), win);
+  Check(errorcode == MPI_SUCCESS);
+  MPI_Win_free(&win);
+#endif
+}
+
 } // namespace odd_solver
 
 //------------------------------------------------------------------------------------------------//

@@ -12,6 +12,7 @@
 
 #include "cdi_ipcress/IpcressFile.hh"
 #include "cdi_ipcress/IpcressGrayOpacity.hh"
+#include "cdi_ipcress/IpcressMultigroupOpacity.hh"
 
 namespace odd_solver {
 
@@ -70,6 +71,12 @@ public:
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_rosseland_abs_models;
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_planck_abs_models;
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressGrayOpacity>> mat_rosseland_total_models;
+
+  std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressMultigroupOpacity>>
+      mat_mg_rosseland_abs_models;
+  std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressMultigroupOpacity>> mat_mg_planck_abs_models;
+  std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressMultigroupOpacity>>
+      mat_mg_rosseland_total_models;
 };
 
 } // namespace odd_solver

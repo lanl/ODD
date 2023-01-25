@@ -52,11 +52,20 @@ void test_1d_dd_comm(rtt_dsxx::UnitTest &ut) {
     std::cout << std::endl;
   }
   std::vector<double> local_ghost_data(gcomm.local_ghost_buffer_size);
+  size_t stride = 3;
+  std::vector<double> local_stride_ghost_data(gcomm.local_ghost_buffer_size * stride);
   std::map<size_t, std::vector<double>> local_put_data;
-  for (auto &map : gcomm.put_buffer_size)
+  std::map<size_t, std::vector<double>> local_stride_put_data;
+  for (auto &map : gcomm.put_buffer_size) {
     local_put_data[map.first] = std::vector<double>(map.second, rtt_c4::node() + 3);
+    local_stride_put_data[map.first] = std::vector<double>(map.second * stride, 0.0);
+    for (size_t g = 0; g < map.second; g++)
+      for (size_t s = 0; s < stride; s++)
+        local_stride_put_data[map.first][g * stride + s] = rtt_c4::node() + s;
+  }
 
   gcomm.exchange_ghost_data(local_put_data, local_ghost_data);
+  gcomm.exchange_ghost_data(local_stride_put_data, local_stride_ghost_data, stride);
   // Check cell data
   if (rtt_c4::node() == 0) {
     FAIL_IF_NOT(gcomm.local_ghost_buffer_size == 1);
@@ -70,6 +79,9 @@ void test_1d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[0].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0][1] == 0);
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 3.0));
   }
 
   // Check cell data
@@ -84,6 +96,9 @@ void test_1d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(gcomm.ghost_map[0].size() == 1);
     FAIL_IF_NOT(gcomm.ghost_map[0][0] == 0);
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 2.0));
   }
 
   if (ut.numFails == 0) {
@@ -121,10 +136,19 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
   }
   std::vector<double> local_ghost_data(gcomm.local_ghost_buffer_size);
   std::map<size_t, std::vector<double>> local_put_data;
-  for (auto &map : gcomm.put_buffer_size)
+  size_t stride = 3;
+  std::vector<double> local_stride_ghost_data(gcomm.local_ghost_buffer_size * stride);
+  std::map<size_t, std::vector<double>> local_stride_put_data;
+  for (auto &map : gcomm.put_buffer_size) {
     local_put_data[map.first] = std::vector<double>(map.second, rtt_c4::node() + 3);
+    local_stride_put_data[map.first] = std::vector<double>(map.second * stride, 0.0);
+    for (size_t g = 0; g < map.second; g++)
+      for (size_t s = 0; s < stride; s++)
+        local_stride_put_data[map.first][g * stride + s] = rtt_c4::node() + s;
+  }
 
   gcomm.exchange_ghost_data(local_put_data, local_ghost_data);
+  gcomm.exchange_ghost_data(local_stride_put_data, local_stride_ghost_data, stride);
   // Check cell data
   if (rtt_c4::node() == 0) {
     FAIL_IF_NOT(mesh.number_of_local_cells() == 1);
@@ -151,6 +175,12 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
 
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 4.0));
   }
 
   // Check cell data
@@ -178,6 +208,12 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
 
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 4.0));
   }
 
   // Check cell data
@@ -205,6 +241,12 @@ void test_2d_dd_comm(rtt_dsxx::UnitTest &ut) {
 
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 3.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 3.0));
   }
 
   if (ut.numFails == 0) {
@@ -242,10 +284,19 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
   }
   std::vector<double> local_ghost_data(gcomm.local_ghost_buffer_size);
   std::map<size_t, std::vector<double>> local_put_data;
-  for (auto &map : gcomm.put_buffer_size)
+  size_t stride = 3;
+  std::vector<double> local_stride_ghost_data(gcomm.local_ghost_buffer_size * stride);
+  std::map<size_t, std::vector<double>> local_stride_put_data;
+  for (auto &map : gcomm.put_buffer_size) {
     local_put_data[map.first] = std::vector<double>(map.second, rtt_c4::node() + 3);
+    local_stride_put_data[map.first] = std::vector<double>(map.second * stride, 0.0);
+    for (size_t g = 0; g < map.second; g++)
+      for (size_t s = 0; s < stride; s++)
+        local_stride_put_data[map.first][g * stride + s] = rtt_c4::node() + s;
+  }
 
   gcomm.exchange_ghost_data(local_put_data, local_ghost_data);
+  gcomm.exchange_ghost_data(local_stride_put_data, local_stride_ghost_data, stride);
   // Check cell data
   if (rtt_c4::node() == 0) {
     FAIL_IF_NOT(mesh.number_of_local_cells() == 1);
@@ -280,6 +331,15 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[0], 4.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[6], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[7], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[8], 4.0));
   }
 
   // Check cell data
@@ -333,6 +393,21 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 5.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[3], 5.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[4], 5.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[6], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[7], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[8], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[9], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[10], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[11], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[12], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[13], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[14], 4.0));
   }
 
   // Check cell data
@@ -375,6 +450,18 @@ void test_3d_dd_comm(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[1], 4.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[2], 4.0));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_ghost_data[3], 4.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[0], 0.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[1], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[2], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[3], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[4], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[5], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[6], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[7], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[8], 3.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[9], 1.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[10], 2.0));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(local_stride_ghost_data[11], 3.0));
   }
 
   if (ut.numFails == 0) {

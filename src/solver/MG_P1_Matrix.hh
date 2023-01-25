@@ -1,14 +1,14 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/Grey_Matrix.hh
+ * \file   solver/Mg_P1_Matrix.hh
  * \author Mathew Cleveland
- * \brief  Define class Grey_Matrix
+ * \brief  Define class Mg_P1_Matrix
  * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
-#ifndef odd_solver_Grey_Matrix_hh
-#define odd_solver_Grey_Matrix_hh
+#ifndef odd_solver_Mg_P1_Matrix_hh
+#define odd_solver_Mg_P1_Matrix_hh
 
 #include "Ghost_Comm.hh"
 #include "Interface_Data.hh"
@@ -19,7 +19,7 @@ namespace odd_solver {
 
 //================================================================================================//
 /*!
- * \class Grey_Matrix
+ * \class Mg_P1_Matrix
  * \brief
  *
  * This builder function constructs the base matrix data that will be used by the diffusion solver
@@ -27,10 +27,10 @@ namespace odd_solver {
  */
 //================================================================================================//
 
-class Grey_Matrix {
+class Mg_P1_Matrix {
 public:
   //! Default constructors.
-  Grey_Matrix(const Control_Data &control_data, const bool flux_limiter = false);
+  Mg_P1_Matrix(const Control_Data &control_data);
 
   //! Initialize solver data
   void initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
@@ -47,11 +47,11 @@ public:
                              Output_Data &output_data);
 
 private:
-  // flux limiter
-  const bool flux_limiter;
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;
   const std::array<double, 6> bnd_temp;
+  const size_t ngroups;
+  const std::vector<double> group_bounds;
 
   // Local matrix data
   double current_dt;
@@ -61,10 +61,12 @@ private:
   std::vector<double> fleck;
   std::vector<double> cell_epsilon;
   std::vector<double> cell_correction_source;
+  std::vector<std::vector<double>> cell_planck_weights;
   std::vector<double> volume;
-  std::vector<double> sigma_a;
-  std::vector<std::vector<double>> face_D;
-  std::vector<std::vector<double>> face_sigma_tr;
+  std::vector<std::vector<double>> sigma_a;
+  std::vector<double> sigma_planck;
+  std::vector<std::vector<std::vector<double>>> face_D;
+  std::vector<std::vector<std::vector<double>>> face_sigma_tr;
   // Local Ghost data
   std::vector<double> ghost_face_D;
 
@@ -76,13 +78,13 @@ private:
 
 public:
   //! Fundamental matrix data and solution vectors
-  Solver_Data solver_data;
+  MG_Solver_Data solver_data;
 };
 
 } // end namespace odd_solver
 
-#endif // odd_solver_Grey_Matrix_hh
+#endif // odd_solver_Mg_P1_Matrix_hh
 
 //------------------------------------------------------------------------------------------------//
-// end of solver/Grey_Matrix.hh
+// end of solver/Mg_P1_Matrix.hh
 //------------------------------------------------------------------------------------------------//

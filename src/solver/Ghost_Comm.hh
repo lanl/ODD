@@ -43,6 +43,8 @@ public:
                            std::vector<size_t> &ghost_data) const;
   void exchange_ghost_data(const std::map<size_t, std::vector<double>> &put_data,
                            std::vector<double> &ghost_data) const;
+  void exchange_ghost_data(const std::map<size_t, std::vector<double>> &put_data,
+                           std::vector<double> &ghost_data, const size_t data_stride) const;
 
 private:
   // Initialize ghost maps
