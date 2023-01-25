@@ -30,6 +30,7 @@ struct Control_Data {
   std::vector<double> group_bounds;
   std::array<bool, 6> reflect_bnd{true, true, true, true, true, true};
   std::array<double, 6> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  bool correction{false};
 };
 
 //! Mesh Data

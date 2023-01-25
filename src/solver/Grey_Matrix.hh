@@ -52,6 +52,7 @@ private:
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;
   const std::array<double, 6> bnd_temp;
+  const bool correction;
 
   // Local matrix data
   double current_dt;

@@ -52,6 +52,7 @@ private:
   const std::array<double, 6> bnd_temp;
   const size_t ngroups;
   const std::vector<double> group_bounds;
+  const bool correction;
 
   // Local matrix data
   double current_dt;

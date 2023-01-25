@@ -33,7 +33,8 @@ namespace odd_solver {
 //================================================================================================//
 Mg_P1_Matrix::Mg_P1_Matrix(const Control_Data &control_data)
     : reflect_bnd(control_data.reflect_bnd), bnd_temp(control_data.bnd_temp),
-      ngroups(control_data.ngroups), group_bounds(control_data.group_bounds) {
+      ngroups(control_data.ngroups), group_bounds(control_data.group_bounds),
+      correction(control_data.correction) {
   Insist(control_data.multigroup, "Must be multigroup");
   Insist(control_data.ngroups == (control_data.group_bounds.size() + 1),
          "Group bounds and number of groups must match");
@@ -549,10 +550,11 @@ void Mg_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool
           sigma_dep += solver_data.cell_eden[i][g] * sigma_a[i][g];
         }
         sigma_dep /= new_cell_eden;
-        Correction::calc_correction(
-            cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
-            new_cell_eden, sigma_dep, sigma_planck[i], fleck[i], solver_data.cell_cve[i], volume[i],
-            current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
+        if (correction)
+          Correction::calc_correction(
+              cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
+              new_cell_eden, sigma_dep, sigma_planck[i], fleck[i], solver_data.cell_cve[i],
+              volume[i], current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
         Check(!(new_cell_eden < 0.0));
         // Check convergence
         for (size_t g = 0; g < ngroups; g++) {

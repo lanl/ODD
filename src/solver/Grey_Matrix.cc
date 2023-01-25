@@ -32,7 +32,7 @@ namespace odd_solver {
 //================================================================================================//
 Grey_Matrix::Grey_Matrix(const Control_Data &control_data, const bool flux_limiter_)
     : flux_limiter(flux_limiter_), reflect_bnd(control_data.reflect_bnd),
-      bnd_temp(control_data.bnd_temp) {
+      bnd_temp(control_data.bnd_temp), correction(control_data.correction) {
   Insist(!control_data.multigroup, "Multigroup currently not supported");
 }
 
@@ -523,10 +523,11 @@ void Grey_Matrix::gs_solver(const double eps, const size_t max_iter, const bool 
         Check(diag > 0.0);
         const double last_eden = solver_data.cell_eden[i];
         solver_data.cell_eden[i] = b / diag;
-        Correction::calc_correction(
-            cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
-            solver_data.cell_eden[i], sigma_a[i], sigma_a[i], fleck[i], solver_data.cell_cve[i],
-            volume[i], current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
+        if (correction)
+          Correction::calc_correction(
+              cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
+              solver_data.cell_eden[i], sigma_a[i], sigma_a[i], fleck[i], solver_data.cell_cve[i],
+              volume[i], current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
         Check(!(solver_data.cell_eden[i] < 0.0));
         const double eden_diff =
             solver_data.cell_eden[i] > 0.0
