@@ -1,14 +1,14 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/Mg_P1_Matrix.hh
+ * \file   solver/MG_P1_Matrix.hh
  * \author Mathew Cleveland
- * \brief  Define class Mg_P1_Matrix
+ * \brief  Define class MG_P1_Matrix
  * \note   Copyright (C) 2022 Triad National Security, LLC., All rights reserved.
  */
 //------------------------------------------------------------------------------------------------//
 
-#ifndef odd_solver_Mg_P1_Matrix_hh
-#define odd_solver_Mg_P1_Matrix_hh
+#ifndef odd_solver_MG_P1_Matrix_hh
+#define odd_solver_MG_P1_Matrix_hh
 
 #include "Ghost_Comm.hh"
 #include "Interface_Data.hh"
@@ -19,7 +19,7 @@ namespace odd_solver {
 
 //================================================================================================//
 /*!
- * \class Mg_P1_Matrix
+ * \class MG_P1_Matrix
  * \brief
  *
  * This builder function constructs the base matrix data that will be used by the diffusion solver
@@ -27,10 +27,10 @@ namespace odd_solver {
  */
 //================================================================================================//
 
-class Mg_P1_Matrix {
+class MG_P1_Matrix {
 public:
   //! Default constructors.
-  Mg_P1_Matrix(const Control_Data &control_data);
+  MG_P1_Matrix(const Control_Data &control_data);
 
   //! Initialize solver data
   void initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
@@ -50,9 +50,11 @@ private:
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;
   const std::array<double, 6> bnd_temp;
-  const size_t ngroups;
-  const std::vector<double> group_bounds;
   const bool correction;
+
+  // Group data read from opacity file
+  std::vector<double> group_bounds;
+  size_t ngroups;
 
   // Local matrix data
   double current_dt;
@@ -84,8 +86,8 @@ public:
 
 } // end namespace odd_solver
 
-#endif // odd_solver_Mg_P1_Matrix_hh
+#endif // odd_solver_MG_P1_Matrix_hh
 
 //------------------------------------------------------------------------------------------------//
-// end of solver/Mg_P1_Matrix.hh
+// end of solver/MG_P1_Matrix.hh
 //------------------------------------------------------------------------------------------------//

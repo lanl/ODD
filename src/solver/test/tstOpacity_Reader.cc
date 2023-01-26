@@ -20,6 +20,9 @@ using namespace odd_solver;
 //------------------------------------------------------------------------------------------------//
 void test_print(rtt_dsxx::UnitTest &ut) {
   Opacity_Reader op_reader(ut.getTestSourcePath() + "two-mats.ipcress");
+  size_t ngroups = op_reader.ngroups;
+  if (ngroups != 33)
+    ITFAILS;
   op_reader.print_available_mats();
   op_reader.print_available_data(10001);
   op_reader.print_available_data(10002);

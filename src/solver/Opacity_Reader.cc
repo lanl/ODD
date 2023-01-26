@@ -42,6 +42,8 @@ Opacity_Reader::Opacity_Reader(const std::string &ipcressfile)
         std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
             my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
   }
+  group_bounds = mat_mg_rosseland_abs_models[0]->getGroupBoundaries();
+  ngroups = group_bounds.size() - 1;
 }
 
 //================================================================================================//
@@ -74,6 +76,8 @@ Opacity_Reader::Opacity_Reader(const std::string &ipcressfile, const std::vector
         std::make_unique<rtt_cdi_ipcress::IpcressMultigroupOpacity>(
             my_opacity_file, id, rtt_cdi::Model::ROSSELAND, rtt_cdi::Reaction::TOTAL));
   }
+  group_bounds = mat_mg_rosseland_abs_models[0]->getGroupBoundaries();
+  ngroups = group_bounds.size() - 1;
 }
 
 } // namespace odd_solver

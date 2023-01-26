@@ -11,6 +11,7 @@
 #define solver_test_Test_Interface_Builder_hh
 
 #include "solver/Interface_Data.hh"
+#include "solver/Opacity_Reader.hh"
 #include "c4/global.hh"
 #include "ds++/dbc.hh"
 
@@ -24,7 +25,6 @@ namespace odd_solver_test {
  *
  */
 //================================================================================================//
-
 void Test_Output_Builder(odd_solver::Interface_Data &iface) {
   Insist(iface.mesh_data.number_of_local_cells > 0, "Must have cells defined on the mesh");
   iface.mat_data.ipcress_filename = "two-mats.ipcress";
@@ -35,6 +35,31 @@ void Test_Output_Builder(odd_solver::Interface_Data &iface) {
     iface.output_data.cell_mat_dedv[cell].resize(iface.mat_data.number_of_cell_mats[cell], 0.0);
   iface.output_data.face_flux = std::vector<std::vector<double>>(
       ncells, std::vector<double>(iface.mesh_data.n_dims * 2, 0.0));
+}
+
+//================================================================================================//
+/*!
+ * \brief
+ *
+ * Initialize multigroup data
+ *
+ */
+//================================================================================================//
+void Test_MG_Data_Builder(odd_solver::Interface_Data &iface, const size_t ngroups) {
+  Insist(iface.mesh_data.number_of_local_cells > 0, "Must have cells defined on the mesh");
+  Insist(iface.control_data.multigroup, "Must be a multigroup problem");
+  Insist(ngroups > 0, "ngroups must be greater than zero");
+  const size_t ncells = iface.mesh_data.number_of_local_cells;
+  iface.output_data.cell_rad_mg_eden =
+      std::vector<std::vector<double>>(ncells, std::vector<double>(ngroups, 0.0));
+  iface.output_data.face_mg_flux = std::vector<std::vector<std::vector<double>>>(
+      ncells, std::vector<std::vector<double>>(iface.mesh_data.n_dims * 2,
+                                               std::vector<double>(ngroups, 0.0)));
+  iface.mat_data.cell_rad_mg_eden =
+      std::vector<std::vector<double>>(ncells, std::vector<double>(ngroups, 3.0));
+  iface.mat_data.face_mg_flux = std::vector<std::vector<std::vector<double>>>(
+      ncells, std::vector<std::vector<double>>(iface.mesh_data.n_dims * 2,
+                                               std::vector<double>(ngroups, 0.0)));
 }
 
 //================================================================================================//

@@ -77,6 +77,8 @@ public:
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressMultigroupOpacity>> mat_mg_planck_abs_models;
   std::vector<std::unique_ptr<rtt_cdi_ipcress::IpcressMultigroupOpacity>>
       mat_mg_rosseland_total_models;
+  std::vector<double> group_bounds;
+  size_t ngroups;
 };
 
 } // namespace odd_solver

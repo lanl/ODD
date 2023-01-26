@@ -1,6 +1,6 @@
 //--------------------------------------------*-C++-*---------------------------------------------//
 /*!
- * \file   solver/Mg_P1_Matrix.cc
+ * \file   solver/MG_P1_Matrix.cc
  * \author Mathew Cleveland
  * \date   January 5th 2022
  * \brief  Build Matrix data to be used by the solver
@@ -31,13 +31,10 @@ namespace odd_solver {
  *
  */
 //================================================================================================//
-Mg_P1_Matrix::Mg_P1_Matrix(const Control_Data &control_data)
+MG_P1_Matrix::MG_P1_Matrix(const Control_Data &control_data)
     : reflect_bnd(control_data.reflect_bnd), bnd_temp(control_data.bnd_temp),
-      ngroups(control_data.ngroups), group_bounds(control_data.group_bounds),
       correction(control_data.correction) {
   Insist(control_data.multigroup, "Must be multigroup");
-  Insist(control_data.ngroups == (control_data.group_bounds.size() + 1),
-         "Group bounds and number of groups must match");
 }
 
 //================================================================================================//
@@ -52,7 +49,7 @@ Mg_P1_Matrix::Mg_P1_Matrix(const Control_Data &control_data)
  *
  */
 //================================================================================================//
-double Mg_P1_Matrix::mass_average(const std::vector<double> &mass,
+double MG_P1_Matrix::mass_average(const std::vector<double> &mass,
                                   const std::vector<double> &variable) const {
   Require(mass.size() == variable.size());
   const double total_mass = std::accumulate(mass.begin(), mass.end(), 0);
@@ -74,9 +71,11 @@ double Mg_P1_Matrix::mass_average(const std::vector<double> &mass,
  *
  */
 //================================================================================================//
-void Mg_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
+void MG_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
                                           const double dt) {
   Opacity_Reader opacity_reader(mat_data.ipcress_filename, mat_data.problem_matids);
+  group_bounds = opacity_reader.group_bounds;
+  ngroups = group_bounds.size() - 1;
   const auto ncells = mesh.number_of_local_cells();
   current_dt = dt;
   Require(mat_data.face_flux.size() == ncells);
@@ -204,6 +203,7 @@ void Mg_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat
     Check(cell_cve > 0.0);
     fleck[cell] = 1.0 / (1.0 + constants::a * constants::c * sigma_planck[cell] * 4.0 * cell_T *
                                    cell_T * cell_T * dt / cell_cve);
+
     const double src_val = std::inner_product(mat_data.cell_mat_electron_source[cell].begin(),
                                               mat_data.cell_mat_electron_source[cell].end(),
                                               mat_data.cell_mat_vol_frac[cell].begin(), 0.0);
@@ -227,7 +227,7 @@ void Mg_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat
     face_sigma_tr[cell].resize(nfaces, std::vector<double>(ngroups, 0.0));
     // Loop over faces
     for (size_t face = 0; face < nfaces; face++) {
-      solver_data.face_flux0[cell][face] = mat_data.mg_face_flux[cell][face];
+      solver_data.face_flux0[cell][face] = mat_data.face_mg_flux[cell][face];
       const auto ftype = mesh.face_type(cell, face);
       if (ftype == FACE_TYPE::INTERNAL_FACE || ftype == FACE_TYPE::GHOST_FACE) {
         solver_data.off_diagonal_id[cell][face] = mesh.next_cell(cell, face);
@@ -353,7 +353,7 @@ void Mg_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat
  *
  */
 //================================================================================================//
-void Mg_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
+void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
   const auto ncells = mesh.number_of_local_cells();
 
   std::map<size_t, std::vector<double>> put_face_D;
@@ -381,7 +381,7 @@ void Mg_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
           face_D[cell][face][g] =
               (constants::c * dt) / (3.0 * (1.0 + constants::c * dt * sigma_tr[g]));
           // populate the put buffer
-          put_face_D[rank][put_index + g] = face_D[cell][face][g];
+          put_face_D[rank][put_index * ngroups + g] = face_D[cell][face][g];
         }
 
       } else if (ftype == FACE_TYPE::INTERNAL_FACE) {
@@ -411,16 +411,15 @@ void Mg_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     std::vector<double> planck_spec(ngroups, 0.0);
     rtt_cdi::CDI::integrate_Planckian_Spectrum(group_bounds, solver_data.cell_temperature0[cell],
                                                planck_spec);
-
+    const double total_emission =
+        constants::a * constants::c * fleck[cell] * sigma_planck[cell] *
+        solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] *
+        solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] * dt;
     for (size_t g = 0; g < ngroups; g++) {
       solver_data.diagonal[cell][g] = 1.0 + constants::c * dt * fleck[cell] * sigma_a[cell][g];
       // Apply the cell source
       solver_data.source[cell][g] =
-          solver_data.cell_eden0[cell][g] +
-          constants::a * constants::c * fleck[cell] * sigma_planck[cell] *
-              solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] *
-              solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] * dt *
-              planck_spec[g] +
+          solver_data.cell_eden0[cell][g] + total_emission * planck_spec[g] +
           ext_imp_source[cell] * planck_spec[g] + rad_source[cell] * planck_spec[g];
     }
 
@@ -506,7 +505,7 @@ void Mg_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
  *
  */
 //================================================================================================//
-void Mg_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool print) {
+void MG_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool print) {
   Require(max_iter > 0);
   double max_error = 1.0;
   std::stringstream diagnostics;
@@ -653,7 +652,7 @@ void Mg_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool
  *
  */
 //================================================================================================//
-void Mg_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
+void MG_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_Data &mat_data,
                                          const double dt, Output_Data &output_data) {
   const auto ncells = mesh.number_of_local_cells();
   Require(output_data.cell_mat_dedv.size() == ncells);
@@ -749,5 +748,5 @@ void Mg_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_
 } // namespace odd_solver
 
 //------------------------------------------------------------------------------------------------//
-// end of Mg_P1_Matrix.cc
+// end of MG_P1_Matrix.cc
 //------------------------------------------------------------------------------------------------//

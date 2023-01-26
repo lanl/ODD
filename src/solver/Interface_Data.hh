@@ -26,8 +26,6 @@ enum FACE_TYPE { INTERNAL_FACE, BOUNDARY_FACE, GHOST_FACE, N_FACE_TYPES };
 //! Control Data
 struct Control_Data {
   bool multigroup{false};
-  size_t ngroups;
-  std::vector<double> group_bounds;
   std::array<bool, 6> reflect_bnd{true, true, true, true, true, true};
   std::array<double, 6> bnd_temp{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   bool correction{false};
@@ -71,7 +69,7 @@ struct Mat_Data {
   std::vector<std::vector<double>> cell_rad_mg_eden;
   std::vector<double> cell_rad_source;
   std::vector<std::vector<double>> face_flux;
-  std::vector<std::vector<std::vector<double>>> mg_face_flux;
+  std::vector<std::vector<std::vector<double>>> face_mg_flux;
   std::vector<std::array<double, 3>> cell_velocity;
 };
 

@@ -21,8 +21,6 @@ struct Control_Data {
   // Constructor to initialize data
   double dt{0.0};
   size_t multigroup{0};
-  size_t ngroups{0};
-  double *group_bounds{nullptr};
   size_t correction{0};
   size_t max_iter{0};
   double min_tol{0};
