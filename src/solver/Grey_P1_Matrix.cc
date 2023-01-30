@@ -440,7 +440,7 @@ void Grey_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) 
           solver_data.source[cell] += fring * E0;
           solver_data.source[cell] += flux_source;
           solver_data.diagonal[cell] += fring;
-          solver_data.off_diagonal[cell][face] = fring;
+          solver_data.off_diagonal[cell][face] = -fring;
           solver_data.flux_source[cell][face] = fring * E0 + flux_source;
         }
       }

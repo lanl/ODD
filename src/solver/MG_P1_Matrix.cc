@@ -487,7 +487,7 @@ void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
             solver_data.source[cell][g] += fring * E0;
             solver_data.source[cell][g] += flux_source;
             solver_data.diagonal[cell][g] += fring;
-            solver_data.off_diagonal[cell][face][g] = fring;
+            solver_data.off_diagonal[cell][face][g] = -fring;
             solver_data.flux_source[cell][face][g] = fring * E0 + flux_source;
           }
         }

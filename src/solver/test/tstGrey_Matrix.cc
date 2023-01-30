@@ -118,7 +118,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.9006, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
@@ -173,8 +173,8 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Vacuum boundaries store the leakage coefficient
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], -12.9006, 1e-5));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
                                      matrix.solver_data.off_diagonal[1][0]));
@@ -234,8 +234,8 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.9006, 1e-5));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.9006, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], -12.9006, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[0][0], 110.624, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[1][1], 110.624, 1e-5));
     // Internal leakage should match left==right

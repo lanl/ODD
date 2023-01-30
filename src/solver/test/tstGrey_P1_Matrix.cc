@@ -123,7 +123,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.8316, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.8316, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 0.0));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
@@ -139,7 +139,7 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     matrix.calculate_output_data(mesh, iface.mat_data, dt, iface.output_data);
     // Just check for the expected slope
     FAIL_IF_NOT(iface.output_data.cell_rad_eden[0] < iface.output_data.cell_rad_eden[1]);
-    FAIL_IF_NOT(iface.output_data.face_flux[0][0] < 0.0);
+    FAIL_IF_NOT(iface.output_data.face_flux[0][0] > 0.0);
     FAIL_IF_NOT(iface.output_data.face_flux[0][1] < 0.0);
     FAIL_IF_NOT(iface.output_data.face_flux[1][0] > 0.0);
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(iface.output_data.face_flux[0][1],
@@ -184,8 +184,8 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Reflecting boundaries should be zero
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.8316, 1e-5));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.8316, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.8316, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], -12.8316, 1e-5));
     // Internal leakage should match left==right
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][1],
                                      matrix.solver_data.off_diagonal[1][0]));
@@ -245,8 +245,8 @@ void test_1d_matrix(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][0] == 0);
     FAIL_IF_NOT(matrix.solver_data.off_diagonal_id[1][1] == 2);
     // Cheat and store the source energy density in the off diagonal
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], 12.8316, 1e-5));
-    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], 12.8316, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[0][0], -12.8316, 1e-5));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.off_diagonal[1][1], -12.8316, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[0][0], 110.032, 1e-5));
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(matrix.solver_data.flux_source[1][1], 110.032, 1e-5));
     // Internal leakage should match left==right
