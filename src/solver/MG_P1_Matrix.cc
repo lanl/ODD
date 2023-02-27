@@ -161,6 +161,13 @@ void MG_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat
           mat_data.cell_mat_temperature[cell][mat] * mat_data.cell_mat_temperature[cell][mat];
       rtt_cdi::CDI::integrate_Planckian_Spectrum(
           group_bounds, mat_data.cell_mat_temperature[cell][mat], planck_spec);
+      // normalize
+      const double planck_sum = std::accumulate(planck_spec.begin(), planck_spec.end(), 0.0);
+      if (planck_sum > 0.0)
+        std::transform(planck_spec.begin(), planck_spec.end(), planck_spec.begin(),
+                       std::bind1st(std::multiplies<double>(), 1.0 / planck_sum));
+      else
+        planck_spec[0] = 1.0;
       cell_mat_sigma_planck[mat] = std::inner_product(
           cell_mat_sigma_a[mat].begin(), cell_mat_sigma_a[mat].end(), planck_spec.begin(), 0.0);
       cell_mat_emission[mat] = cell_mat_T4[mat] * cell_mat_sigma_planck[mat];
@@ -194,10 +201,18 @@ void MG_P1_Matrix::initialize_solver_data(const Orthogonal_Mesh &mesh, const Mat
 
     // calculate the planck
     rtt_cdi::CDI::integrate_Planckian_Spectrum(group_bounds, cell_T, planck_spec);
-    cell_planck_weights[cell] = planck_spec;
+    // normalize
+    const double planck_sum = std::accumulate(planck_spec.begin(), planck_spec.end(), 0.0);
+    if (planck_sum > 0.0)
+      std::transform(planck_spec.begin(), planck_spec.end(), planck_spec.begin(),
+                     std::bind1st(std::multiplies<double>(), 1.0 / planck_sum));
+    else
+      planck_spec[0] = 1.0;
     sigma_planck[cell] =
         std::inner_product(sigma_a[cell].begin(), sigma_a[cell].end(), planck_spec.begin(), 0.0);
 
+    for (size_t g = 0; g < ngroups; g++)
+      cell_planck_weights[cell][g] = planck_spec[g] * sigma_a[cell][g] / sigma_planck[cell];
     solver_data.cell_density[cell] = cell_density;
     solver_data.cell_cve[cell] = cell_cve;
     Check(cell_cve > 0.0);
@@ -408,19 +423,28 @@ void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
     // Populate the homogenized cell material data
     const auto cell_volume = mesh.cell_volume(cell);
     // Apply collision terms to the diagonal (census + absorption)
+    const double rad_T = std::pow(rad_source[cell] / constants::a, 0.25);
     std::vector<double> planck_spec(ngroups, 0.0);
-    rtt_cdi::CDI::integrate_Planckian_Spectrum(group_bounds, solver_data.cell_temperature0[cell],
-                                               planck_spec);
+    rtt_cdi::CDI::integrate_Planckian_Spectrum(group_bounds, rad_T, planck_spec);
+    // normalize
+    const double planck_sum = std::accumulate(planck_spec.begin(), planck_spec.end(), 0.0);
+    if (planck_sum > 0.0)
+      std::transform(planck_spec.begin(), planck_spec.end(), planck_spec.begin(),
+                     std::bind1st(std::multiplies<double>(), 1.0 / planck_sum));
+    else
+      planck_spec[0] = 1.0;
     const double total_emission =
         constants::a * constants::c * fleck[cell] * sigma_planck[cell] *
         solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] *
         solver_data.cell_temperature0[cell] * solver_data.cell_temperature0[cell] * dt;
     for (size_t g = 0; g < ngroups; g++) {
-      solver_data.diagonal[cell][g] = 1.0 + constants::c * dt * fleck[cell] * sigma_a[cell][g];
+      solver_data.diagonal[cell][g] = scale_dfdt + constants::c * dt * sigma_a[cell][g];
+      Check(solver_data.diagonal[cell][g] > 0.0);
       // Apply the cell source
       solver_data.source[cell][g] =
-          solver_data.cell_eden0[cell][g] + total_emission * planck_spec[g] +
-          ext_imp_source[cell] * planck_spec[g] + rad_source[cell] * planck_spec[g];
+          solver_data.cell_eden0[cell][g] + total_emission * cell_planck_weights[cell][g] +
+          ext_imp_source[cell] * cell_planck_weights[cell][g] + rad_source[cell] * planck_spec[g];
+      //Check(!(solver_data.source[cell][g] < 0.0));
     }
 
     const auto nfaces = mesh.number_of_faces(cell);
@@ -434,18 +458,17 @@ void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         const auto next_face = face % 2 == 0 ? face + 1 : face - 1;
         const auto D = face_D[cell][face];
         const auto next_D = std::vector<double>(
-            ghost_face_D.begin() + gcomm->ghost_map[next_cell][next_face],
-            ghost_face_D.begin() + gcomm->ghost_map[next_cell][next_face] + ngroups);
+            ghost_face_D.begin() + gcomm->ghost_map[next_cell][next_face] * ngroups,
+            ghost_face_D.begin() + gcomm->ghost_map[next_cell][next_face] * ngroups + ngroups);
         const auto half_width = mesh.distance_center_to_face(cell, face);
         const auto next_half_width =
             solver_data.ghost_dist_center_to_face[gcomm->ghost_map[next_cell][next_face]];
         for (size_t g = 0; g < ngroups; g++) {
           const double fring = -constants::c * dt * face_area * (D[g] * next_D[g]) /
                                (cell_volume * (half_width * next_D[g] + next_half_width * D[g]));
-          const double flux_source = -fring * 3.0 * (half_width + next_half_width) /
-                                     (constants::c * dt) * solver_data.face_flux0[cell][face][g] /
-                                     constants::c;
-
+          const double flux_source = face_area * dt / cell_volume *
+                                     solver_data.face_flux0[cell][face][g] * D[g] * 3.0 /
+                                     (constants::c * dt) * scale_dfdt;
           solver_data.off_diagonal[cell][face][g] = fring;
           solver_data.flux_source[cell][face][g] = flux_source;
           solver_data.source[cell][g] -= flux_source;
@@ -462,10 +485,9 @@ void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
         for (size_t g = 0; g < ngroups; g++) {
           const double fring = -constants::c * dt * face_area * (D[g] * next_D[g]) /
                                (cell_volume * (half_width * next_D[g] + next_half_width * D[g]));
-          const double flux_source = -fring * 3.0 * (half_width + next_half_width) /
-                                     (constants::c * dt) * solver_data.face_flux0[cell][face][g] /
-                                     constants::c;
-
+          const double flux_source = face_area * dt / cell_volume *
+                                     solver_data.face_flux0[cell][face][g] * D[g] * 3.0 /
+                                     (constants::c * dt) * scale_dfdt;
           solver_data.off_diagonal[cell][face][g] = fring;
           solver_data.flux_source[cell][face][g] = flux_source;
           solver_data.source[cell][g] -= flux_source;
@@ -482,10 +504,11 @@ void MG_P1_Matrix::build_matrix(const Orthogonal_Mesh &mesh, const double dt) {
           for (size_t g = 0; g < ngroups; g++) {
             const double fring = constants::c * D[g] * dt * face_area /
                                  (cell_volume * half_width * (1.0 + 2.0 * D[g] / half_width));
-            const double flux_source = fring * 3.0 * half_width / (constants::c * dt) *
-                                       solver_data.face_flux0[cell][face][g] / constants::c;
+            const double flux_source = face_area * dt / cell_volume *
+                                       solver_data.face_flux0[cell][face][g] * D[g] * 3.0 /
+                                       (constants::c * dt) * scale_dfdt;
             solver_data.source[cell][g] += fring * E0;
-            solver_data.source[cell][g] += flux_source;
+            solver_data.source[cell][g] -= flux_source;
             solver_data.diagonal[cell][g] += fring;
             solver_data.off_diagonal[cell][face][g] = -fring;
             solver_data.flux_source[cell][face][g] = fring * E0 + flux_source;
@@ -526,12 +549,17 @@ void MG_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool
       max_error = 0.0;
       for (size_t i = 0; i < solver_data.diagonal.size(); i++) {
         const std::vector<double> last_mg_eden = solver_data.cell_eden[i];
+        const double eff_scat_source =
+            (1.0 - fleck[i]) * constants::c * current_dt *
+            std::inner_product(solver_data.cell_eden[i].begin(), solver_data.cell_eden[i].end(),
+                               sigma_a[i].begin(), 0.0);
         double new_cell_eden = 0.0;
         double sigma_dep = 0.0;
         for (size_t g = 0; g < ngroups; g++) {
           const double diag = solver_data.diagonal[i][g];
-          double b =
-              solver_data.source[i][g] + cell_correction_source[i] * cell_planck_weights[i][g];
+          double b = solver_data.source[i][g] +
+                     cell_correction_source[i] * cell_planck_weights[i][g] +
+                     eff_scat_source * cell_planck_weights[i][g];
           for (size_t f = 0; f < solver_data.off_diagonal_id[i].size(); f++) {
             const auto ftype = solver_data.face_type[i][f];
             const size_t next_cell = solver_data.off_diagonal_id[i][f];
@@ -548,13 +576,15 @@ void MG_P1_Matrix::gs_solver(const double eps, const size_t max_iter, const bool
           new_cell_eden += solver_data.cell_eden[i][g];
           sigma_dep += solver_data.cell_eden[i][g] * sigma_a[i][g];
         }
-        sigma_dep /= new_cell_eden;
-        if (correction)
+        //Check(!(new_cell_eden < 0.0));
+        if (false) {
+          sigma_dep /= new_cell_eden;
           Correction::calc_correction(
               cell_epsilon[i], cell_correction_source[i], solver_data.cell_temperature[i],
               new_cell_eden, sigma_dep, sigma_planck[i], fleck[i], solver_data.cell_cve[i],
               volume[i], current_dt, solver_data.cell_temperature0[i], ext_exp_source[i]);
-        Check(!(new_cell_eden < 0.0));
+          Check(!(new_cell_eden < 0.0));
+        }
         // Check convergence
         for (size_t g = 0; g < ngroups; g++) {
           const double eden_diff = solver_data.cell_eden[i][g] > 0.0
@@ -729,6 +759,13 @@ void MG_P1_Matrix::calculate_output_data(const Orthogonal_Mesh &mesh, const Mat_
                      std::bind1st(std::multiplies<double>(), mat_data.cell_mat_density[cell][mat]));
       rtt_cdi::CDI::integrate_Planckian_Spectrum(
           group_bounds, mat_data.cell_mat_temperature[cell][mat], planck_spec);
+      // normalize
+      const double planck_sum = std::accumulate(planck_spec.begin(), planck_spec.end(), 0.0);
+      if (planck_sum > 0.0)
+        std::transform(planck_spec.begin(), planck_spec.end(), planck_spec.begin(),
+                       std::bind1st(std::multiplies<double>(), 1.0 / planck_sum));
+      else
+        planck_spec[0] = 1.0;
       const double mat_planck =
           std::inner_product(mat_sigma_a.begin(), mat_sigma_a.end(), planck_spec.begin(), 0.0);
 

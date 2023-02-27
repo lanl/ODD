@@ -21,6 +21,8 @@ struct Control_Data {
   // Constructor to initialize data
   double dt{0.0};
   size_t multigroup{0};
+  size_t ngroups{0};
+  double *group_bounds{nullptr};
   size_t correction{0};
   size_t max_iter{0};
   double min_tol{0};
@@ -81,11 +83,16 @@ struct Zonal_Data {
   double *cell_velocity{nullptr};
   // cell energy density [jerks/cc]
   double *cell_erad{nullptr};
+  // cell mg energy density [jerks/cc]
+  double *cell_mg_erad{nullptr};
   // cell rad source [jerks/cc]
   double *cell_rad_source{nullptr};
   // Flux on cell faces ncells*nfaces (strided by cells*face)
   // ergs/cm^2/sh
   double *face_flux{nullptr};
+  // Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_mg_flux{nullptr};
 
   // constructor to initialize data
   Zonal_Data() = default;
@@ -97,6 +104,8 @@ struct Output_Data {
 
   // The cell radiation energy density [jerks/cc]
   double *cell_erad{nullptr};
+  // The cell mg radiation energy density [jerks/cc]
+  double *cell_mg_erad{nullptr};
   // The cell radiation temperature [keV]
   double *cell_Trad{nullptr};
   // The change in material energy (strided by cells*mats) [jerks/cc]
@@ -104,6 +113,9 @@ struct Output_Data {
   // Flux on cell faces ncells*nfaces (strided by cells*face)
   // ergs/cm^2/sh
   double *face_flux{nullptr};
+  // mg Flux on cell faces ncells*nfaces (strided by cells*face)
+  // ergs/cm^2/sh
+  double *face_mg_flux{nullptr};
 
   // constructor to initialize data
   Output_Data() = default;

@@ -92,6 +92,15 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
   // cell material data
   mat_data.cell_rad_eden =
       std::vector<double>(arg.zonal_data.cell_erad, arg.zonal_data.cell_erad + ncells);
+  mat_data.cell_rad_mg_eden =
+      std::vector<std::vector<double>>(ncells, std::vector<double>(arg.control_data.ngroups, 0.0));
+  size_t g_index = 0;
+  for (auto &mg_eden : mat_data.cell_rad_mg_eden) {
+    for (auto &eden : mg_eden) {
+      eden = arg.zonal_data.cell_mg_erad[g_index];
+      g_index++;
+    }
+  }
   mat_data.cell_rad_source =
       std::vector<double>(arg.zonal_data.cell_rad_source, arg.zonal_data.cell_rad_source + ncells);
   mat_data.cell_velocity.resize(ncells, {32.0, 32.0, 32.0});
@@ -111,15 +120,33 @@ odd_solver::Interface_Data build_interface_data(const Arguments &arg) {
       f_index++;
     }
   }
+  mat_data.face_mg_flux = std::vector<std::vector<std::vector<double>>>(
+      ncells, std::vector<std::vector<double>>(
+                  nfaces, std::vector<double>(arg.control_data.ngroups, 32.0)));
+  // fill in the face_flux data for p1 solver
+  f_index = 0;
+  for (auto &cell_flux : mat_data.face_mg_flux) {
+    for (auto &face_flux : cell_flux) {
+      for (auto &mg_flux : face_flux) {
+        mg_flux = arg.zonal_data.face_mg_flux[f_index];
+        f_index++;
+      }
+    }
+  }
 
   // build output_data
   auto &output_data = iface.output_data;
   output_data.cell_rad_eden = std::vector<double>(ncells, 0.0);
+  output_data.cell_rad_mg_eden =
+      std::vector<std::vector<double>>(ncells, std::vector<double>(arg.control_data.ngroups, 0.0));
   output_data.cell_mat_dedv = std::vector<std::vector<double>>(ncells);
   for (size_t i = 0; i < iface.mesh_data.number_of_local_cells; i++)
     output_data.cell_mat_dedv[i] = std::vector<double>(mat_data.number_of_cell_mats[i], 0.0);
   output_data.face_flux =
       std::vector<std::vector<double>>(ncells, std::vector<double>(nfaces, 0.0));
+  output_data.face_mg_flux = std::vector<std::vector<std::vector<double>>>(
+      ncells,
+      std::vector<std::vector<double>>(nfaces, std::vector<double>(arg.control_data.ngroups, 0.0)));
 
   return iface;
 }

@@ -62,7 +62,6 @@ int main(int argc, char *argv[]) {
       p_out << "####################################\n";
     }
     p_out.send();
-
     // Calculate the energy update
     energy_update(arg, odd_data, print_cycle);
 
@@ -70,6 +69,7 @@ int main(int argc, char *argv[]) {
 
       // print out the final material and cell properties
       size_t mat_index = 0;
+      size_t group_index = 0;
       for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++) {
         const size_t cell_id = arg.zonal_data.cell_global_id[i];
         p_out << "Cell = " << cell_id;
@@ -87,6 +87,10 @@ int main(int argc, char *argv[]) {
           p_out << "; cell_mat_T[" << cell_id << "][" << m
                 << "] = " << arg.zonal_data.cell_mat_temperature[mat_index];
         }
+        for (size_t g = 0; g < arg.control_data.ngroups; g++, group_index++) {
+          p_out << "; mg_erad[" << cell_id << "][" << g
+                << "] = " << arg.zonal_data.cell_mg_erad[group_index];
+        }
         if (odd_data.domain_decomposed)
           p_out << "; Rank = " << rtt_c4::node();
         p_out << "\n";
@@ -97,8 +101,6 @@ int main(int argc, char *argv[]) {
         p_out << "############  CYCLE END  ############\n";
     }
     p_out.send();
-    for (size_t i = 0; i < arg.zonal_data.number_of_local_cells; i++)
-      arg.zonal_data.cell_erad[i] = arg.output_data.cell_erad[i];
     t += arg.control_data.dt;
     arg.control_data.dt *= odd_data.dt_ramp;
   }

@@ -9,6 +9,7 @@
 
 #include "Correction.hh"
 #include "Constants.hh"
+#include "ds++/dbc.hh"
 #include <cmath>
 #include <iostream>
 
@@ -23,7 +24,7 @@ void calc_correction(double &epsilon, double &correction_source, double &Tstar, 
   const double convergence = 1e-6;
   const double dep = fleck * eden * sigma_a * constants::c * dt * volume;
   const double sampled =
-      fleck * sigma_a * constants::a * constants::c * T0 * T0 * T0 * T0 * dt * volume;
+      fleck * sigma_planck * constants::a * constants::c * T0 * T0 * T0 * T0 * dt * volume;
   const double Sc = 1.0 / fleck * (dep + ext_exp_source - sampled);
   size_t count = 0;
   while (error > convergence && count < 1000) {
@@ -41,6 +42,7 @@ void calc_correction(double &epsilon, double &correction_source, double &Tstar, 
     error = fabs(Tstar - last_Tstar) / Tstar;
     correction_source = -epsilon * Sc / volume;
   }
+  /*
   std::cout << " T0 = " << T0;
   std::cout << " Tstar = " << Tstar;
   std::cout << " Tr0 = " << std::pow(eden / constants::a, 0.25);
@@ -49,6 +51,7 @@ void calc_correction(double &epsilon, double &correction_source, double &Tstar, 
   std::cout << " count = " << count;
   std::cout << " eps = " << epsilon;
   std::cout << std::endl;
+  */
   //Check(!(correction_source < 0.0));
 }
 

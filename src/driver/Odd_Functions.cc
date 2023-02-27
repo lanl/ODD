@@ -30,8 +30,17 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
     // Parse control data
     if (str == "-c" || str == "-correction")
       args.control_data.correction = std::stoi(argv[i + 1]);
-    if (str == "-mg" || str == "-multigroup")
+    if (str == "-mg" || str == "-multigroup") {
       args.control_data.multigroup = std::stoi(argv[i + 1]);
+      args.control_data.ngroups = std::stoi(argv[i + 2]);
+      odd_data.group_bounds = std::vector<double>(args.control_data.ngroups + 1, 0.0);
+      for (size_t g = 0; g < (args.control_data.ngroups + 1); g++) {
+        //std::cout << g << " "
+        //          << " " << args.control_data.ngroups << " " << argv[i + g + 3] << std::endl;
+        odd_data.group_bounds[g] = std::stod(argv[i + g + 3]);
+      }
+      args.control_data.group_bounds = &odd_data.group_bounds[0];
+    }
     if (str == "-if" || str == "-ipcress_file") {
       odd_data.opacity_file = argv[i + 1];
       args.control_data.opacity_file = &odd_data.opacity_file[0];
@@ -182,6 +191,8 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
   args.control_data.reflect_bnd = &odd_data.reflect_bnd[0];
 
   // Build mesh arguments
+  size_t ngroups = args.control_data.ngroups;
+  args.control_data.group_bounds = &odd_data.group_bounds[0];
   const size_t nfaces_per_cell = args.zonal_data.dimensions * 2;
   size_t ncells = 1;
   for (size_t d = 0; d < args.zonal_data.dimensions; d++) {
@@ -373,8 +384,22 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
   odd_data.cell_erad = std::vector<double>(ncells, odd_solver::constants::a *
                                                        std::pow(odd_data.rad_temperature, 4.0));
   args.zonal_data.cell_erad = &odd_data.cell_erad[0];
+  odd_data.cell_mg_erad = std::vector<double>(ncells * ngroups, 0.0);
+  args.zonal_data.cell_mg_erad = &odd_data.cell_mg_erad[0];
+  std::vector<double> planck_spec(ngroups, 0.0);
+  rtt_cdi::CDI::integrate_Planckian_Spectrum(odd_data.group_bounds, odd_data.rad_temperature,
+                                             planck_spec);
+  size_t g_index = 0;
+  for (size_t cell = 0; cell < ncells; cell++) {
+    for (size_t g = 0; g < ngroups; g++) {
+      odd_data.cell_mg_erad[g_index] = odd_data.cell_erad[cell] * planck_spec[g];
+      g_index++;
+    }
+  }
   odd_data.face_flux = std::vector<double>(ncells * nfaces_per_cell, 0.0);
   args.zonal_data.face_flux = &odd_data.face_flux[0];
+  odd_data.face_mg_flux = std::vector<double>(ncells * nfaces_per_cell * ngroups, 0.0);
+  args.zonal_data.face_mg_flux = &odd_data.face_mg_flux[0];
 
   // Allocate mat source arrays
   odd_data.cell_mat_electron_source = std::vector<double>(ncells, 0.0);
@@ -383,15 +408,18 @@ void build_arguments_from_cmd(const std::vector<std::string> &argv, Arguments &a
   args.zonal_data.cell_rad_source = &odd_data.cell_rad_source[0];
 
   // Output data
-  odd_data.output_cell_erad = std::vector<double>(
-      ncells, odd_solver::constants::a * std::pow(odd_data.rad_temperature, 4.0));
+  odd_data.output_cell_erad = std::vector<double>(ncells, 0.0);
   args.output_data.cell_erad = &odd_data.output_cell_erad[0];
+  odd_data.output_cell_mg_erad = std::vector<double>(ncells * ngroups, 0.0);
+  args.output_data.cell_mg_erad = &odd_data.output_cell_mg_erad[0];
   odd_data.output_cell_Trad = std::vector<double>(ncells, odd_data.rad_temperature);
   args.output_data.cell_Trad = &odd_data.output_cell_Trad[0];
   odd_data.output_cell_mat_delta_e = std::vector<double>(ncells, 0.0);
   args.output_data.cell_mat_delta_e = &odd_data.output_cell_mat_delta_e[0];
   odd_data.output_face_flux = std::vector<double>(ncells * nfaces_per_cell, 0.0);
   args.output_data.face_flux = &odd_data.output_face_flux[0];
+  odd_data.output_face_mg_flux = std::vector<double>(ncells * nfaces_per_cell * ngroups, 0.0);
+  args.output_data.face_mg_flux = &odd_data.output_face_mg_flux[0];
 
   // Query the EOS in kJ/g
   odd_data.cell_mat_specific_heat = odd_data.eos->getElectronHeatCapacity(
@@ -472,6 +500,9 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
   const double total_energy0 = odd_data.total_energy;
   size_t mat_index = 0;
   size_t face_index = 0;
+  size_t mg_index = 0;
+  size_t mg_face_index = 0;
+  size_t ngroups = args.control_data.ngroups;
   const size_t nfaces_per_cell = 2 * args.zonal_data.dimensions;
   odd_data.total_rad_energy = 0.0;
   odd_data.total_mat_energy = 0.0;
@@ -481,6 +512,8 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
     for (size_t d = 0; d < args.zonal_data.dimensions; d++)
       volume *= odd_data.cell_size[i * 3 + d];
     odd_data.cell_erad[i] = args.output_data.cell_erad[i];
+    for (size_t g = 0; g < ngroups; g++)
+      odd_data.cell_mg_erad[i * ngroups + g] = args.output_data.cell_mg_erad[i * ngroups + g];
     odd_data.total_rad_energy += odd_data.cell_erad[i] * volume;
     odd_data.total_source_energy += odd_data.cell_rad_source[i] * volume;
     for (size_t m = 0; m < args.zonal_data.number_of_cell_mats[i]; m++, mat_index++) {
@@ -501,11 +534,20 @@ void energy_update(Arguments &args, Odd_Driver_Data &odd_data, bool print_info) 
                                      odd_data.cell_mat_energy_density[mat_index] * 1.0e6 /
                                          odd_data.cell_mat_density[mat_index],
                                      odd_data.cell_mat_temperature[mat_index]);
+
+      odd_data.cell_mat_specific_heat[mat_index] =
+          eos.getElectronHeatCapacity(odd_data.cell_mat_temperature[mat_index],
+                                      odd_data.cell_mat_density[mat_index]) *
+          1e-6;
     }
     for (size_t f = 0; f < nfaces_per_cell; f++, face_index++) {
       odd_data.face_flux[face_index] = args.output_data.face_flux[face_index];
+      for (size_t g = 0; g < ngroups; g++)
+        odd_data.face_mg_flux[face_index * ngroups + g] =
+            args.output_data.face_mg_flux[face_index * ngroups + g];
     }
   }
+
   if (odd_data.domain_decomposed) {
     rtt_c4::global_sum(odd_data.total_mat_energy);
     rtt_c4::global_sum(odd_data.total_rad_energy);

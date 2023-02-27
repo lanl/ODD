@@ -87,13 +87,17 @@ struct Odd_Driver_Data {
   std::vector<double> cell_mat_electron_source;
   std::vector<double> cell_velocity;
   std::vector<double> cell_erad;
+  std::vector<double> cell_mg_erad;
   std::vector<double> cell_rad_source;
   std::vector<double> face_flux;
+  std::vector<double> face_mg_flux;
   // Output data
   std::vector<double> output_cell_erad;
+  std::vector<double> output_cell_mg_erad;
   std::vector<double> output_cell_Trad;
   std::vector<double> output_cell_mat_delta_e;
   std::vector<double> output_face_flux;
+  std::vector<double> output_face_mg_flux;
   // ODD Conservation Data
   std::vector<double> cell_mat_energy_density;
   double total_energy;

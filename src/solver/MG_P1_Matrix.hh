@@ -47,6 +47,7 @@ public:
                              Output_Data &output_data);
 
 private:
+  const bool scale_dfdt = 1.0;
   // boundary conditions
   const std::array<bool, 6> reflect_bnd;
   const std::array<double, 6> bnd_temp;
